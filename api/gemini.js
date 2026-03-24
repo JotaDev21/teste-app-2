@@ -6,7 +6,7 @@ export default async function handler(req, res) {
 
   // API key: use Vercel env var, fallback to hardcoded
   const API_KEY = process.env.GEMINI_API_KEY || 'AIzaSyASBbydBEUM9XEUsg0O70uyPWN30UMG5RI';
-  const MODEL = 'gemini-2.5-pro-preview-05-06';
+  const MODEL = 'gemini-2.5-flash';
 
   try {
     const { prompt, maxTokens = 300 } = req.body;
