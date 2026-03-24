@@ -500,6 +500,47 @@
     @keyframes slideUp { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     @supports (padding-bottom: env(safe-area-inset-bottom)) { nav { padding-bottom: env(safe-area-inset-bottom); } }
 
+    /* ===== THE FUEL MODULE ===== */
+    @keyframes fuelScanPulse {
+      0%, 100% { box-shadow: 0 0 20px rgba(0,255,100,0.2), inset 0 0 30px rgba(0,255,100,0.05); border-color: rgba(0,255,100,0.3); }
+      50% { box-shadow: 0 0 40px rgba(0,255,100,0.4), 0 0 80px rgba(0,255,100,0.1), inset 0 0 30px rgba(0,255,100,0.08); border-color: rgba(0,255,100,0.6); }
+    }
+    .fuel-scan-btn {
+      width: 140px; height: 140px; border-radius: 50%;
+      background: radial-gradient(circle at 40% 40%, #0a2a0a, #050f05 70%, #000);
+      border: 2px solid rgba(0,255,100,0.3);
+      animation: fuelScanPulse 3s ease-in-out infinite;
+      transition: all 0.25s cubic-bezier(.4,0,.2,1);
+    }
+    .fuel-scan-btn:active { transform: scale(0.94); box-shadow: 0 0 50px rgba(0,255,100,0.5) !important; }
+    .fuel-analysis-panel {
+      background: linear-gradient(135deg, #0a1a0a 0%, #0a0a0a 100%);
+      border: 1px solid rgba(0,255,100,0.15);
+      border-radius: 18px;
+    }
+    .fuel-analysis-panel .ai-prose strong { color: #86efac; }
+    .fuel-analysis-panel .ai-prose th { background: rgba(0,255,100,0.12); color: #86efac; border-color: #0a2a0a; }
+    .fuel-analysis-panel .ai-prose td { border-color: #0a1a0a; }
+    .fuel-analysis-panel .ai-prose code { background: rgba(0,255,100,0.1); color: #86efac; }
+    .fuel-analysis-panel .ai-prose li::marker { color: #00FF64; }
+    .fuel-analysis-panel .ai-prose blockquote { border-left-color: #00FF64; color: #86efac; }
+    .fuel-goal-btn { transition: all 0.25s cubic-bezier(.4,0,.2,1); }
+    .fuel-goal-btn.active-goal { border-color: rgba(0,255,100,0.5) !important; box-shadow: 0 0 12px rgba(0,255,100,0.15); }
+    .fuel-log-card {
+      background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 14px;
+      transition: all 0.3s ease;
+    }
+    .fuel-log-card:hover { border-color: rgba(0,255,100,0.2); }
+    @keyframes fuelScanline {
+      0% { transform: translateY(-100%); }
+      100% { transform: translateY(100%); }
+    }
+    .fuel-scanning::after {
+      content: ''; position: absolute; inset: 0; border-radius: 50%;
+      background: linear-gradient(transparent 40%, rgba(0,255,100,0.15) 50%, transparent 60%);
+      animation: fuelScanline 1.5s ease-in-out infinite;
+    }
+
     /* ===== UPGRADE DE ELITE: MICROINTERAÇÕES ===== */
 
     /* Staggered slide-up entrance for tab cards */
@@ -653,6 +694,10 @@
       <button class="nav-btn flex flex-col items-center justify-center gap-0.5 min-w-[48px] min-h-[48px] px-2 py-1.5 rounded-xl active:bg-white/5" onclick="switchTab('warchest')">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         <span class="text-[10px] font-bold">Capital</span>
+      </button>
+      <button class="nav-btn flex flex-col items-center justify-center gap-0.5 min-w-[48px] min-h-[48px] px-2 py-1.5 rounded-xl active:bg-white/5" onclick="switchTab('fuel')">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        <span class="text-[10px] font-bold">Fuel</span>
       </button>
       <button class="nav-btn flex flex-col items-center justify-center gap-0.5 min-w-[48px] min-h-[48px] px-2 py-1.5 rounded-xl active:bg-white/5" onclick="switchTab('focus')">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -1531,6 +1576,8 @@
       }
       if (!userState.missoesDiarias) userState.missoesDiarias = null;
       if (!Array.isArray(userState.studyLogs)) userState.studyLogs = [];
+      if (!Array.isArray(userState.mealLogs)) userState.mealLogs = [];
+      if (!userState.fuelGoal) userState.fuelGoal = 'manutenção';
       // Clean stale AI cache (keep only today's)
       const todayPrefix = 'verdict_' + today;
       Object.keys(userState.aiCache).forEach(k => {
@@ -1620,6 +1667,7 @@
         case 'grind': main.innerHTML = renderGrind(); break;
         case 'treino': main.innerHTML = renderTreino(); break;
         case 'warchest': main.innerHTML = renderWarChest(); break;
+        case 'fuel': main.innerHTML = renderTheFuel(); break;
         case 'focus': main.innerHTML = renderFocus(); break;
         case 'status': main.innerHTML = renderStatus(); break;
         case 'mentor': main.innerHTML = renderMentor(); break;
@@ -3432,6 +3480,307 @@
       return { text: 'ALERTA VERMELHO. VOCÊ ESTÁ SE SABOTANDO. ACORDE AGORA.', cls: 'neon-red', icon: '💀', bg: 'rgba(255,50,50,0.06)', border: 'border-red-900/40' };
     }
 
+    // =============================================
+    // THE FUEL MODULE (DIETA / NUTRIÇÃO)
+    // =============================================
+    let fuelSubTab = 'scan'; // 'scan' or 'log'
+    let fuelAnalysis = null; // { text: string } current analysis result
+    let fuelScanning = false;
+    let fuelChat = [];
+    let showFuelAdvisor = false;
+
+    function getMealLogs() {
+      if (!Array.isArray(userState.mealLogs)) userState.mealLogs = [];
+      return userState.mealLogs;
+    }
+
+    function triggerFuelCamera() {
+      document.getElementById('fuelCameraInput')?.click();
+    }
+
+    async function handleFuelImage(event) {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      fuelScanning = true;
+      fuelAnalysis = null;
+      renderActiveTab();
+
+      try {
+        // Compress + convert to Base64
+        const base64 = await compressAndConvert(file, 800, 0.7);
+        const thumbBase64 = await compressAndConvert(file, 200, 0.5);
+
+        // Send to API
+        const objetivo = userState.fuelGoal || 'manutenção';
+        const prompt = `Objetivo atual do usuário: ${objetivo}. Identifique os alimentos nesta imagem. Estime calorias totais, gramas de proteína, carboidratos (e seu índice glicêmico estimado) e gorduras (boas vs ruins). Liste em uma tabela. Dê um veredito para um diabético e avalie se a refeição é adequada para o objetivo de ${objetivo}.`;
+
+        const resp = await callGemini(prompt, null, null, null, 'the_fuel', base64);
+
+        fuelAnalysis = { text: resp };
+        fuelScanning = false;
+
+        // Save to meal log
+        const log = {
+          date: getTodayKey(),
+          time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+          thumb: thumbBase64,
+          analysis: resp,
+          goal: objetivo
+        };
+        getMealLogs().unshift(log);
+        // Keep last 50
+        if (userState.mealLogs.length > 50) userState.mealLogs = userState.mealLogs.slice(0, 50);
+        saveData();
+      } catch (e) {
+        console.error('ERRO FUEL SCAN:', e);
+        fuelAnalysis = { text: 'Falha na análise. Tente novamente, guerreiro.' };
+        fuelScanning = false;
+      }
+      // Reset input so same file can be re-selected
+      event.target.value = '';
+      renderActiveTab();
+    }
+
+    function compressAndConvert(file, maxSize, quality) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            let w = img.width, h = img.height;
+            if (w > maxSize || h > maxSize) {
+              const ratio = Math.min(maxSize / w, maxSize / h);
+              w = Math.round(w * ratio);
+              h = Math.round(h * ratio);
+            }
+            canvas.width = w;
+            canvas.height = h;
+            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+            const dataUrl = canvas.toDataURL('image/jpeg', quality);
+            // Strip "data:image/jpeg;base64," prefix
+            resolve(dataUrl.split(',')[1]);
+          };
+          img.onerror = reject;
+          img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function askFuelMentor() {
+      const input = document.getElementById('fuelMentorInput');
+      const question = input ? input.value.trim() : '';
+      if (!question) return;
+      fuelChat.push({ role: 'user', text: question });
+      input.value = '';
+      renderActiveTab();
+      const scrollFC = () => setTimeout(() => {
+        const el = document.getElementById('fuelMentorMessages');
+        if (el) el.scrollTop = el.scrollHeight;
+      }, 100);
+      scrollFC();
+      try {
+        const previousMessages = fuelChat.slice(0, -1);
+        const historico = previousMessages.length > 0
+          ? previousMessages.map(m => ({ role: m.role === 'user' ? 'user' : 'model', text: m.text }))
+          : null;
+        const objetivo = userState.fuelGoal || 'manutenção';
+        const ctx = `[Objetivo: ${objetivo}]\n\n`;
+        const resp = await callGemini(ctx + question, null, null, historico, 'the_fuel');
+        fuelChat.push({ role: 'ai', text: resp });
+      } catch (e) {
+        console.error('ERRO FUEL MENTOR:', e);
+        fuelChat.push({ role: 'ai', text: 'Conexão falhou. Mantenha a dieta limpa.' });
+      }
+      renderActiveTab();
+      scrollFC();
+    }
+
+    function renderTheFuel() {
+      const logs = getMealLogs();
+      const todayLogs = logs.filter(l => l.date === getTodayKey());
+      const objetivo = userState.fuelGoal || 'manutenção';
+
+      return `
+        <div class="tab-enter stagger-enter space-y-4 max-w-lg mx-auto">
+          <div class="pt-1">
+            <h2 class="text-2xl font-extrabold">The <span class="neon-text">Fuel</span></h2>
+            <p class="text-gray-500 text-sm font-semibold mt-1">O Combustível do Guerreiro.</p>
+          </div>
+
+          <!-- SUB-TAB TOGGLE -->
+          <div class="flex gap-2">
+            <button onclick="fuelSubTab='scan';renderActiveTab();"
+              class="flex-1 py-3 rounded-xl text-sm font-extrabold transition-all active:scale-[0.97] ${fuelSubTab === 'scan' ? 'text-[#00FF64] border-2 border-[#00FF64]/40 bg-[#00FF64]/5' : 'text-gray-600 border-2 border-[#1a1a1a] bg-black'}">
+              SCANNER
+            </button>
+            <button onclick="fuelSubTab='log';renderActiveTab();"
+              class="flex-1 py-3 rounded-xl text-sm font-extrabold transition-all active:scale-[0.97] ${fuelSubTab === 'log' ? 'text-[#00FF64] border-2 border-[#00FF64]/40 bg-[#00FF64]/5' : 'text-gray-600 border-2 border-[#1a1a1a] bg-black'}">
+              HISTÓRICO (${logs.length})
+            </button>
+          </div>
+
+          ${fuelSubTab === 'scan' ? `
+            <!-- META DE SHAPE -->
+            <div class="card-neu rounded-xl p-4">
+              <p class="text-[10px] font-extrabold tracking-[0.2em] text-gray-500 mb-3">META DE SHAPE</p>
+              <div class="grid grid-cols-3 gap-2">
+                ${['Bulking', 'Cutting', 'Manutenção'].map(g => `
+                  <button onclick="userState.fuelGoal='${g.toLowerCase()}';saveData();renderActiveTab();"
+                    class="fuel-goal-btn py-3 rounded-xl text-xs font-extrabold border-2 border-[#1a1a1a] bg-black active:scale-[0.97] ${objetivo === g.toLowerCase() ? 'active-goal text-[#00FF64]' : 'text-gray-500'}">
+                    ${g === 'Bulking' ? '💪' : g === 'Cutting' ? '🔥' : '⚖️'}<br>${g.toUpperCase()}
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+
+            <!-- SCANNER BUTTON -->
+            <div class="flex flex-col items-center py-4">
+              <input type="file" accept="image/*" capture="environment" class="hidden" id="fuelCameraInput" onchange="handleFuelImage(event)">
+              <button onclick="triggerFuelCamera()"
+                class="fuel-scan-btn flex flex-col items-center justify-center relative ${fuelScanning ? 'fuel-scanning' : ''}">
+                ${fuelScanning ? `
+                  <div class="text-[10px] font-extrabold tracking-[0.2em] text-[#00FF64]/60">ANALISANDO</div>
+                  <div class="text-2xl mt-1 animate-pulse">🔬</div>
+                ` : `
+                  <svg class="w-10 h-10 text-[#00FF64]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z"/>
+                  </svg>
+                  <p class="text-[10px] font-extrabold tracking-[0.15em] text-[#00FF64]/70 mt-2">ESCANEAR</p>
+                  <p class="text-[9px] font-bold text-[#00FF64]/40">REFEIÇÃO</p>
+                `}
+              </button>
+              <p class="text-[10px] font-semibold text-gray-600 mt-3">Tire a foto do prato. A IA analisa tudo.</p>
+            </div>
+
+            <!-- ANALYSIS RESULT -->
+            ${fuelScanning ? `
+              <div class="fuel-analysis-panel p-5 text-center">
+                <div class="animate-pulse space-y-3">
+                  <p class="text-xs font-extrabold tracking-[0.2em] text-[#00FF64]/50">O MESTRE ESTÁ ANALISANDO SEU PRATO...</p>
+                  <div class="w-16 h-1 bg-[#00FF64]/20 rounded-full mx-auto"></div>
+                  <p class="text-[10px] font-bold text-gray-600">Identificando alimentos, calculando macros e índice glicêmico</p>
+                </div>
+              </div>
+            ` : ''}
+            ${fuelAnalysis ? `
+              <div class="fuel-analysis-panel p-5">
+                <p class="text-[10px] font-extrabold tracking-[0.2em] text-[#00FF64]/60 mb-3">ANÁLISE NUTRICIONAL</p>
+                <div class="ai-prose text-sm font-medium text-gray-400 leading-relaxed break-words">
+                  ${typeof marked !== 'undefined' ? marked.parse(fuelAnalysis.text) : fuelAnalysis.text}
+                </div>
+              </div>
+            ` : ''}
+
+            <!-- NUTRICIONISTA CHAT -->
+            <button onclick="showFuelAdvisor=true;renderActiveTab();"
+              class="w-full py-4 rounded-xl font-extrabold text-sm text-white active:scale-[0.97] transition-transform ${showFuelAdvisor ? 'hidden' : ''}"
+              style="background: linear-gradient(135deg, #0a2a0a 0%, #050f05 50%, #000 100%); border: 1px solid rgba(0,255,100,0.2);">
+              <span class="text-lg mr-2">🧬</span> CONSULTAR NUTRICIONISTA — IA
+            </button>
+            ${showFuelAdvisor ? renderFuelAdvisor() : ''}
+
+            <!-- TODAY'S MEALS -->
+            ${todayLogs.length > 0 ? `
+              <div class="card-neu rounded-xl p-4">
+                <p class="text-[10px] font-extrabold tracking-[0.2em] text-gray-500 mb-3">REFEIÇÕES DE HOJE (${todayLogs.length})</p>
+                <div class="space-y-2">
+                  ${todayLogs.map((l, i) => `
+                    <div class="fuel-log-card p-3 flex items-center gap-3">
+                      ${l.thumb ? `<img src="data:image/jpeg;base64,${l.thumb}" class="w-12 h-12 rounded-lg object-cover flex-shrink-0" alt="Refeição">` : '<div class="w-12 h-12 rounded-lg bg-[#111] border border-[#222] flex items-center justify-center text-lg flex-shrink-0">🍽️</div>'}
+                      <div class="flex-1 min-w-0">
+                        <p class="text-xs font-bold text-gray-400 truncate">${l.time} — ${l.goal || 'livre'}</p>
+                        <p class="text-[10px] font-semibold text-gray-600 truncate">${(l.analysis || '').substring(0, 60)}...</p>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            ` : ''}
+          ` : `
+            <!-- LOG TAB -->
+            <div class="space-y-3">
+              ${logs.length === 0 ? `
+                <div class="card-neu rounded-xl p-8 text-center">
+                  <p class="text-3xl mb-2">🍽️</p>
+                  <p class="text-sm font-bold text-gray-600">Nenhuma refeição escaneada ainda.</p>
+                  <p class="text-[10px] font-semibold text-gray-700 mt-1">Use o Scanner para começar.</p>
+                </div>
+              ` : logs.map((l, i) => `
+                <div class="fuel-log-card p-4">
+                  <div class="flex items-center gap-3 mb-3">
+                    ${l.thumb ? `<img src="data:image/jpeg;base64,${l.thumb}" class="w-14 h-14 rounded-xl object-cover flex-shrink-0" alt="Refeição">` : '<div class="w-14 h-14 rounded-xl bg-[#111] border border-[#222] flex items-center justify-center text-xl flex-shrink-0">🍽️</div>'}
+                    <div class="flex-1 min-w-0">
+                      <p class="text-sm font-extrabold text-gray-300">${l.date}</p>
+                      <p class="text-xs font-bold text-gray-500">${l.time} — ${(l.goal || 'livre').toUpperCase()}</p>
+                    </div>
+                    <button onclick="userState.mealLogs.splice(${i},1);saveData();renderActiveTab();"
+                      class="text-gray-700 hover:text-red-400 p-1 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center">
+                      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                  </div>
+                  <div class="ai-prose text-xs font-medium text-gray-500 leading-relaxed break-words max-h-40 overflow-y-auto" style="scrollbar-width: thin; scrollbar-color: #1a1a1a #000;">
+                    ${typeof marked !== 'undefined' ? marked.parse(l.analysis || '') : (l.analysis || '')}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          `}
+        </div>
+      `;
+    }
+
+    function renderFuelAdvisor() {
+      return `
+        <div class="card-neu rounded-xl p-4 space-y-3" style="border: 1px solid rgba(0,255,100,0.15);">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-lg flex items-center justify-center text-sm" style="background: linear-gradient(135deg, #0a2a0a, #0a0a0a); border: 1px solid rgba(0,255,100,0.2);">🧬</div>
+              <div>
+                <p class="text-xs font-extrabold text-[#00FF64]">NUTRICIONISTA DE ELITE</p>
+                <p class="text-[9px] font-bold text-gray-600">Gemini AI — Modo Biohacking</p>
+              </div>
+            </div>
+            <button onclick="showFuelAdvisor=false;renderActiveTab();" class="min-w-[44px] min-h-[44px] flex items-center justify-center text-gray-600 hover:text-red-400 rounded-xl active:bg-white/5">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+
+          <div id="fuelMentorMessages" class="space-y-3 max-h-96 overflow-y-auto" style="scrollbar-width: thin; scrollbar-color: #0a2a0a #000;">
+            ${fuelChat.length === 0 ? `
+              <div class="text-center py-4">
+                <p class="text-sm font-bold text-gray-600">Pergunte sobre dieta, macros, suplementação, índice glicêmico...</p>
+              </div>
+            ` : fuelChat.map(msg => `
+              <div class="${msg.role === 'user' ? 'ml-8' : 'mr-4'}">
+                <div class="${msg.role === 'user' ? 'bg-green-950/30 border border-green-800/20' : 'fuel-analysis-panel'} rounded-2xl p-4">
+                  <p class="text-xs font-extrabold ${msg.role === 'user' ? 'text-[#00FF64]' : 'text-gray-500'} mb-1">${msg.role === 'user' ? 'VOCÊ' : 'NUTRICIONISTA'}</p>
+                  ${msg.role === 'user'
+                    ? `<p class="text-sm font-semibold text-gray-300 leading-relaxed whitespace-pre-wrap break-words">${msg.text}</p>`
+                    : `<div class="ai-prose text-sm font-medium text-gray-400 leading-relaxed break-words">${typeof marked !== 'undefined' ? marked.parse(msg.text) : msg.text}</div>`
+                  }
+                </div>
+              </div>
+            `).join('')}
+          </div>
+
+          <div class="flex gap-2">
+            <input id="fuelMentorInput" type="text" placeholder="Sua dúvida nutricional..."
+              class="forja-input flex-1 px-4 py-3.5 rounded-xl text-sm font-bold min-h-[48px]"
+              onkeydown="if(event.key==='Enter')askFuelMentor();">
+            <button onclick="askFuelMentor()"
+              class="px-5 py-3.5 rounded-xl font-extrabold text-sm text-white min-h-[48px] active:scale-[0.97]"
+              style="background: linear-gradient(135deg, #00FF64, #059669);">
+              ENVIAR
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
     function renderStatus() {
       const weekScores = getWeekScores();
       const avg = getWeekAvgScore();
@@ -4035,12 +4384,13 @@
     const GEMINI_MODEL = 'gemini-2.5-flash';
     // Personas agora vivem no backend (api/gemini.js) via system_instruction dinâmico
 
-    async function callGemini(prompt, maxTokens = 300, topicoEstudo = null, historico = null, moduloAtivo = null) {
+    async function callGemini(prompt, maxTokens = 300, topicoEstudo = null, historico = null, moduloAtivo = null, imagemBase64 = null) {
       try {
         const payload = { prompt, maxTokens };
         if (topicoEstudo) payload.topicoEstudo = topicoEstudo;
         if (historico && historico.length > 0) payload.historico = historico;
         if (moduloAtivo) payload.moduloAtivo = moduloAtivo;
+        if (imagemBase64) payload.imagemBase64 = imagemBase64;
 
         const res = await fetch('/api/gemini', {
           method: 'POST',
