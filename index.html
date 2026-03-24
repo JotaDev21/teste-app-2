@@ -1,0 +1,2451 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#000000">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Unstoppable">
+  <meta name="application-name" content="Unstoppable Clone">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="msapplication-TileColor" content="#000000">
+  <meta name="msapplication-tap-highlight" content="no">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='36' fill='%23000'/><text x='90' y='122' font-size='100' text-anchor='middle' fill='%232563EB' font-family='Arial' font-weight='900'>U</text></svg>">
+  <title>BE UNSTOPPABLE</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            royal: '#2563EB',
+            emerald: '#10B981',
+            card: '#111111',
+            border: '#222222',
+            dark: '#000000',
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    /* ===== BASE & MOBILE UX ===== */
+    * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+    html { overscroll-behavior-y: contain; -webkit-overflow-scrolling: touch; }
+    body { font-family: 'Inter', system-ui, sans-serif; overscroll-behavior: none; touch-action: manipulation; -webkit-text-size-adjust: 100%; overscroll-behavior-y: contain; }
+    a, button, input, select, textarea, [onclick] { touch-action: manipulation; }
+    input[type="text"], input[type="number"], input[type="password"], textarea, select { font-size: 16px !important; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: #000; }
+    ::-webkit-scrollbar-thumb { background: #222; border-radius: 4px; }
+
+    /* ===== NEUMORPHIC CARD SYSTEM ===== */
+    .card-neu {
+      background: #111;
+      border: 1px solid rgba(255,255,255,0.04);
+      border-radius: 16px;
+      box-shadow: 8px 8px 20px rgba(0,0,0,0.6), -4px -4px 12px rgba(255,255,255,0.02), inset 0 1px 0 rgba(255,255,255,0.03);
+      transition: all 0.3s cubic-bezier(.4,0,.2,1);
+    }
+    .card-neu:hover { box-shadow: 8px 8px 24px rgba(0,0,0,0.7), -4px -4px 14px rgba(255,255,255,0.03), inset 0 1px 0 rgba(255,255,255,0.04); }
+    .card-inner {
+      background: #0a0a0a;
+      border: 1px solid rgba(255,255,255,0.03);
+      border-radius: 12px;
+      box-shadow: inset 2px 2px 6px rgba(0,0,0,0.5), inset -1px -1px 4px rgba(255,255,255,0.02);
+    }
+
+    /* ===== TAB TRANSITIONS ===== */
+    .tab-enter { animation: tabIn 0.3s cubic-bezier(.4,0,.2,1); }
+    @keyframes tabIn {
+      from { opacity: 0; transform: translateY(16px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    #mainContent { transition: opacity 0.15s ease; }
+
+    /* ===== HABIT SYSTEM ===== */
+    .habit-check { transition: all 0.3s cubic-bezier(.4,0,.2,1); }
+    .habit-check.done {
+      background: rgba(0, 255, 100, 0.06) !important;
+      border-color: #00FF64 !important;
+      box-shadow: 0 0 18px rgba(0,255,100,0.2), inset 0 0 15px rgba(0,255,100,0.05) !important;
+    }
+    .habit-icon-ring { transition: all 0.3s ease; }
+    .habit-icon-ring.done { box-shadow: 0 0 14px rgba(0,255,100,0.4); }
+    .streak-fire { display: inline-block; animation: firePulse 1.5s ease-in-out infinite; }
+    @keyframes firePulse {
+      0%, 100% { transform: scale(1); filter: brightness(1); }
+      50% { transform: scale(1.15); filter: brightness(1.3); }
+    }
+
+    /* ===== NEON SYSTEM ===== */
+    .neon-text { color: #00FF64; text-shadow: 0 0 8px rgba(0,255,100,0.6), 0 0 20px rgba(0,255,100,0.3); }
+    .neon-bar { background: linear-gradient(90deg, #00FF64, #10B981); box-shadow: 0 0 12px rgba(0,255,100,0.4), 0 0 4px rgba(0,255,100,0.2); }
+    .neon-bar-track { box-shadow: inset 0 0 8px rgba(0,0,0,0.9); }
+    .neon-red { color: #FF3333; text-shadow: 0 0 10px rgba(255,50,50,0.7), 0 0 25px rgba(255,50,50,0.4); }
+    .neon-red-glow { box-shadow: 0 0 20px rgba(255,50,50,0.3), inset 0 0 15px rgba(255,50,50,0.05) !important; border-color: #FF3333 !important; }
+    .neon-red-bar { background: linear-gradient(90deg, #FF3333, #cc0000); box-shadow: 0 0 12px rgba(255,50,50,0.5); }
+    @keyframes redPulse {
+      0%, 100% { opacity: 1; box-shadow: 0 0 20px rgba(255,50,50,0.3); }
+      50% { opacity: 0.85; box-shadow: 0 0 35px rgba(255,50,50,0.5); }
+    }
+    .red-pulse { animation: redPulse 2s ease-in-out infinite; }
+    .neon-yellow { color: #FACC15; text-shadow: 0 0 8px rgba(250,204,21,0.5), 0 0 20px rgba(250,204,21,0.25); }
+    .neon-gold { color: #FFD700; text-shadow: 0 0 8px rgba(255,215,0,0.6), 0 0 20px rgba(255,215,0,0.3); }
+    .neon-gold-border { border-color: rgba(255,215,0,0.3) !important; box-shadow: 0 0 12px rgba(255,215,0,0.1); }
+
+    /* ===== GLOW BUTTONS ===== */
+    .btn-royal {
+      background: linear-gradient(135deg, #2563EB, #1d4ed8);
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 12px rgba(37,99,235,0.3);
+    }
+    .btn-royal:hover { box-shadow: 0 4px 20px rgba(37,99,235,0.5); }
+    .btn-royal:active { transform: scale(0.97); box-shadow: 0 1px 6px rgba(37,99,235,0.3); }
+    .btn-glow-green {
+      box-shadow: 0 0 15px rgba(0,255,100,0.3), 0 0 40px rgba(0,255,100,0.1);
+      border-color: #00FF64 !important;
+    }
+
+    /* ===== SCORE RING ===== */
+    .score-ring { background: conic-gradient(var(--ring-color) calc(var(--score) * 3.6deg), #1a1a1a 0deg); border-radius: 50%; }
+    .bar-grow { animation: barGrow 0.6s ease-out forwards; }
+    @keyframes barGrow { from { height: 0; } }
+
+    /* ===== TIMERS ===== */
+    .mono-timer { font-family: 'Courier New', 'Consolas', monospace; font-variant-numeric: tabular-nums; letter-spacing: 1px; }
+
+    /* ===== SOBERANIA ===== */
+    .sobriety-card { transition: all 0.3s cubic-bezier(.4,0,.2,1); }
+    .sobriety-card:hover { border-color: #444 !important; transform: translateY(-1px); }
+    .sobriety-card.streak-glow {
+      box-shadow: 0 0 20px rgba(0,255,100,0.15), 0 0 40px rgba(0,255,100,0.05), inset 0 0 20px rgba(0,255,100,0.03);
+      border-color: rgba(0,255,100,0.3) !important;
+    }
+    .verse-glow {
+      background: linear-gradient(135deg, rgba(37,99,235,0.08), rgba(0,0,0,0));
+      border-color: rgba(37,99,235,0.2) !important;
+    }
+
+    /* ===== NAV ===== */
+    .nav-btn { transition: all 0.2s ease; }
+    .nav-btn.active svg { stroke: #2563EB; filter: drop-shadow(0 0 4px rgba(37,99,235,0.4)); }
+    .nav-btn.active span { color: #2563EB; }
+    nav.nav-hidden { transform: translateY(100%); transition: transform 0.3s ease; }
+    .pulse { animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+
+    /* ===== INPUTS ===== */
+    input, textarea, select {
+      background: #0d0d0d !important;
+      border: 1px solid #1a1a1a !important;
+      color: #fff !important;
+      outline: none !important;
+      box-shadow: inset 2px 2px 4px rgba(0,0,0,0.4), inset -1px -1px 3px rgba(255,255,255,0.02);
+      transition: all 0.2s ease;
+    }
+    input:focus, textarea:focus, select:focus {
+      border-color: #2563EB !important;
+      box-shadow: inset 2px 2px 4px rgba(0,0,0,0.4), 0 0 8px rgba(37,99,235,0.2);
+    }
+
+    /* ===== FOCUS MODULE ===== */
+    .focus-pulse { animation: focusPulse 2s ease-in-out infinite; }
+    @keyframes focusPulse {
+      0%, 100% { box-shadow: 0 0 20px rgba(37,99,235,0.3), 0 0 60px rgba(37,99,235,0.1); }
+      50% { box-shadow: 0 0 40px rgba(37,99,235,0.6), 0 0 100px rgba(37,99,235,0.2); }
+    }
+    .focus-timer-text { font-family: 'Courier New', 'Consolas', monospace; font-variant-numeric: tabular-nums; letter-spacing: 3px; }
+    .focus-immersive {
+      position: fixed; inset: 0; z-index: 60;
+      background: rgba(0,0,0,0.96);
+      backdrop-filter: blur(12px);
+      display: flex; align-items: center; justify-content: center;
+      animation: fadeIn 0.4s ease-out;
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .focus-ring-active { border: 3px solid #2563EB; animation: focusRingSpin 4s linear infinite; }
+    @keyframes focusRingSpin {
+      0% { border-color: #2563EB; box-shadow: 0 0 30px rgba(37,99,235,0.3); }
+      33% { border-color: #3b82f6; box-shadow: 0 0 40px rgba(59,130,246,0.4); }
+      66% { border-color: #1d4ed8; box-shadow: 0 0 30px rgba(29,78,216,0.3); }
+      100% { border-color: #2563EB; box-shadow: 0 0 30px rgba(37,99,235,0.3); }
+    }
+    .focus-scanline {
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(37,99,235,0.03) 2px, rgba(37,99,235,0.03) 4px);
+    }
+
+    /* ===== TREINO MODULE ===== */
+    .workout-load { font-family: 'Courier New', 'Consolas', monospace; font-variant-numeric: tabular-nums; }
+    .pr-glow { color: #FFD700; text-shadow: 0 0 8px rgba(255,215,0,0.6), 0 0 20px rgba(255,215,0,0.3); animation: prPulse 1.5s ease-in-out infinite; }
+    @keyframes prPulse {
+      0%, 100% { text-shadow: 0 0 8px rgba(255,215,0,0.6); }
+      50% { text-shadow: 0 0 16px rgba(255,215,0,0.9), 0 0 30px rgba(255,215,0,0.4); }
+    }
+    .pr-badge { background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,215,0,0.05)); border: 1px solid rgba(255,215,0,0.3); color: #FFD700; }
+    .day-selector-btn { transition: all 0.15s ease; }
+    .day-selector-btn.active-day { background: #2563EB !important; color: white !important; border-color: #2563EB !important; box-shadow: 0 0 10px rgba(37,99,235,0.3); }
+    .exercise-row { transition: all 0.3s ease; }
+    .exercise-row.done-exercise { opacity: 0.45; }
+    .exercise-row.done-exercise .exercise-name { text-decoration: line-through; }
+    .rest-timer-bar { height: 3px; background: #2563EB; transition: width 1s linear; border-radius: 2px; box-shadow: 0 0 6px rgba(37,99,235,0.4); }
+
+    /* ===== STATUS MODULE ===== */
+    .status-bar { transition: height 0.6s ease-out; border-radius: 4px 4px 0 0; }
+    .status-metric-card { background: #111; border: 1px solid rgba(255,255,255,0.04); border-radius: 12px; transition: all 0.2s ease; box-shadow: 4px 4px 12px rgba(0,0,0,0.5), -2px -2px 6px rgba(255,255,255,0.02); }
+    .verdict-card { border-radius: 16px; position: relative; overflow: hidden; }
+    .verdict-card::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255,255,255,0.01) 3px, rgba(255,255,255,0.01) 6px); pointer-events: none; }
+
+    /* ===== PIE CHART ===== */
+    .pie-chart {
+      width: 120px; height: 120px; border-radius: 50%;
+      background: conic-gradient(var(--ess-color, #2563EB) 0deg calc(var(--ess-pct, 50) * 3.6deg), var(--dop-color, #FF3333) calc(var(--ess-pct, 50) * 3.6deg) 360deg);
+      box-shadow: inset 0 0 15px rgba(0,0,0,0.6), 0 0 15px rgba(0,0,0,0.4);
+    }
+
+    /* ===== SCARCITY VIGNETTE ===== */
+    .scarcity-vignette::after {
+      content: ''; position: fixed; inset: 0; z-index: 1; pointer-events: none;
+      background: radial-gradient(ellipse at center, transparent 50%, rgba(255,0,0,0.08) 100%);
+      animation: vignetteBreath 3s ease-in-out infinite;
+    }
+    @keyframes vignetteBreath {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+
+    /* ===== RECAIDA OVERLAY ===== */
+    .recaida-overlay {
+      position: fixed; inset: 0; z-index: 70;
+      background: rgba(0,0,0,0.95);
+      display: flex; align-items: center; justify-content: center;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    /* ===== TERMINAL & AI (v3.0) ===== */
+    .terminal-output {
+      background: #050505;
+      border: 1px solid rgba(0,255,100,0.12);
+      border-radius: 12px;
+      padding: 16px;
+      font-family: 'Courier New', 'Consolas', monospace;
+      font-size: 11px;
+      color: #00FF64;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      word-break: break-word;
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.5), 0 0 10px rgba(0,255,100,0.05);
+    }
+    .terminal-output::before {
+      content: '> UNSTOPPABLE v3.0 — TERMINAL DE GUERRA';
+      display: block;
+      color: rgba(0,255,100,0.4);
+      font-size: 9px;
+      letter-spacing: 2px;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(0,255,100,0.08);
+    }
+    .ai-verdict-card {
+      background: linear-gradient(135deg, rgba(255,50,50,0.04), rgba(0,0,0,0));
+      border: 1px solid rgba(255,50,50,0.15);
+      border-radius: 16px;
+      box-shadow: 8px 8px 20px rgba(0,0,0,0.6), -4px -4px 12px rgba(255,255,255,0.02);
+    }
+    .ai-loading { animation: aiPulse 1.5s ease-in-out infinite; }
+    @keyframes aiPulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.8; } }
+    .stagnation-tag { background: rgba(255,50,50,0.1); border: 1px solid rgba(255,50,50,0.3); color: #FF3333; }
+
+    /* ===== PWA INSTALL BANNER ===== */
+    .install-banner {
+      position: fixed; bottom: 72px; left: 16px; right: 16px; z-index: 55;
+      background: #111; border: 1px solid #2563EB; border-radius: 16px;
+      padding: 14px 16px; display: flex; align-items: center; gap: 12px;
+      box-shadow: 0 -4px 30px rgba(37,99,235,0.15), 0 4px 20px rgba(0,0,0,0.6);
+      animation: slideUp 0.4s ease-out;
+    }
+    @keyframes slideUp { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    @supports (padding-bottom: env(safe-area-inset-bottom)) { nav { padding-bottom: env(safe-area-inset-bottom); } }
+  </style>
+</head>
+<body class="bg-dark text-white min-h-screen flex flex-col select-none">
+
+  <!-- ========== HEADER ========== -->
+  <header class="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-md border-b border-border px-4 py-3 flex items-center justify-between">
+    <h1 class="text-lg font-extrabold tracking-tight">BE <span class="text-royal">UNSTOPPABLE</span></h1>
+    <time id="headerDate" class="text-xs text-gray-500 font-semibold tabular-nums"></time>
+  </header>
+
+  <!-- ========== MAIN CONTENT ========== -->
+  <main id="mainContent" class="flex-1 mt-14 mb-20 px-4 py-4 overflow-y-auto">
+    <!-- Dynamic content rendered here -->
+  </main>
+
+  <!-- ========== BOTTOM NAV ========== -->
+  <nav class="fixed bottom-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-md border-t border-border">
+    <div class="flex justify-around items-center py-2 max-w-lg mx-auto">
+      <button class="nav-btn flex flex-col items-center gap-0.5 px-1.5 py-1" onclick="switchTab('dashboard')">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+        <span class="text-[9px] font-bold">Home</span>
+      </button>
+      <button class="nav-btn flex flex-col items-center gap-0.5 px-1.5 py-1" onclick="switchTab('grind')">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        <span class="text-[9px] font-bold">Grind</span>
+      </button>
+      <button class="nav-btn flex flex-col items-center gap-0.5 px-1.5 py-1" onclick="switchTab('treino')">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12h4l1-9h8l1 9h4M7 12v4a2 2 0 002 2h6a2 2 0 002-2v-4"/></svg>
+        <span class="text-[9px] font-bold">Treino</span>
+      </button>
+      <button class="nav-btn flex flex-col items-center gap-0.5 px-1.5 py-1" onclick="switchTab('warchest')">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <span class="text-[9px] font-bold">Capital</span>
+      </button>
+      <button class="nav-btn flex flex-col items-center gap-0.5 px-1.5 py-1" onclick="switchTab('focus')">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <span class="text-[9px] font-bold">Focus</span>
+      </button>
+      <button class="nav-btn flex flex-col items-center gap-0.5 px-1.5 py-1" onclick="switchTab('status')">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        <span class="text-[9px] font-bold">Status</span>
+      </button>
+    </div>
+  </nav>
+
+  <script>
+    // =============================================
+    // STATE MANAGEMENT
+    // =============================================
+    let activeTab = 'dashboard';
+
+    const DEFAULT_HABITS = [
+      { id: 'wake',    label: 'Acordar Cedo (06:00)', icon: '⏰', desc: 'Levantar antes do mundo. Sem soneca.' },
+      { id: 'cold',    label: 'Banho Gelado',         icon: '🧊', desc: 'Desconforto voluntário. Mente de aço.' },
+      { id: 'workout', label: 'Treino de Força',      icon: '🏋️', desc: 'Ferro pesado. Sem desculpas.' },
+      { id: 'read',    label: 'Leitura (10 págs)',     icon: '📖', desc: 'Conhecimento é a arma definitiva.' },
+    ];
+
+    const DEFAULT_VICIOS = [
+      { id: 'acucar',    label: 'Açúcar / Doces',     icon: '🍬' },
+      { id: 'redes',     label: 'Redes Sociais',      icon: '📱' },
+      { id: 'procrast',  label: 'Procrastinação',     icon: '🛋️' },
+      { id: 'custom',    label: 'Personalizado',      icon: '⚡' },
+    ];
+
+    const VERSICULOS = [
+      { ref: 'Josué 1:9',          text: 'Seja forte e corajoso! Não se apavore, nem se desanime, pois o Senhor, o seu Deus, estará com você por onde você andar.' },
+      { ref: 'Filipenses 4:13',    text: 'Tudo posso naquele que me fortalece.' },
+      { ref: 'Salmos 18:34',       text: 'Ele treina as minhas mãos para a batalha; os meus braços podem curvar um arco de bronze.' },
+      { ref: '1 Coríntios 9:27',   text: 'Esmurro o meu corpo e faço dele meu escravo, para que, depois de pregar aos outros, eu mesmo não venha a ser reprovado.' },
+      { ref: 'Isaías 40:31',       text: 'Mas aqueles que esperam no Senhor renovam as suas forças. Voam alto como águias; correm e não ficam exaustos.' },
+      { ref: 'Romanos 8:37',       text: 'Em todas estas coisas somos mais que vencedores, por meio daquele que nos amou.' },
+      { ref: 'Deuteronômio 31:6',  text: 'Sejam fortes e corajosos. Não tenham medo, pois o Senhor, o seu Deus, vai com vocês; nunca os deixará.' },
+      { ref: '2 Timóteo 1:7',      text: 'Pois Deus não nos deu espírito de covardia, mas de poder, de amor e de equilíbrio.' },
+      { ref: 'Salmos 144:1',       text: 'Bendito seja o Senhor, a minha rocha, que treina as minhas mãos para a guerra e os meus dedos para a batalha.' },
+      { ref: 'Provérbios 25:28',   text: 'Como cidade com os muros derrubados é o homem que não sabe dominar-se.' },
+      { ref: 'Efésios 6:10',       text: 'Quanto ao mais, sede fortalecidos no Senhor e na força do seu poder.' },
+      { ref: 'Gálatas 6:9',        text: 'E não nos cansemos de fazer o bem, pois no tempo próprio colheremos, se não desanimarmos.' },
+      { ref: 'Tiago 1:12',         text: 'Bem-aventurado o homem que suporta a provação; porque, depois de aprovado, receberá a coroa da vida.' },
+      { ref: 'Salmos 27:1',        text: 'O Senhor é a minha luz e a minha salvação; de quem terei temor? O Senhor é a fortaleza da minha vida; de quem terei medo?' },
+      { ref: 'Hebreus 12:11',      text: 'Nenhuma disciplina parece ser motivo de alegria no momento, mas sim de tristeza. Depois, porém, produz fruto de justiça e paz.' },
+    ];
+
+    const WORKOUT_DAYS = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sab'];
+    const WORKOUT_DAY_LABELS = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'];
+
+    const DEFAULT_WORKOUT_PLAN = {
+      seg: { label: 'A — Peito / Tríceps', exercises: [
+        { id: 'supino_reto',     name: 'Supino Reto',        sets: 4, reps: 10 },
+        { id: 'supino_incl',     name: 'Supino Inclinado',   sets: 4, reps: 10 },
+        { id: 'crucifixo',       name: 'Crucifixo',          sets: 3, reps: 12 },
+        { id: 'triceps_corda',   name: 'Tríceps Corda',      sets: 3, reps: 12 },
+        { id: 'triceps_testa',   name: 'Tríceps Testa',      sets: 3, reps: 10 },
+      ]},
+      ter: { label: 'B — Costas / Bíceps', exercises: [
+        { id: 'puxada_frontal',  name: 'Puxada Frontal',     sets: 4, reps: 10 },
+        { id: 'remada_curvada',  name: 'Remada Curvada',     sets: 4, reps: 10 },
+        { id: 'remada_uni',      name: 'Remada Unilateral',  sets: 3, reps: 12 },
+        { id: 'rosca_direta',    name: 'Rosca Direta',       sets: 3, reps: 12 },
+        { id: 'rosca_martelo',   name: 'Rosca Martelo',      sets: 3, reps: 10 },
+      ]},
+      qua: { label: 'C — Pernas', exercises: [
+        { id: 'agachamento',     name: 'Agachamento',        sets: 4, reps: 10 },
+        { id: 'leg_press',       name: 'Leg Press',          sets: 4, reps: 12 },
+        { id: 'cadeira_ext',     name: 'Cadeira Extensora',  sets: 3, reps: 12 },
+        { id: 'mesa_flex',       name: 'Mesa Flexora',       sets: 3, reps: 12 },
+        { id: 'panturrilha',     name: 'Panturrilha',        sets: 4, reps: 15 },
+      ]},
+      qui: { label: 'A — Peito / Tríceps', exercises: [
+        { id: 'supino_reto',     name: 'Supino Reto',        sets: 4, reps: 10 },
+        { id: 'supino_incl',     name: 'Supino Inclinado',   sets: 4, reps: 10 },
+        { id: 'crucifixo',       name: 'Crucifixo',          sets: 3, reps: 12 },
+        { id: 'triceps_corda',   name: 'Tríceps Corda',      sets: 3, reps: 12 },
+        { id: 'triceps_testa',   name: 'Tríceps Testa',      sets: 3, reps: 10 },
+      ]},
+      sex: { label: 'B — Costas / Bíceps', exercises: [
+        { id: 'puxada_frontal',  name: 'Puxada Frontal',     sets: 4, reps: 10 },
+        { id: 'remada_curvada',  name: 'Remada Curvada',     sets: 4, reps: 10 },
+        { id: 'remada_uni',      name: 'Remada Unilateral',  sets: 3, reps: 12 },
+        { id: 'rosca_direta',    name: 'Rosca Direta',       sets: 3, reps: 12 },
+        { id: 'rosca_martelo',   name: 'Rosca Martelo',      sets: 3, reps: 10 },
+      ]},
+      sab: { label: 'C — Pernas', exercises: [
+        { id: 'agachamento',     name: 'Agachamento',        sets: 4, reps: 10 },
+        { id: 'leg_press',       name: 'Leg Press',          sets: 4, reps: 12 },
+        { id: 'cadeira_ext',     name: 'Cadeira Extensora',  sets: 3, reps: 12 },
+        { id: 'mesa_flex',       name: 'Mesa Flexora',       sets: 3, reps: 12 },
+        { id: 'panturrilha',     name: 'Panturrilha',        sets: 4, reps: 15 },
+      ]},
+    };
+
+    const FOCUS_PHRASES = [
+      'ELIMINE DISTRAÇÕES. FOCO ABSOLUTO.',
+      'SEU CELULAR PODE ESPERAR. SUA GRANDEZA NÃO.',
+      'CADA MINUTO DE FOCO É UMA VITÓRIA CONTRA A MEDIOCRIDADE.',
+      'DESLIGUE O MUNDO. LIGUE A MÁQUINA.',
+      'DEEP WORK: ONDE LENDAS SÃO CONSTRUÍDAS.',
+      'REDES SOCIAIS ROUBAM SEU TEMPO. TOME-O DE VOLTA.',
+      'VOCÊ NÃO ESTÁ AQUI PARA SER MÉDIO. TRABALHE.',
+      'FOCO É A ARMA DOS IMPARÁVEIS.',
+      'A DOR DA DISCIPLINA PESA GRAMAS. A DOR DO ARREPENDIMENTO PESA TONELADAS.',
+      'NÃO OLHE PARA O LADO. OLHE PARA FRENTE.',
+      'MODO GUERRA: ATIVADO.',
+      'SEM NOTIFICAÇÕES. SEM INTERRUPÇÕES. SEM PIEDADE.',
+    ];
+
+    let userState = {
+      apiKey: 'AIzaSyASBbydBEUM9XEUsg0O70uyPWN30UMG5RI',
+      profile: { name: 'Guerreiro', budget: 0, focusGoalHours: 4 },
+      dailyHabits: {},
+      monthlyExpenses: [],
+      budget: 0,
+      streakCount: 0,
+      lastDate: '',
+      chatHistory: [],
+      vicios: {},
+      focusSessions: {},
+      workoutLoads: {},
+      workoutLog: {},
+      performanceLog: {},  // { "2026-03-23": { score: 85, verdict: "..." } }
+      aiCache: {},         // cached AI responses keyed by type+date
+    };
+
+    let selectedWorkoutDay = WORKOUT_DAYS[new Date().getDay()]; // current day of week
+
+    function getTodayKey() {
+      return new Date().toISOString().split('T')[0];
+    }
+
+    function getMonthKey() {
+      return getTodayKey().slice(0, 7); // "2026-03"
+    }
+
+    function saveData() {
+      localStorage.setItem('unstoppable_state', JSON.stringify(userState));
+    }
+
+    function loadData() {
+      const raw = localStorage.getItem('unstoppable_state');
+      if (raw) {
+        try {
+          const parsed = JSON.parse(raw);
+          userState = { ...userState, ...parsed };
+        } catch (e) {
+          console.warn('Failed to load state:', e);
+        }
+      }
+      // Migrate: old flat array → month-keyed object
+      if (Array.isArray(userState.monthlyExpenses)) {
+        const migrated = {};
+        userState.monthlyExpenses.forEach(e => {
+          const mk = (e.date || getTodayKey()).slice(0, 7);
+          if (!migrated[mk]) migrated[mk] = [];
+          migrated[mk].push(e);
+        });
+        userState.monthlyExpenses = migrated;
+      }
+      if (typeof userState.monthlyExpenses !== 'object' || userState.monthlyExpenses === null) {
+        userState.monthlyExpenses = {};
+      }
+      const today = getTodayKey();
+      // Daily reset: create fresh booleans for today (history stays intact)
+      if (!userState.dailyHabits[today]) {
+        // Before resetting, compute streak from yesterday
+        computeStreakOnNewDay(today);
+        userState.dailyHabits[today] = {};
+        DEFAULT_HABITS.forEach(h => userState.dailyHabits[today][h.id] = false);
+      }
+      // Initialize vicios if needed
+      if (!userState.vicios || typeof userState.vicios !== 'object') {
+        userState.vicios = {};
+      }
+      DEFAULT_VICIOS.forEach(v => {
+        if (!userState.vicios[v.id]) {
+          userState.vicios[v.id] = { startedAt: null, label: v.label };
+        }
+      });
+      // Initialize focusSessions if needed
+      if (!userState.focusSessions || typeof userState.focusSessions !== 'object') {
+        userState.focusSessions = {};
+      }
+      // Initialize workout state if needed
+      if (!userState.workoutLoads || typeof userState.workoutLoads !== 'object') {
+        userState.workoutLoads = {};
+      }
+      if (!userState.workoutLog || typeof userState.workoutLog !== 'object') {
+        userState.workoutLog = {};
+      }
+      // Initialize v3.0 fields
+      if (!userState.performanceLog || typeof userState.performanceLog !== 'object') userState.performanceLog = {};
+      if (!userState.aiCache || typeof userState.aiCache !== 'object') userState.aiCache = {};
+      if (!userState.apiKey) userState.apiKey = 'AIzaSyASBbydBEUM9XEUsg0O70uyPWN30UMG5RI';
+      if (!userState.profile) userState.profile = { name: 'Guerreiro', budget: 0, focusGoalHours: 4 };
+      // Clean stale AI cache (keep only today's)
+      const todayPrefix = 'verdict_' + today;
+      Object.keys(userState.aiCache).forEach(k => {
+        if (k.startsWith('verdict_') && !k.startsWith(todayPrefix)) delete userState.aiCache[k];
+      });
+      // Clean old habit data (keep only last 60 days)
+      pruneOldHabits();
+      // Prune old focus data (keep only last 60 days)
+      const focusKeys = Object.keys(userState.focusSessions).sort();
+      if (focusKeys.length > 60) {
+        focusKeys.slice(0, focusKeys.length - 60).forEach(k => delete userState.focusSessions[k]);
+      }
+      // Prune old workout logs (keep only last 60 days)
+      const workoutLogKeys = Object.keys(userState.workoutLog).sort();
+      if (workoutLogKeys.length > 60) {
+        workoutLogKeys.slice(0, workoutLogKeys.length - 60).forEach(k => delete userState.workoutLog[k]);
+      }
+      userState.lastDate = today;
+      saveData();
+    }
+
+    function computeStreakOnNewDay(today) {
+      const yesterday = getDateOffset(today, -1);
+      const yHabits = userState.dailyHabits[yesterday];
+
+      if (userState.lastDate === today) return; // Already processed
+
+      if (userState.lastDate === yesterday) {
+        // Yesterday exists — check if ALL habits were completed
+        if (yHabits && allHabitsComplete(yHabits)) {
+          userState.streakCount = (userState.streakCount || 0) + 1;
+        } else {
+          // Yesterday was not 100% → streak breaks
+          userState.streakCount = 0;
+        }
+      } else if (userState.lastDate) {
+        // Skipped one or more days → streak resets to 0
+        userState.streakCount = 0;
+      }
+    }
+
+    function allHabitsComplete(habitsObj) {
+      const ids = DEFAULT_HABITS.map(h => h.id);
+      return ids.every(id => habitsObj[id] === true);
+    }
+
+    function getDateOffset(dateStr, offset) {
+      const d = new Date(dateStr + 'T12:00:00');
+      d.setDate(d.getDate() + offset);
+      return d.toISOString().split('T')[0];
+    }
+
+    function pruneOldHabits() {
+      const keys = Object.keys(userState.dailyHabits).sort();
+      if (keys.length > 60) {
+        keys.slice(0, keys.length - 60).forEach(k => delete userState.dailyHabits[k]);
+      }
+    }
+
+    // =============================================
+    // DATE DISPLAY
+    // =============================================
+    function updateHeaderDate() {
+      const now = new Date();
+      const opts = { weekday: 'short', day: '2-digit', month: 'short' };
+      document.getElementById('headerDate').textContent = now.toLocaleDateString('pt-BR', opts).toUpperCase();
+    }
+
+    // =============================================
+    // TAB SYSTEM
+    // =============================================
+    function switchTab(tab) {
+      activeTab = tab;
+      renderActiveTab();
+      // Update nav active state
+      document.querySelectorAll('.nav-btn').forEach((btn, i) => {
+        const tabs = ['dashboard', 'grind', 'treino', 'warchest', 'focus', 'status'];
+        btn.classList.toggle('active', tabs[i] === tab);
+      });
+    }
+
+    function renderActiveTab() {
+      const main = document.getElementById('mainContent');
+      switch (activeTab) {
+        case 'dashboard': main.innerHTML = renderDashboard(); break;
+        case 'grind': main.innerHTML = renderGrind(); break;
+        case 'treino': main.innerHTML = renderTreino(); break;
+        case 'warchest': main.innerHTML = renderWarChest(); break;
+        case 'focus': main.innerHTML = renderFocus(); break;
+        case 'status': main.innerHTML = renderStatus(); break;
+        case 'mentor': main.innerHTML = renderMentor(); break;
+      }
+      main.querySelector('.tab-enter')?.offsetHeight; // force reflow
+    }
+
+    // =============================================
+    // SOBERANIA (VÍCIOS) ENGINE
+    // =============================================
+    function getVersiculoDoDia() {
+      const today = getTodayKey();
+      const dayOfYear = Math.floor((new Date(today + 'T12:00:00') - new Date(today.slice(0, 4) + '-01-01T00:00:00')) / 86400000);
+      return VERSICULOS[dayOfYear % VERSICULOS.length];
+    }
+
+    function calcTimeSince(isoString) {
+      if (!isoString) return null;
+      const start = new Date(isoString).getTime();
+      const now = Date.now();
+      const diff = now - start;
+      if (diff < 0) return { days: 0, hours: 0, mins: 0, total: 0 };
+      const days = Math.floor(diff / 86400000);
+      const hours = Math.floor((diff % 86400000) / 3600000);
+      const mins = Math.floor((diff % 3600000) / 60000);
+      return { days, hours, mins, total: diff };
+    }
+
+    function getVicioLevel(days) {
+      if (days < 4) return { label: 'INICIANTE', cls: 'text-gray-500', border: 'border-[#333]' };
+      if (days < 7) return { label: 'RESISTÊNCIA', cls: 'text-royal', border: 'border-royal/30' };
+      return { label: 'SOBERANO', cls: 'neon-gold', border: 'neon-gold-border' };
+    }
+
+    function startSobriety(vicioId) {
+      userState.vicios[vicioId].startedAt = new Date().toISOString();
+      saveData();
+      renderActiveTab();
+    }
+
+    function resetSobriety(vicioId) {
+      showRecaidaOverlay(vicioId);
+    }
+
+    function updateCustomVicioLabel() {
+      const input = document.getElementById('customVicioInput');
+      if (input && input.value.trim()) {
+        userState.vicios.custom.label = input.value.trim();
+        saveData();
+        showToast('Vício atualizado.');
+      }
+    }
+
+    function renderSoberaniaSection() {
+      return DEFAULT_VICIOS.map(v => {
+        const data = userState.vicios[v.id];
+        if (!data) return '';
+        const time = calcTimeSince(data.startedAt);
+        const active = !!data.startedAt;
+        const level = active ? getVicioLevel(time.days) : { label: 'INATIVO', cls: 'text-gray-700', border: 'border-[#333]' };
+        const displayLabel = v.id === 'custom' ? (data.label || 'Personalizado') : v.label;
+
+        const streakGlow = active && time.days >= 7 ? ' streak-glow' : '';
+        return `
+          <div class="sobriety-card card-neu ${level.border}${streakGlow} p-4">
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-2">
+                <span class="text-lg">${v.icon}</span>
+                <div>
+                  <p class="text-xs font-extrabold text-gray-300">${escapeHtml(displayLabel)}</p>
+                  <p class="text-[9px] font-bold ${level.cls}">${level.label}</p>
+                </div>
+              </div>
+              ${active ? `
+                <button onclick="resetSobriety('${v.id}')" class="px-2.5 py-1 rounded-lg bg-red-950/30 border border-red-900/40 text-[10px] font-extrabold text-red-400 hover:bg-red-900/30 transition-all active:scale-95">
+                  RECAÍDA
+                </button>
+              ` : `
+                <button onclick="startSobriety('${v.id}')" class="px-2.5 py-1 rounded-lg bg-royal/20 border border-royal/30 text-[10px] font-extrabold text-royal hover:bg-royal/30 transition-all active:scale-95">
+                  INICIAR
+                </button>
+              `}
+            </div>
+            ${active ? `
+              <div class="bg-black rounded-lg p-3 text-center">
+                <p class="mono-timer text-2xl font-black ${level.cls}" id="timer-${v.id}">
+                  ${String(time.days).padStart(2, '0')}d ${String(time.hours).padStart(2, '0')}h ${String(time.mins).padStart(2, '0')}m
+                </p>
+              </div>
+            ` : `
+              <div class="bg-black rounded-lg p-3 text-center">
+                <p class="mono-timer text-2xl font-black text-gray-800">00d 00h 00m</p>
+              </div>
+            `}
+            ${v.id === 'custom' ? `
+              <input type="text" id="customVicioInput" value="${escapeHtml(data.label || '')}" placeholder="Nome do vício"
+                class="w-full mt-2 px-2 py-1.5 rounded-lg text-[11px] font-semibold" onchange="updateCustomVicioLabel()">
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    let sobrietyInterval = null;
+    function startSobrietyTicker() {
+      if (sobrietyInterval) clearInterval(sobrietyInterval);
+      sobrietyInterval = setInterval(() => {
+        DEFAULT_VICIOS.forEach(v => {
+          const data = userState.vicios[v.id];
+          if (!data || !data.startedAt) return;
+          const el = document.getElementById('timer-' + v.id);
+          if (!el) return;
+          const time = calcTimeSince(data.startedAt);
+          const level = getVicioLevel(time.days);
+          el.textContent = `${String(time.days).padStart(2, '0')}d ${String(time.hours).padStart(2, '0')}h ${String(time.mins).padStart(2, '0')}m`;
+          el.className = `mono-timer text-2xl font-black ${level.cls}`;
+        });
+      }, 30000); // update every 30s
+    }
+
+    // =============================================
+    // SCORE ENGINE
+    // =============================================
+    function calcDayScore(dateKey) {
+      const habits = userState.dailyHabits[dateKey];
+      if (!habits) return 0;
+
+      // 70% — habit completion
+      const ids = DEFAULT_HABITS.map(h => h.id);
+      const done = ids.filter(id => habits[id] === true).length;
+      const habitScore = (done / ids.length) * 70;
+
+      // 30% — budget health (daily portion)
+      let budgetScore = 30; // default full if no budget set
+      const budget = userState.budget || 0;
+      if (budget > 0) {
+        const mk = dateKey.slice(0, 7);
+        const monthExps = userState.monthlyExpenses[mk] || [];
+        const daysInMonth = new Date(parseInt(mk.split('-')[0]), parseInt(mk.split('-')[1]), 0).getDate();
+        const dailyBudget = budget / daysInMonth;
+        const dayExpenses = monthExps.filter(e => e.date === dateKey).reduce((s, e) => s + e.amount, 0);
+        const ratio = Math.max(0, Math.min(1, 1 - (dayExpenses / dailyBudget)));
+        budgetScore = ratio * 30;
+      }
+
+      return Math.round(habitScore + budgetScore);
+    }
+
+    function getWeekData() {
+      const today = getTodayKey();
+      const days = [];
+      for (let i = 6; i >= 0; i--) {
+        const dk = getDateOffset(today, -i);
+        const habits = userState.dailyHabits[dk];
+        const score = calcDayScore(dk);
+        const ids = DEFAULT_HABITS.map(h => h.id);
+        const done = habits ? ids.filter(id => habits[id] === true).length : 0;
+        const allDone = done === ids.length && habits;
+        const dayLabel = new Date(dk + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'short' }).slice(0, 3).toUpperCase();
+        days.push({ date: dk, score, done, allDone, dayLabel, isToday: dk === today });
+      }
+      return days;
+    }
+
+    function getStatusBattle(score) {
+      if (score <= 30) return { text: 'REAGIR OU MORRER', cls: 'neon-red', bg: 'border-red-900/40', bgInner: 'rgba(255,50,50,0.05)', icon: '💀' };
+      if (score <= 70) return { text: 'MANTENHA A LINHA', cls: 'neon-yellow', bg: 'border-yellow-700/40', bgInner: 'rgba(250,204,21,0.05)', icon: '⚔️' };
+      return { text: 'IMPARÁVEL', cls: 'neon-text', bg: 'border-[#00FF64]/30', bgInner: 'rgba(0,255,100,0.05)', icon: '👑' };
+    }
+
+    function getScoreRingColor(score) {
+      if (score <= 30) return '#FF3333';
+      if (score <= 70) return '#FACC15';
+      return '#00FF64';
+    }
+
+    // =============================================
+    // DASHBOARD TAB
+    // =============================================
+    function renderDashboard() {
+      const today = getTodayKey();
+      const score = calcDayScore(today);
+      const streak = userState.streakCount || 0;
+      const status = getStatusBattle(score);
+      const week = getWeekData();
+      const ringColor = getScoreRingColor(score);
+      const verse = getVersiculoDoDia();
+
+      // Schedule sobriety ticker after render
+      setTimeout(startSobrietyTicker, 100);
+      // Schedule AI verdict fetch
+      setTimeout(fetchAIVerdict, 300);
+
+      return `
+        <div class="tab-enter space-y-4 max-w-lg mx-auto">
+
+          <!-- O VEREDITO DO MENTOR -->
+          <div class="ai-verdict-card rounded-xl p-4 border border-red-900/20">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-lg">⚖️</span>
+              <span class="text-[10px] font-extrabold tracking-[0.2em] text-red-400">O VEREDITO DO MENTOR</span>
+            </div>
+            <p id="aiVerdict" class="text-sm font-bold text-gray-400 leading-relaxed ai-loading">Conectando ao Mentor Estoico...</p>
+          </div>
+
+          <!-- ARMADURA DO DIA -->
+          <div class="verse-glow bg-[#111] border border-[#333] rounded-xl p-4">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-lg">🛡️</span>
+              <span class="text-[10px] font-extrabold tracking-[0.2em] text-royal">ARMADURA DO DIA</span>
+            </div>
+            <p class="text-sm font-bold text-gray-300 italic leading-relaxed">"${verse.text}"</p>
+            <p class="text-[10px] font-extrabold text-gray-600 mt-2 text-right">— ${verse.ref}</p>
+          </div>
+
+          <!-- SCORE HERO -->
+          <div class="card-neu rounded-2xl p-6 flex flex-col items-center">
+            <p class="text-[10px] font-extrabold tracking-[0.25em] text-gray-500 mb-4">UNSTOPPABLE SCORE</p>
+            <div class="score-ring w-36 h-36 flex items-center justify-center p-1.5" style="--score:${score}; --ring-color:${ringColor}">
+              <div class="bg-[#111] w-full h-full rounded-full flex flex-col items-center justify-center">
+                <span class="text-5xl font-black tabular-nums ${status.cls}" style="letter-spacing:-3px;">${score}</span>
+                <span class="text-[10px] font-extrabold text-gray-500 mt-0.5">/100</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-3 mt-4">
+              ${streak > 0 ? `<span class="streak-fire text-lg">🔥</span><span class="text-sm font-black neon-text">${streak} dia${streak !== 1 ? 's' : ''}</span>` : '<span class="text-sm font-bold text-gray-700">Sem streak ativo</span>'}
+            </div>
+          </div>
+
+          <!-- SOBERANIA -->
+          <div class="card-neu p-4">
+            <div class="flex items-center gap-2 mb-3">
+              <span class="text-lg">⛓️</span>
+              <span class="text-[10px] font-extrabold tracking-[0.2em] text-gray-400">SOBERANIA</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              ${renderSoberaniaSection()}
+            </div>
+          </div>
+
+          <!-- BARRA DE PROGRESSO DO DIA -->
+          <div class="bg-[#111] border border-[#333] rounded-xl p-4">
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-[10px] font-extrabold tracking-widest text-gray-500">PROGRESSO DIÁRIO</span>
+              <span class="text-xs font-black ${status.cls}">${score}%</span>
+            </div>
+            <div class="w-full h-3 bg-black rounded-full overflow-hidden neon-bar-track">
+              <div class="h-full rounded-full transition-all duration-700 ease-out" style="width:${score}%; background:${ringColor}; box-shadow: 0 0 10px ${ringColor}40;"></div>
+            </div>
+            <div class="flex justify-between items-center mt-2">
+              <div class="flex gap-1">
+                ${DEFAULT_HABITS.map(h => {
+                  const habits = userState.dailyHabits[today] || {};
+                  const isDone = habits[h.id];
+                  return `<span class="text-sm ${isDone ? '' : 'opacity-25 grayscale'}" title="${h.label}">${h.icon}</span>`;
+                }).join('')}
+              </div>
+              <span class="text-[10px] font-bold text-gray-600">${(() => { const h = userState.dailyHabits[today] || {}; return DEFAULT_HABITS.filter(hb => h[hb.id]).length; })()}/${DEFAULT_HABITS.length} hábitos</span>
+            </div>
+          </div>
+
+          <!-- GRÁFICO SEMANAL -->
+          <div class="bg-[#111] border border-[#333] rounded-xl p-4">
+            <p class="text-[10px] font-extrabold tracking-widest text-gray-500 mb-3">ÚLTIMOS 7 DIAS</p>
+            <div class="flex items-end justify-between gap-1.5" style="height:120px;">
+              ${week.map(d => {
+                const h = Math.max(8, (d.score / 100) * 100);
+                const barColor = d.allDone ? (d.isToday ? ringColor : '#2563EB') : '#2a2a2a';
+                const glowStyle = d.allDone ? `box-shadow: 0 0 8px ${barColor}50;` : '';
+                return `
+                  <div class="flex-1 flex flex-col items-center gap-1 h-full justify-end">
+                    <span class="text-[10px] font-black tabular-nums ${d.isToday ? status.cls : d.allDone ? 'text-white' : 'text-gray-700'}">${d.score}</span>
+                    <div class="w-full rounded-md bar-grow" style="height:${h}%; background:${barColor}; ${glowStyle} animation-delay:${week.indexOf(d) * 0.07}s;"></div>
+                    <span class="text-[8px] font-bold ${d.isToday ? 'text-white' : 'text-gray-600'}">${d.dayLabel}</span>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+
+          <!-- STATUS DE BATALHA -->
+          <div class="bg-[#111] border ${status.bg} rounded-xl p-5 text-center" style="background:${status.bgInner};">
+            <span class="text-3xl">${status.icon}</span>
+            <p class="text-xl font-black ${status.cls} mt-2 tracking-wide">${status.text}</p>
+            <p class="text-[10px] font-bold text-gray-600 mt-1">${score <= 30 ? 'Acorde. O dia não espera.' : score <= 70 ? 'Bom, mas bom não é o bastante.' : 'Você está no controle total.'}</p>
+          </div>
+
+        </div>
+      `;
+    }
+
+    function toggleHabit(id) {
+      const today = getTodayKey();
+      if (!userState.dailyHabits[today]) return;
+      userState.dailyHabits[today][id] = !userState.dailyHabits[today][id];
+      haptic(userState.dailyHabits[today][id] ? 30 : 15);
+      saveData();
+      renderActiveTab();
+    }
+
+    // =============================================
+    // GRIND TAB
+    // =============================================
+    function renderGrind() {
+      const today = getTodayKey();
+      const habits = userState.dailyHabits[today] || {};
+      const done = Object.values(habits).filter(Boolean).length;
+      const total = DEFAULT_HABITS.length;
+      const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+      const streak = userState.streakCount || 0;
+
+      return `
+        <div class="tab-enter space-y-4 max-w-lg mx-auto">
+          <div class="pt-1">
+            <h2 class="text-2xl font-extrabold">The <span class="text-royal">Grind</span></h2>
+            <p class="text-gray-500 text-sm font-semibold mt-1">4 hábitos não-negociáveis. Todos os dias.</p>
+          </div>
+
+          <!-- Streak + Progress Header -->
+          <div class="bg-[#111] border border-[#333] rounded-xl p-4">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <p class="text-[10px] font-extrabold text-gray-500 tracking-widest">STREAK ATUAL</p>
+                <div class="flex items-center gap-2 mt-1">
+                  ${streak > 0 ? '<span class="streak-fire text-2xl">🔥</span>' : '<span class="text-2xl opacity-30">🔥</span>'}
+                  <span class="text-4xl font-black ${streak > 0 ? 'neon-text' : 'text-gray-600'}">${streak}</span>
+                  <span class="text-sm font-extrabold text-gray-500 self-end mb-1">${streak === 1 ? 'DIA' : 'DIAS'}</span>
+                </div>
+              </div>
+              <div class="w-20 h-20 rounded-full border-4 ${pct === 100 ? 'border-[#00FF64]' : 'border-[#333]'} flex items-center justify-center relative" style="${pct === 100 ? 'box-shadow: 0 0 20px rgba(0,255,100,0.3)' : ''}">
+                <span class="text-xl font-black ${pct === 100 ? 'neon-text' : 'text-white'}">${pct}%</span>
+              </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="w-full h-3 bg-black rounded-full overflow-hidden neon-bar-track">
+              <div class="h-full rounded-full transition-all duration-700 ease-out ${pct === 100 ? 'neon-bar' : 'bg-royal'}" style="width:${pct}%"></div>
+            </div>
+            <p class="text-[10px] font-bold text-gray-600 mt-2 text-center">${done}/${total} CONCLUÍDOS HOJE</p>
+          </div>
+
+          <!-- 4 Habit Cards -->
+          <div class="space-y-3">
+            ${DEFAULT_HABITS.map((h, i) => {
+              const checked = habits[h.id];
+              return `
+                <button onclick="toggleHabit('${h.id}')"
+                  class="habit-check w-full flex items-center gap-4 p-4 rounded-xl border transition-all ${checked ? 'done' : 'bg-[#111] border-[#333] hover:border-gray-500'}">
+                  <div class="habit-icon-ring w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0 ${checked ? 'done bg-[#00FF64]/10' : 'bg-black border border-[#333]'}">
+                    ${h.icon}
+                  </div>
+                  <div class="text-left flex-1 min-w-0">
+                    <p class="text-base font-extrabold ${checked ? 'neon-text' : 'text-gray-200'}">${h.label}</p>
+                    <p class="text-xs font-semibold mt-0.5 ${checked ? 'text-[#00FF64]/60' : 'text-gray-600'}">${checked ? 'CONCLUÍDO' : h.desc}</p>
+                  </div>
+                  <div class="w-7 h-7 rounded-lg border-2 flex items-center justify-center flex-shrink-0 transition-all ${checked ? 'bg-[#00FF64] border-[#00FF64]' : 'border-[#444]'}">
+                    ${checked
+                      ? '<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="black" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>'
+                      : ''}
+                  </div>
+                </button>
+              `;
+            }).join('')}
+          </div>
+
+          ${pct === 100 ? `
+            <div class="rounded-xl p-5 text-center border border-[#00FF64]/30" style="background: rgba(0,255,100,0.05); box-shadow: 0 0 30px rgba(0,255,100,0.1);">
+              <p class="text-3xl mb-2 streak-fire">🔥</p>
+              <p class="neon-text font-black text-xl tracking-wide">MODO BESTA ATIVADO</p>
+              <p class="text-gray-400 text-xs font-bold mt-2">Todos os hábitos concluídos. Amanhã, de novo.</p>
+            </div>
+          ` : `
+            <div class="bg-[#111] border border-[#333] rounded-xl p-4 text-center">
+              <p class="text-gray-500 text-xs font-bold mb-1">FALTAM</p>
+              <p class="text-3xl font-black text-white">${total - done}</p>
+              <p class="text-gray-600 text-xs font-bold mt-1">HÁBITOS PARA COMPLETAR O DIA</p>
+            </div>
+          `}
+        </div>
+      `;
+    }
+
+    // =============================================
+    // WAR CHEST TAB
+    // =============================================
+    function getMonthExpenses() {
+      const mk = getMonthKey();
+      if (!userState.monthlyExpenses[mk]) userState.monthlyExpenses[mk] = [];
+      return userState.monthlyExpenses[mk];
+    }
+
+    function renderWarChest() {
+      const expenses = getMonthExpenses();
+      const totalGasto = expenses.reduce((s, e) => s + e.amount, 0);
+      const totalDopamina = expenses.filter(e => e.category === 'dopamina').reduce((s, e) => s + e.amount, 0);
+      const totalEssencial = expenses.filter(e => e.category === 'essencial').reduce((s, e) => s + e.amount, 0);
+      const budget = userState.budget || 0;
+      const saldo = budget - totalGasto;
+      const usoPct = budget > 0 ? Math.min(100, Math.round((totalGasto / budget) * 100)) : 0;
+      const dopaminaPct = budget > 0 ? (totalDopamina / budget) * 100 : 0;
+      const dopaminaAlert = dopaminaPct > 15;
+      const last5 = expenses.slice(-5).reverse();
+
+      const monthLabel = new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }).toUpperCase();
+
+      return `
+        <div class="tab-enter space-y-4 max-w-lg mx-auto">
+          <div class="pt-1">
+            <h2 class="text-2xl font-extrabold">War <span class="text-royal">Chest</span></h2>
+            <p class="text-gray-500 text-sm font-semibold mt-1">Controle rigoroso de capital. ${monthLabel}.</p>
+          </div>
+
+          <!-- SALDO PRINCIPAL -->
+          <div class="card-neu rounded-xl p-6 text-center ${dopaminaAlert ? 'neon-red-glow red-pulse' : ''}">
+            <p class="text-[10px] font-extrabold tracking-[0.2em] ${dopaminaAlert ? 'text-red-400' : 'text-gray-500'} mb-2">SALDO RESTANTE</p>
+            <p class="text-5xl font-black tabular-nums ${saldo < 0 ? 'neon-red' : dopaminaAlert ? 'neon-red' : 'text-white'}" style="letter-spacing:-2px;">
+              R$${saldo < 0 ? '-' : ''}${Math.abs(saldo).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+            </p>
+            ${budget > 0 ? `<p class="text-[10px] font-bold text-gray-600 mt-2">de R$${budget.toLocaleString('pt-BR', {minimumFractionDigits: 2})} de Capital de Guerra</p>` : '<p class="text-[10px] font-bold text-gray-600 mt-2">Defina seu Capital de Guerra abaixo</p>'}
+            ${dopaminaAlert ? `<p class="text-xs font-extrabold text-red-400 mt-3">ALERTA: DOPAMINA BARATA ACIMA DE 15%</p>` : ''}
+          </div>
+
+          <!-- Stats Row -->
+          <div class="grid grid-cols-3 gap-2">
+            <div class="bg-[#111] border border-[#333] rounded-xl p-3 text-center">
+              <p class="text-[10px] font-bold text-gray-500">GASTO TOTAL</p>
+              <p class="text-lg font-black text-gray-300 mt-1">R$${totalGasto.toLocaleString('pt-BR')}</p>
+            </div>
+            <div class="bg-[#111] border border-[#333] rounded-xl p-3 text-center">
+              <p class="text-[10px] font-bold text-gray-500">ESSENCIAL</p>
+              <p class="text-lg font-black text-gray-400 mt-1">R$${totalEssencial.toLocaleString('pt-BR')}</p>
+            </div>
+            <div class="bg-[#111] border border-[#333] rounded-xl p-3 text-center ${dopaminaAlert ? 'neon-red-glow' : ''}">
+              <p class="text-[10px] font-bold ${dopaminaAlert ? 'text-red-400' : 'text-gray-500'}">DOPAMINA</p>
+              <p class="text-lg font-black ${dopaminaAlert ? 'neon-red' : 'text-red-900'} mt-1">R$${totalDopamina.toLocaleString('pt-BR')}</p>
+              ${budget > 0 ? `<p class="text-[8px] font-bold ${dopaminaAlert ? 'text-red-400' : 'text-gray-600'} mt-0.5">${dopaminaPct.toFixed(1)}% DO BUDGET</p>` : ''}
+            </div>
+          </div>
+
+          <!-- PIE CHART: ESSENCIAL vs DOPAMINA -->
+          ${totalGasto > 0 ? `
+            <div class="card-neu p-4">
+              <p class="text-[10px] font-extrabold tracking-widest text-gray-500 mb-3">DISTRIBUIÇÃO DE GASTOS</p>
+              <div class="flex items-center justify-center gap-6">
+                <div class="pie-chart" style="--ess-pct:${Math.round((totalEssencial / totalGasto) * 100)}; --ess-color:#2563EB; --dop-color:#FF3333;">
+                  <div class="w-full h-full rounded-full flex items-center justify-center" style="background: radial-gradient(circle, #111 35%, transparent 36%);">
+                    <span class="text-xs font-black text-white">${Math.round((totalEssencial / totalGasto) * 100)}%</span>
+                  </div>
+                </div>
+                <div class="space-y-3">
+                  <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 rounded-sm bg-royal"></div>
+                    <div>
+                      <span class="text-[10px] font-bold text-gray-400">Essencial</span>
+                      <p class="text-[9px] font-black text-gray-500">${Math.round((totalEssencial / totalGasto) * 100)}%</p>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 rounded-sm bg-red-500"></div>
+                    <div>
+                      <span class="text-[10px] font-bold text-gray-400">Dopamina</span>
+                      <p class="text-[9px] font-black text-red-400">${Math.round((totalDopamina / totalGasto) * 100)}%</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ` : ''}
+
+          <!-- Barra de Uso -->
+          ${budget > 0 ? `
+            <div class="card-neu p-4">
+              <div class="flex justify-between mb-2">
+                <span class="text-[10px] font-extrabold tracking-widest text-gray-500">USO DO CAPITAL</span>
+                <span class="text-xs font-black ${usoPct > 90 ? 'neon-red' : usoPct > 70 ? 'text-yellow-400' : 'text-royal'}">${usoPct}%</span>
+              </div>
+              <div class="w-full h-3 bg-black rounded-full overflow-hidden neon-bar-track">
+                <div class="h-full rounded-full transition-all duration-700 ease-out ${usoPct > 90 ? 'neon-red-bar' : usoPct > 70 ? 'bg-yellow-500' : 'bg-royal'}" style="width:${usoPct}%"></div>
+              </div>
+            </div>
+          ` : ''}
+
+          <!-- Capital de Guerra -->
+          <div class="bg-[#111] border border-[#333] rounded-xl p-4">
+            <label class="text-[10px] font-extrabold tracking-widest text-gray-500 block mb-2">CAPITAL DE GUERRA (R$)</label>
+            <input type="number" id="budgetInput" value="${budget || ''}" placeholder="Ex: 5000"
+              class="w-full px-3 py-3 rounded-lg text-sm font-extrabold text-center" style="font-size:18px;"
+              onchange="updateBudget(this.value)">
+          </div>
+
+          <!-- Input de Gastos -->
+          <div class="bg-[#111] border border-[#333] rounded-xl p-4">
+            <h3 class="text-sm font-extrabold mb-3 text-gray-300">REGISTRAR GASTO</h3>
+            <input type="text" id="expDesc" placeholder="Descrição do gasto"
+              class="w-full px-3 py-2.5 rounded-lg text-sm font-semibold mb-2">
+            <input type="number" id="expAmount" placeholder="Valor (R$)" step="0.01"
+              class="w-full px-3 py-3 rounded-lg text-sm font-extrabold mb-3" style="font-size:16px;">
+            <div class="grid grid-cols-2 gap-3">
+              <button onclick="addWarExpense('essencial')"
+                class="py-3 rounded-xl text-sm font-extrabold border-2 border-[#333] bg-black text-gray-300 hover:border-gray-500 transition-all active:scale-[0.97]">
+                <span class="block text-lg mb-0.5">🛡️</span>
+                ESSENCIAL
+              </button>
+              <button onclick="addWarExpense('dopamina')"
+                class="py-3 rounded-xl text-sm font-extrabold border-2 border-red-900/50 bg-red-950/20 text-red-400 hover:border-red-700 transition-all active:scale-[0.97]">
+                <span class="block text-lg mb-0.5">💀</span>
+                DOPAMINA BARATA
+              </button>
+            </div>
+          </div>
+
+          <!-- Últimos 5 Registros -->
+          ${last5.length > 0 ? `
+            <div class="bg-[#111] border border-[#333] rounded-xl p-4">
+              <div class="flex justify-between items-center mb-3">
+                <h3 class="text-sm font-extrabold text-gray-300">ÚLTIMOS REGISTROS</h3>
+                <button onclick="clearMonthExpenses()" class="text-[10px] font-bold text-gray-600 hover:text-red-400 transition-colors">LIMPAR MÊS</button>
+              </div>
+              <div class="space-y-2">
+                ${last5.map((e, i) => {
+                  const isD = e.category === 'dopamina';
+                  const realIdx = expenses.length - 1 - i;
+                  return `
+                    <div class="flex items-center gap-3 p-3 bg-black rounded-xl">
+                      <div class="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black flex-shrink-0 ${isD ? 'bg-red-950 text-red-400 border border-red-900/50' : 'bg-[#1a1a1a] text-gray-500 border border-[#333]'}">
+                        ${isD ? 'D' : 'E'}
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <p class="text-sm font-bold ${isD ? 'text-red-900' : 'text-gray-400'} truncate">${escapeHtml(e.name || 'Sem descrição')}</p>
+                        <p class="text-[10px] font-semibold text-gray-700">${e.date || ''}</p>
+                      </div>
+                      <div class="flex items-center gap-2 flex-shrink-0">
+                        <span class="text-sm font-black tabular-nums ${isD ? 'text-red-500' : 'text-gray-400'}">-R$${e.amount.toLocaleString('pt-BR')}</span>
+                        <button onclick="removeWarExpense(${realIdx})" class="text-gray-700 hover:text-red-400 p-0.5 transition-colors">
+                          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                        </button>
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+              ${expenses.length > 5 ? `<p class="text-[10px] text-gray-700 font-bold text-center mt-2">+ ${expenses.length - 5} registros anteriores</p>` : ''}
+            </div>
+          ` : `
+            <div class="bg-[#111] border border-[#333] rounded-xl p-6 text-center">
+              <p class="text-gray-700 text-sm font-bold">Nenhum gasto registrado este mês.</p>
+              <p class="text-gray-800 text-xs font-semibold mt-1">Mantenha a disciplina.</p>
+            </div>
+          `}
+        </div>
+      `;
+    }
+
+    function updateBudget(val) {
+      userState.budget = parseFloat(val) || 0;
+      saveData();
+      checkScarcity();
+      renderActiveTab();
+    }
+
+    function addWarExpense(category) {
+      const descEl = document.getElementById('expDesc');
+      const amountEl = document.getElementById('expAmount');
+      const name = descEl?.value?.trim() || (category === 'essencial' ? 'Gasto Essencial' : 'Dopamina Barata');
+      const amount = parseFloat(amountEl?.value);
+      if (!amount || amount <= 0) {
+        // Highlight input briefly
+        if (amountEl) { amountEl.style.borderColor = '#FF3333'; setTimeout(() => amountEl.style.borderColor = '#222', 1000); }
+        return;
+      }
+      const mk = getMonthKey();
+      if (!userState.monthlyExpenses[mk]) userState.monthlyExpenses[mk] = [];
+      userState.monthlyExpenses[mk].push({ name, amount, category, date: getTodayKey() });
+      haptic(category === 'dopamina' ? [50, 30, 50] : 20);
+      saveData();
+      checkScarcity();
+      renderActiveTab();
+      showToast(category === 'dopamina' ? 'Dopamina registrada. Fique esperto.' : 'Gasto registrado.');
+    }
+
+    function removeWarExpense(index) {
+      const mk = getMonthKey();
+      const arr = userState.monthlyExpenses[mk];
+      if (arr && arr[index] !== undefined) {
+        arr.splice(index, 1);
+        saveData();
+        checkScarcity();
+        renderActiveTab();
+      }
+    }
+
+    function clearMonthExpenses() {
+      if (confirm('Limpar todos os gastos deste mês? Isso é irreversível.')) {
+        userState.monthlyExpenses[getMonthKey()] = [];
+        saveData();
+        renderActiveTab();
+      }
+    }
+
+    // =============================================
+    // TREINO (ATLAS) MODULE
+    // =============================================
+    function getTodayWorkoutDay() {
+      return WORKOUT_DAYS[new Date().getDay()];
+    }
+
+    function getWorkoutLog(dateKey) {
+      if (!userState.workoutLog[dateKey]) {
+        userState.workoutLog[dateKey] = { exercises: {}, finalized: false };
+      }
+      return userState.workoutLog[dateKey];
+    }
+
+    function toggleExerciseDone(exerciseId) {
+      const today = getTodayKey();
+      const log = getWorkoutLog(today);
+      if (!log.exercises[exerciseId]) {
+        log.exercises[exerciseId] = { done: false, load: 0 };
+      }
+      log.exercises[exerciseId].done = !log.exercises[exerciseId].done;
+      haptic(log.exercises[exerciseId].done ? 40 : 15);
+      if (log.exercises[exerciseId].done) startRestTimer(90);
+      saveData();
+      renderActiveTab();
+    }
+
+    function updateExerciseLoad(exerciseId, val) {
+      const today = getTodayKey();
+      const log = getWorkoutLog(today);
+      const load = parseFloat(val) || 0;
+      if (!log.exercises[exerciseId]) {
+        log.exercises[exerciseId] = { done: false, load: 0 };
+      }
+      log.exercises[exerciseId].load = load;
+
+      // Update load history and PR
+      if (!userState.workoutLoads[exerciseId]) {
+        userState.workoutLoads[exerciseId] = { lastLoad: 0, pr: 0 };
+      }
+      if (load > 0) {
+        userState.workoutLoads[exerciseId].lastLoad = load;
+        if (load > userState.workoutLoads[exerciseId].pr) {
+          userState.workoutLoads[exerciseId].pr = load;
+        }
+      }
+      saveData();
+    }
+
+    function finalizeWorkout() {
+      const today = getTodayKey();
+      const log = getWorkoutLog(today);
+      log.finalized = true;
+
+      // Auto-mark 'Treino de Força' habit as done
+      if (userState.dailyHabits[today]) {
+        userState.dailyHabits[today].workout = true;
+      }
+
+      stopRestTimer();
+      haptic([100, 50, 100, 50, 100]);
+      saveData();
+      renderActiveTab();
+      showToast('TREINO FINALIZADO. Hábito marcado.');
+    }
+
+    function selectWorkoutDay(day) {
+      selectedWorkoutDay = day;
+      renderActiveTab();
+    }
+
+    function renderTreino() {
+      const today = getTodayKey();
+      const todayDay = getTodayWorkoutDay();
+      const viewDay = selectedWorkoutDay;
+      const plan = DEFAULT_WORKOUT_PLAN[viewDay];
+      const isToday = viewDay === todayDay;
+      const log = isToday ? getWorkoutLog(today) : { exercises: {}, finalized: false };
+      const isRest = !plan; // Sunday
+      const isFinalized = isToday && log.finalized;
+
+      // Count completed exercises
+      const doneCount = plan ? plan.exercises.filter(e => log.exercises[e.id]?.done).length : 0;
+      const totalExercises = plan ? plan.exercises.length : 0;
+      const stagnationAlerts = getStagnationAlerts();
+
+      return `
+        <div class="tab-enter space-y-4 max-w-lg mx-auto">
+          <div class="pt-1">
+            <h2 class="text-2xl font-extrabold">Atlas <span class="text-royal">Treino</span></h2>
+            <p class="text-gray-500 text-sm font-semibold mt-1">Sua ficha de guerra. Sem papel, sem desculpa.</p>
+          </div>
+
+          <!-- DAY SELECTOR -->
+          <div class="flex gap-1.5">
+            ${WORKOUT_DAYS.map((d, i) => {
+              const isActive = d === viewDay;
+              const hasPlan = !!DEFAULT_WORKOUT_PLAN[d];
+              return `
+                <button onclick="selectWorkoutDay('${d}')"
+                  class="day-selector-btn flex-1 py-2 rounded-lg text-[10px] font-extrabold border transition-all ${isActive ? 'active-day' : hasPlan ? 'bg-[#111] border-[#333] text-gray-400 hover:border-gray-500' : 'bg-[#0a0a0a] border-[#222] text-gray-700'}">
+                  ${WORKOUT_DAY_LABELS[i]}
+                </button>
+              `;
+            }).join('')}
+          </div>
+
+          ${isRest ? `
+            <!-- REST DAY -->
+            <div class="bg-[#111] border border-[#333] rounded-xl p-8 text-center">
+              <p class="text-4xl mb-3">😴</p>
+              <p class="text-xl font-black text-gray-400">DIA DE DESCANSO</p>
+              <p class="text-xs font-bold text-gray-600 mt-2">Recuperação é parte do processo. Descanse para voltar mais forte.</p>
+            </div>
+          ` : `
+            <!-- WORKOUT HEADER -->
+            <div class="card-neu p-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-[10px] font-extrabold tracking-widest text-gray-500">${isToday ? 'TREINO DE HOJE' : 'VISUALIZANDO'}</p>
+                  <p class="text-lg font-black text-white mt-1">${plan.label}</p>
+                </div>
+                <div class="text-center">
+                  <p class="text-3xl font-black workout-load ${doneCount === totalExercises && totalExercises > 0 ? 'neon-text' : 'text-gray-500'}">${doneCount}/${totalExercises}</p>
+                  <p class="text-[9px] font-bold text-gray-600">EXERCÍCIOS</p>
+                </div>
+              </div>
+              ${isToday && totalExercises > 0 ? `
+                <div class="w-full h-2 bg-black rounded-full overflow-hidden mt-3">
+                  <div class="h-full rounded-full transition-all duration-500 ease-out ${doneCount === totalExercises ? 'neon-bar' : 'bg-royal'}" style="width:${Math.round((doneCount / totalExercises) * 100)}%"></div>
+                </div>
+              ` : ''}
+            </div>
+
+            <!-- REST TIMER -->
+            ${isToday && restTimerSeconds > 0 ? `
+              <div class="card-neu p-3" id="restTimerContainer">
+                <div class="flex items-center justify-between mb-1">
+                  <span id="restTimerLabel" class="text-[10px] font-extrabold text-royal tracking-wider">Descanso: ${restTimerSeconds}s</span>
+                  <button onclick="stopRestTimer(); document.getElementById('restTimerContainer').style.display='none'" class="text-[10px] font-bold text-gray-600 hover:text-red-400 transition-colors">PULAR</button>
+                </div>
+                <div class="w-full h-1 bg-black rounded-full overflow-hidden">
+                  <div id="restTimerBar" class="rest-timer-bar" style="width:100%"></div>
+                </div>
+              </div>
+            ` : ''}
+
+            <!-- EXERCISE TABLE -->
+            <div class="card-neu overflow-hidden">
+              <!-- Table Header -->
+              <div class="grid grid-cols-[1fr_80px_80px_40px] gap-0 px-4 py-2.5 border-b border-[#222]">
+                <span class="text-[9px] font-extrabold tracking-widest text-gray-600">EXERCÍCIO</span>
+                <span class="text-[9px] font-extrabold tracking-widest text-gray-600 text-center">SxR</span>
+                <span class="text-[9px] font-extrabold tracking-widest text-gray-600 text-center">KG</span>
+                <span class="text-[9px] font-extrabold tracking-widest text-gray-600 text-center">OK</span>
+              </div>
+
+              <!-- Exercise Rows -->
+              ${plan.exercises.map(ex => {
+                const exLog = log.exercises[ex.id] || { done: false, load: 0 };
+                const loadHistory = userState.workoutLoads[ex.id] || { lastLoad: 0, pr: 0 };
+                const currentLoad = isToday ? (exLog.load || loadHistory.lastLoad) : loadHistory.lastLoad;
+                const isPR = isToday && exLog.load > 0 && exLog.load >= loadHistory.pr && loadHistory.pr > 0;
+                const isDone = isToday && exLog.done;
+
+                const history = getExerciseHistory(ex.id);
+                return `
+                  <div class="exercise-row grid grid-cols-[1fr_80px_80px_40px] gap-0 px-4 py-3 border-b border-[#1a1a1a] items-center ${isDone ? 'done-exercise' : ''}">
+                    <div class="min-w-0">
+                      <div class="flex items-center gap-1">
+                        <p class="exercise-name text-sm font-bold ${isDone ? 'text-gray-600' : 'text-gray-200'} truncate">${ex.name}</p>
+                        ${history.length > 0 ? `<button onclick="event.stopPropagation(); toggleExerciseHistory('${ex.id}')" class="text-[9px] text-gray-600 hover:text-royal px-1 transition-colors">\u25BC</button>` : ''}
+                      </div>
+                      ${isPR ? '<span class="pr-badge text-[8px] font-black px-1.5 py-0.5 rounded mt-0.5 inline-block">PR!</span>' : ''}
+                      ${stagnationAlerts[ex.id] ? '<span class="stagnation-tag text-[8px] font-black px-1.5 py-0.5 rounded mt-0.5 inline-block">⚠ AUMENTE A CARGA</span>' : ''}
+                      ${!isToday && loadHistory.pr > 0 ? `<p class="text-[9px] font-bold text-gray-700 mt-0.5">PR: ${loadHistory.pr}kg</p>` : ''}
+                      ${history.length > 0 ? `
+                        <div id="history-${ex.id}" class="hidden mt-1 space-y-0.5">
+                          <p class="text-[8px] font-extrabold text-gray-600 tracking-wider">ÚLTIMAS CARGAS:</p>
+                          ${history.map(h => `<p class="text-[9px] font-bold text-gray-600">${h.date.slice(5)}: <span class="text-gray-400 workout-load">${h.load}kg</span></p>`).join('')}
+                        </div>
+                      ` : ''}
+                    </div>
+                    <div class="text-center">
+                      <span class="workout-load text-sm font-black ${isDone ? 'text-gray-600' : 'text-gray-400'}">${ex.sets}x${ex.reps}</span>
+                    </div>
+                    <div class="flex justify-center">
+                      ${isToday ? `
+                        <input type="number" value="${currentLoad || ''}" placeholder="—"
+                          class="w-16 px-1 py-1.5 rounded text-center text-sm font-black workout-load"
+                          style="background:#0a0a0a !important; border:1px solid #222 !important;"
+                          onchange="updateExerciseLoad('${ex.id}', this.value)"
+                          ${isDone ? '' : ''}>
+                      ` : `
+                        <span class="workout-load text-sm font-black ${loadHistory.lastLoad > 0 ? 'text-gray-400' : 'text-gray-700'}">${loadHistory.lastLoad > 0 ? loadHistory.lastLoad : '—'}</span>
+                      `}
+                    </div>
+                    <div class="flex justify-center">
+                      ${isToday ? `
+                        <button onclick="toggleExerciseDone('${ex.id}')"
+                          class="w-7 h-7 rounded-lg border-2 flex items-center justify-center transition-all active:scale-90 ${isDone ? 'bg-[#00FF64] border-[#00FF64]' : 'border-[#444] hover:border-gray-400'}">
+                          ${isDone ? '<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="black" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>' : ''}
+                        </button>
+                      ` : `
+                        <span class="text-gray-700">—</span>
+                      `}
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+
+            ${isToday && !isFinalized ? `
+              <!-- FINALIZAR TREINO -->
+              <button onclick="finalizeWorkout()"
+                class="w-full py-4 rounded-xl ${doneCount === totalExercises && doneCount > 0 ? 'btn-royal' : 'bg-[#111] border-2 border-[#333]'} text-white font-extrabold text-base tracking-wider active:scale-[0.97] transition-all">
+                ${doneCount === totalExercises && doneCount > 0 ? '🏋️ FINALIZAR TREINO' : `🏋️ FINALIZAR TREINO (${doneCount}/${totalExercises})`}
+              </button>
+            ` : ''}
+
+            ${isFinalized ? `
+              <div class="rounded-xl p-5 text-center border border-[#00FF64]/30" style="background: rgba(0,255,100,0.05); box-shadow: 0 0 30px rgba(0,255,100,0.1);">
+                <p class="text-3xl mb-2">🏆</p>
+                <p class="neon-text font-black text-xl tracking-wide">TREINO CONCLUÍDO</p>
+                <p class="text-gray-400 text-xs font-bold mt-2">Hábito 'Treino de Força' marcado automaticamente.</p>
+              </div>
+            ` : ''}
+          `}
+        </div>
+      `;
+    }
+
+    // =============================================
+    // FOCUS (DEEP WORK) MODULE
+    // =============================================
+    let focusInterval = null;
+    let focusStartTime = null;
+    let focusImmersive = false;
+    let restTimerInterval = null;
+    let restTimerSeconds = 0;
+    let extremeFocusMode = false;
+
+    function getTodayFocus() {
+      const today = getTodayKey();
+      if (!userState.focusSessions[today]) {
+        userState.focusSessions[today] = { totalSeconds: 0, sessions: [] };
+      }
+      return userState.focusSessions[today];
+    }
+
+    function formatFocusTime(totalSec) {
+      const h = Math.floor(totalSec / 3600);
+      const m = Math.floor((totalSec % 3600) / 60);
+      const s = totalSec % 60;
+      return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+
+    function getRandomFocusPhrase() {
+      return FOCUS_PHRASES[Math.floor(Math.random() * FOCUS_PHRASES.length)];
+    }
+
+    function startFocusSession() {
+      focusStartTime = Date.now();
+      focusImmersive = true;
+      renderActiveTab();
+      showImmersiveOverlay();
+      startFocusTicker();
+    }
+
+    function startFocusTicker() {
+      if (focusInterval) clearInterval(focusInterval);
+      focusInterval = setInterval(() => {
+        if (!focusStartTime) return;
+        const elapsed = Math.floor((Date.now() - focusStartTime) / 1000);
+        // Update immersive timer
+        const imTimer = document.getElementById('focusImmersiveTimer');
+        if (imTimer) imTimer.textContent = formatFocusTime(elapsed);
+        // Update phrase every 60 seconds
+        const phEl = document.getElementById('focusPhrase');
+        if (phEl && elapsed > 0 && elapsed % 60 === 0) {
+          phEl.textContent = getRandomFocusPhrase();
+          phEl.style.opacity = '0';
+          setTimeout(() => { if (phEl) phEl.style.opacity = '1'; }, 50);
+        }
+        // Update regular tab timer if visible
+        const tabTimer = document.getElementById('focusTabTimer');
+        if (tabTimer) tabTimer.textContent = formatFocusTime(elapsed);
+      }, 1000);
+    }
+
+    function endFocusSession() {
+      if (!focusStartTime) return;
+      const elapsed = Math.floor((Date.now() - focusStartTime) / 1000);
+      if (elapsed > 0) {
+        const todayFocus = getTodayFocus();
+        todayFocus.totalSeconds += elapsed;
+        todayFocus.sessions.push({
+          start: new Date(focusStartTime).toISOString(),
+          durationSec: elapsed,
+        });
+        saveData();
+      }
+      focusStartTime = null;
+      focusImmersive = false;
+      if (focusInterval) { clearInterval(focusInterval); focusInterval = null; }
+      removeImmersiveOverlay();
+      renderActiveTab();
+      if (elapsed > 0) {
+        const mins = Math.floor(elapsed / 60);
+        showToast(`Sessão encerrada: ${mins} min registrados.`);
+      }
+    }
+
+    function showImmersiveOverlay() {
+      removeImmersiveOverlay();
+      const overlay = document.createElement('div');
+      overlay.id = 'focusOverlay';
+      overlay.className = 'focus-immersive focus-scanline';
+      overlay.innerHTML = `
+        <div class="flex flex-col items-center justify-center w-full px-6">
+          <p class="text-[10px] font-extrabold tracking-[0.3em] text-royal/60 mb-6">MODO IMERSIVO ATIVO</p>
+          <div class="w-52 h-52 rounded-full focus-ring-active focus-pulse flex items-center justify-center mb-8" style="background: radial-gradient(circle, #0a0a0a 60%, #111 100%);">
+            <span id="focusImmersiveTimer" class="focus-timer-text text-5xl font-black text-royal">00:00:00</span>
+          </div>
+          <p id="focusPhrase" class="text-sm font-extrabold text-gray-500 text-center max-w-xs mb-10 transition-opacity duration-500" style="letter-spacing:0.5px;">
+            ${getRandomFocusPhrase()}
+          </p>
+          <button onclick="endFocusSession()"
+            class="px-8 py-4 rounded-xl border-2 border-red-900/60 bg-red-950/30 text-red-400 font-extrabold text-sm tracking-wider hover:bg-red-900/30 transition-all active:scale-95">
+            ENCERRAR SESSÃO
+          </button>
+          <p class="text-[9px] font-bold text-gray-700 mt-4">O tempo será salvo automaticamente</p>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+    }
+
+    function removeImmersiveOverlay() {
+      const el = document.getElementById('focusOverlay');
+      if (el) el.remove();
+    }
+
+    function renderFocus() {
+      const today = getTodayKey();
+      const todayFocus = getTodayFocus();
+      const totalSec = todayFocus.totalSeconds + (focusStartTime ? Math.floor((Date.now() - focusStartTime) / 1000) : 0);
+      const goalSec = 4 * 3600; // 4h goal
+      const pct = Math.min(100, Math.round((totalSec / goalSec) * 100));
+      const totalHours = (totalSec / 3600).toFixed(1);
+      const goalColor = pct >= 100 ? '#00FF64' : pct >= 50 ? '#2563EB' : '#444';
+      const isActive = !!focusStartTime;
+      const sessions = todayFocus.sessions || [];
+      const lastSessions = sessions.slice(-5).reverse();
+
+      return `
+        <div class="tab-enter space-y-4 max-w-lg mx-auto">
+          <div class="pt-1">
+            <h2 class="text-2xl font-extrabold">Deep <span class="text-royal">Work</span></h2>
+            <p class="text-gray-500 text-sm font-semibold mt-1">Foco inabalável. Sem distrações. Sem piedade.</p>
+          </div>
+
+          <!-- TIMER HERO -->
+          <div class="card-neu rounded-2xl p-6 flex flex-col items-center focus-scanline">
+            <p class="text-[10px] font-extrabold tracking-[0.25em] text-gray-500 mb-4">CRONÔMETRO TÁTICO</p>
+            <div class="w-44 h-44 rounded-full border-3 flex items-center justify-center mb-4 ${isActive ? 'focus-ring-active focus-pulse' : 'border-[#333]'}" style="background: radial-gradient(circle, #0a0a0a 60%, #111 100%);">
+              <span id="focusTabTimer" class="focus-timer-text text-4xl font-black ${isActive ? 'text-royal' : 'text-gray-600'}">
+                ${isActive ? formatFocusTime(Math.floor((Date.now() - focusStartTime) / 1000)) : '00:00:00'}
+              </span>
+            </div>
+
+            ${isActive ? `
+              <p class="text-xs font-extrabold text-royal/60 mb-4 tracking-wider">SESSÃO EM ANDAMENTO</p>
+              <div class="flex gap-3">
+                <button onclick="endFocusSession()"
+                  class="px-6 py-3 rounded-xl border-2 border-red-900/60 bg-red-950/30 text-red-400 font-extrabold text-sm tracking-wider hover:bg-red-900/30 transition-all active:scale-95">
+                  ABORTAR MISSÃO
+                </button>
+                <button onclick="showImmersiveOverlay(); startFocusTicker();"
+                  class="px-6 py-3 rounded-xl border-2 border-royal/40 bg-royal/10 text-royal font-extrabold text-sm tracking-wider hover:bg-royal/20 transition-all active:scale-95">
+                  MODO IMERSIVO
+                </button>
+              </div>
+            ` : `
+              <button onclick="startFocusSession()"
+                class="px-8 py-4 rounded-xl btn-royal text-white font-extrabold text-base tracking-wider active:scale-95 transition-all w-full max-w-xs">
+                INICIAR SESSÃO DE FOCO
+              </button>
+            `}
+          </div>
+
+          <!-- META DIÁRIA -->
+          <div class="bg-[#111] border border-[#333] rounded-xl p-4">
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-[10px] font-extrabold tracking-widest text-gray-500">META DIÁRIA: 4 HORAS</span>
+              <span class="focus-timer-text text-xs font-black" style="color:${goalColor}">${totalHours}h / 4.0h</span>
+            </div>
+            <div class="w-full h-3 bg-black rounded-full overflow-hidden">
+              <div class="h-full rounded-full transition-all duration-700 ease-out" style="width:${pct}%; background:${goalColor}; box-shadow: 0 0 10px ${goalColor}40;"></div>
+            </div>
+            <div class="flex justify-between items-center mt-2">
+              <span class="text-[10px] font-bold text-gray-600">${sessions.length} sessão(ões) hoje</span>
+              <span class="text-[10px] font-black ${pct >= 100 ? 'neon-text' : 'text-gray-500'}">${pct}%</span>
+            </div>
+          </div>
+
+          <!-- FOCO ADAPTATIVO — IA -->
+          ${(() => {
+            const adaptiveFeedback = getFocusAdaptiveFeedback();
+            if (adaptiveFeedback) return `
+              <div class="ai-verdict-card rounded-xl p-4 border border-yellow-900/30">
+                <div class="flex items-center gap-2 mb-2">
+                  <span class="text-lg">🧠</span>
+                  <span class="text-[10px] font-extrabold tracking-[0.2em] text-yellow-400">FOCO ADAPTATIVO — IA</span>
+                </div>
+                <p class="text-sm font-bold text-yellow-200/80 leading-relaxed">${adaptiveFeedback}</p>
+              </div>
+            `;
+            return '';
+          })()}
+
+          ${pct >= 100 ? `
+            <div class="rounded-xl p-5 text-center border border-[#00FF64]/30" style="background: rgba(0,255,100,0.05); box-shadow: 0 0 30px rgba(0,255,100,0.1);">
+              <p class="text-3xl mb-2">🎯</p>
+              <p class="neon-text font-black text-xl tracking-wide">META ATINGIDA</p>
+              <p class="text-gray-400 text-xs font-bold mt-2">4 horas de deep work. Você é imparável.</p>
+            </div>
+          ` : ''}
+
+          <!-- FRASE MOTIVACIONAL -->
+          <div class="card-neu border-royal/20 p-4 text-center">
+            <p class="text-xs font-extrabold text-royal/70 tracking-wide">${getRandomFocusPhrase()}</p>
+          </div>
+
+          <!-- EXTREME FOCUS MODE -->
+          <button onclick="toggleExtremeFocus()"
+            class="w-full py-3 rounded-xl ${extremeFocusMode ? 'bg-red-950/30 border-2 border-red-900/40 text-red-400' : 'bg-[#111] border border-[#333] text-gray-400'} font-extrabold text-sm tracking-wider active:scale-[0.97] transition-all flex items-center justify-center gap-2">
+            <span>${extremeFocusMode ? '\u{1F441}\u{FE0F}' : '\u{1F512}'}</span>
+            ${extremeFocusMode ? 'DESATIVAR MODO EXTREMO' : 'ATIVAR MODO EXTREMO (ESCONDER NAV)'}
+          </button>
+
+          <!-- SESSÕES DE HOJE -->
+          ${lastSessions.length > 0 ? `
+            <div class="bg-[#111] border border-[#333] rounded-xl p-4">
+              <p class="text-[10px] font-extrabold tracking-widest text-gray-500 mb-3">REGISTRO DE OPERAÇÕES</p>
+              <div class="space-y-2">
+                ${lastSessions.map((s, i) => {
+                  const startTime = new Date(s.start).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                  const durMin = Math.floor(s.durationSec / 60);
+                  const durSec = s.durationSec % 60;
+                  return `
+                    <div class="flex items-center gap-3 p-3 bg-black rounded-xl">
+                      <div class="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black bg-royal/10 text-royal border border-royal/20 flex-shrink-0 focus-timer-text">
+                        ${String(i + 1).padStart(2, '0')}
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <p class="text-sm font-bold text-gray-400 focus-timer-text">${durMin}m ${durSec}s</p>
+                        <p class="text-[10px] font-semibold text-gray-700">Início: ${startTime}</p>
+                      </div>
+                      <span class="text-lg">🎯</span>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+              ${sessions.length > 5 ? `<p class="text-[10px] text-gray-700 font-bold text-center mt-2">+ ${sessions.length - 5} sessões anteriores</p>` : ''}
+            </div>
+          ` : `
+            <div class="bg-[#111] border border-[#333] rounded-xl p-6 text-center">
+              <p class="text-gray-700 text-sm font-bold">Nenhuma sessão registrada hoje.</p>
+              <p class="text-gray-800 text-xs font-semibold mt-1">Inicie sua primeira sessão de foco.</p>
+            </div>
+          `}
+        </div>
+      `;
+    }
+
+    // =============================================
+    // STATUS (RELATÓRIOS DE GUERRA) MODULE
+    // =============================================
+    function getWeekScores() {
+      const today = getTodayKey();
+      const result = [];
+      for (let i = 6; i >= 0; i--) {
+        const dk = getDateOffset(today, -i);
+        const score = calcDayScore(dk);
+        const dayLabel = new Date(dk + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'short' }).slice(0, 3).toUpperCase();
+        const isToday = dk === today;
+        result.push({ date: dk, score, dayLabel, isToday });
+      }
+      return result;
+    }
+
+    function getWeekAvgScore() {
+      const scores = getWeekScores();
+      const total = scores.reduce((s, d) => s + d.score, 0);
+      return Math.round(total / scores.length);
+    }
+
+    function getWeekFocusHours() {
+      const today = getTodayKey();
+      let totalSec = 0;
+      for (let i = 6; i >= 0; i--) {
+        const dk = getDateOffset(today, -i);
+        const fs = userState.focusSessions[dk];
+        if (fs) totalSec += fs.totalSeconds;
+      }
+      return (totalSec / 3600).toFixed(1);
+    }
+
+    function getWeekHabitRate() {
+      const today = getTodayKey();
+      let totalPossible = 0;
+      let totalDone = 0;
+      const ids = DEFAULT_HABITS.map(h => h.id);
+      for (let i = 6; i >= 0; i--) {
+        const dk = getDateOffset(today, -i);
+        const habits = userState.dailyHabits[dk];
+        if (habits) {
+          totalPossible += ids.length;
+          totalDone += ids.filter(id => habits[id] === true).length;
+        }
+      }
+      return totalPossible > 0 ? Math.round((totalDone / totalPossible) * 100) : 0;
+    }
+
+    function getMonthFinancials() {
+      const mk = getMonthKey();
+      const expenses = userState.monthlyExpenses[mk] || [];
+      const totalGasto = expenses.reduce((s, e) => s + e.amount, 0);
+      const totalDopamina = expenses.filter(e => e.category === 'dopamina').reduce((s, e) => s + e.amount, 0);
+      const totalEssencial = expenses.filter(e => e.category === 'essencial').reduce((s, e) => s + e.amount, 0);
+      const budget = userState.budget || 0;
+      const saldo = budget - totalGasto;
+      return { totalGasto, totalDopamina, totalEssencial, budget, saldo };
+    }
+
+    function getVerdict(avg) {
+      if (avg >= 90) return { text: 'VOCÊ É UM LEÃO. IMPARÁVEL. MANTENHA ESSE RITMO.', cls: 'neon-text', icon: '👑', bg: 'rgba(0,255,100,0.05)', border: 'border-[#00FF64]/30' };
+      if (avg >= 80) return { text: 'DESEMPENHO DE ELITE. POUCOS CHEGAM AQUI. CONTINUE.', cls: 'neon-text', icon: '🦅', bg: 'rgba(0,255,100,0.03)', border: 'border-[#00FF64]/20' };
+      if (avg >= 60) return { text: 'ACIMA DA MÉDIA, MAS MÉDIA NÃO É O SEU PADRÃO. SUBA.', cls: 'neon-yellow', icon: '⚔️', bg: 'rgba(250,204,21,0.04)', border: 'border-yellow-700/30' };
+      if (avg >= 40) return { text: 'VOCÊ ESTÁ SENDO MEDÍOCRE. O TEMPO NÃO ESPERA. REAJA.', cls: 'neon-red', icon: '⚠️', bg: 'rgba(255,50,50,0.04)', border: 'border-red-900/30' };
+      return { text: 'ALERTA VERMELHO. VOCÊ ESTÁ SE SABOTANDO. ACORDE AGORA.', cls: 'neon-red', icon: '💀', bg: 'rgba(255,50,50,0.06)', border: 'border-red-900/40' };
+    }
+
+    function renderStatus() {
+      const weekScores = getWeekScores();
+      const avg = getWeekAvgScore();
+      const streak = userState.streakCount || 0;
+      const focusHours = getWeekFocusHours();
+      const habitRate = getWeekHabitRate();
+      const fin = getMonthFinancials();
+      const verdict = getVerdict(avg);
+      const maxScore = Math.max(...weekScores.map(d => d.score), 1);
+
+      const monthLabel = new Date().toLocaleDateString('pt-BR', { month: 'long' }).toUpperCase();
+
+      return `
+        <div class="tab-enter space-y-4 max-w-lg mx-auto">
+          <div class="pt-1">
+            <h2 class="text-2xl font-extrabold">Relatório de <span class="text-royal">Guerra</span></h2>
+            <p class="text-gray-500 text-sm font-semibold mt-1">Seus números não mentem.</p>
+          </div>
+
+          <!-- VEREDITO DA IA -->
+          <div class="verdict-card card-neu ${verdict.border} p-5 text-center" style="background:${verdict.bg};">
+            <span class="text-3xl">${verdict.icon}</span>
+            <p class="text-lg font-black ${verdict.cls} mt-2 tracking-wide">${verdict.text}</p>
+            <p class="text-[10px] font-bold text-gray-600 mt-2">Média semanal: <span class="font-black text-white">${avg}/100</span></p>
+          </div>
+
+          <!-- CARDS DE RESUMO -->
+          <div class="grid grid-cols-3 gap-2">
+            <div class="status-metric-card p-3 text-center">
+              <span class="text-xl">🔥</span>
+              <p class="text-2xl font-black ${streak > 0 ? 'neon-text' : 'text-gray-600'} mt-1">${streak}</p>
+              <p class="text-[9px] font-extrabold text-gray-600 mt-0.5">STREAK</p>
+            </div>
+            <div class="status-metric-card p-3 text-center">
+              <span class="text-xl">⌛</span>
+              <p class="text-2xl font-black text-royal mt-1">${focusHours}h</p>
+              <p class="text-[9px] font-extrabold text-gray-600 mt-0.5">FOCO SEMANAL</p>
+            </div>
+            <div class="status-metric-card p-3 text-center">
+              <span class="text-xl">💰</span>
+              <p class="text-2xl font-black ${fin.saldo < 0 ? 'neon-red' : 'text-white'} mt-1" style="font-size:${fin.saldo > 9999 || fin.saldo < -999 ? '16px' : '20px'};">R$${Math.abs(fin.saldo).toLocaleString('pt-BR', {maximumFractionDigits: 0})}</p>
+              <p class="text-[9px] font-extrabold text-gray-600 mt-0.5">SALDO</p>
+            </div>
+          </div>
+
+          <!-- GRÁFICO SEMANAL -->
+          <div class="bg-[#111] border border-[#222] rounded-xl p-4">
+            <div class="flex justify-between items-center mb-3">
+              <p class="text-[10px] font-extrabold tracking-widest text-gray-500">SCORE — ÚLTIMOS 7 DIAS</p>
+              <p class="text-xs font-black text-royal">Média: ${avg}</p>
+            </div>
+            <div class="flex items-end justify-between gap-2" style="height:140px;">
+              ${weekScores.map(d => {
+                const h = Math.max(8, (d.score / 100) * 100);
+                const barColor = d.score >= 80 ? '#00FF64' : d.score >= 50 ? '#2563EB' : d.score >= 30 ? '#FACC15' : '#FF3333';
+                const glow = d.score >= 80 ? `box-shadow: 0 0 8px ${barColor}40;` : '';
+                return `
+                  <div class="flex-1 flex flex-col items-center gap-1 h-full justify-end">
+                    <span class="text-[10px] font-black tabular-nums ${d.isToday ? 'text-white' : 'text-gray-600'}">${d.score}</span>
+                    <div class="status-bar bar-grow w-full" style="height:${h}%; background:${barColor}; ${glow}"></div>
+                    <span class="text-[8px] font-bold ${d.isToday ? 'text-white' : 'text-gray-600'}">${d.dayLabel}</span>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+
+          <!-- TAXA DE SUCESSO HÁBITOS -->
+          <div class="bg-[#111] border border-[#222] rounded-xl p-4">
+            <div class="flex justify-between items-center mb-2">
+              <div class="flex items-center gap-2">
+                <span class="text-lg">⚡</span>
+                <span class="text-[10px] font-extrabold tracking-widest text-gray-500">TAXA DE SUCESSO — HÁBITOS</span>
+              </div>
+              <span class="text-sm font-black ${habitRate >= 80 ? 'neon-text' : habitRate >= 50 ? 'text-royal' : 'neon-red'}">${habitRate}%</span>
+            </div>
+            <div class="w-full h-3 bg-black rounded-full overflow-hidden">
+              <div class="h-full rounded-full transition-all duration-700 ease-out" style="width:${habitRate}%; background:${habitRate >= 80 ? '#00FF64' : habitRate >= 50 ? '#2563EB' : '#FF3333'};"></div>
+            </div>
+            <p class="text-[10px] font-bold text-gray-700 mt-2">Últimos 7 dias — ${DEFAULT_HABITS.length} hábitos/dia</p>
+          </div>
+
+          <!-- FINANCEIRO DO MÊS -->
+          <div class="bg-[#111] border border-[#222] rounded-xl p-4">
+            <div class="flex items-center gap-2 mb-3">
+              <span class="text-lg">💸</span>
+              <span class="text-[10px] font-extrabold tracking-widest text-gray-500">FINANCEIRO — ${monthLabel}</span>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div class="bg-black rounded-xl p-3 text-center border border-[#1a1a1a]">
+                <p class="text-[9px] font-extrabold text-gray-600 mb-1">ESSENCIAL</p>
+                <p class="text-lg font-black text-gray-300 workout-load">R$${fin.totalEssencial.toLocaleString('pt-BR', {maximumFractionDigits: 0})}</p>
+              </div>
+              <div class="bg-black rounded-xl p-3 text-center border border-[#1a1a1a] ${fin.totalDopamina > 0 ? '' : ''}">
+                <p class="text-[9px] font-extrabold ${fin.totalDopamina > 0 ? 'text-red-400' : 'text-gray-600'} mb-1">DOPAMINA</p>
+                <p class="text-lg font-black ${fin.totalDopamina > 0 ? 'text-red-400' : 'text-gray-600'} workout-load">R$${fin.totalDopamina.toLocaleString('pt-BR', {maximumFractionDigits: 0})}</p>
+              </div>
+            </div>
+            ${fin.budget > 0 ? `
+              <div class="mt-3 flex justify-between items-center bg-black rounded-xl p-3 border border-[#1a1a1a]">
+                <div>
+                  <p class="text-[9px] font-extrabold text-gray-600">DOPAMINA vs CAPITAL</p>
+                  <p class="text-xs font-bold text-gray-500 mt-0.5">${(fin.totalDopamina / fin.budget * 100).toFixed(1)}% do budget</p>
+                </div>
+                <div class="w-24 h-2 bg-[#1a1a1a] rounded-full overflow-hidden">
+                  <div class="h-full rounded-full ${(fin.totalDopamina / fin.budget * 100) > 10 ? 'bg-red-500' : 'bg-royal'}" style="width:${Math.min(100, (fin.totalDopamina / fin.budget * 100))}%"></div>
+                </div>
+              </div>
+            ` : ''}
+          </div>
+
+          <!-- FOCO SEMANAL DETALHADO -->
+          <div class="bg-[#111] border border-[#222] rounded-xl p-4">
+            <div class="flex items-center gap-2 mb-3">
+              <span class="text-lg">🎯</span>
+              <span class="text-[10px] font-extrabold tracking-widest text-gray-500">HORAS DE FOCO — 7 DIAS</span>
+            </div>
+            <div class="flex items-end justify-between gap-2" style="height:80px;">
+              ${(() => {
+                const today = getTodayKey();
+                const days = [];
+                for (let i = 6; i >= 0; i--) {
+                  const dk = getDateOffset(today, -i);
+                  const fs = userState.focusSessions[dk];
+                  const hours = fs ? (fs.totalSeconds / 3600) : 0;
+                  const dayLabel = new Date(dk + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'short' }).slice(0, 3).toUpperCase();
+                  days.push({ hours, dayLabel, isToday: dk === today });
+                }
+                const maxH = Math.max(...days.map(d => d.hours), 0.1);
+                return days.map(d => {
+                  const h = Math.max(6, (d.hours / 4) * 100); // 4h goal = 100%
+                  return `
+                    <div class="flex-1 flex flex-col items-center gap-1 h-full justify-end">
+                      <span class="text-[9px] font-black tabular-nums ${d.hours >= 4 ? 'neon-text' : d.isToday ? 'text-white' : 'text-gray-700'}">${d.hours.toFixed(1)}</span>
+                      <div class="status-bar bar-grow w-full" style="height:${Math.min(100, h)}%; background:${d.hours >= 4 ? '#00FF64' : d.hours > 0 ? '#2563EB' : '#1a1a1a'};"></div>
+                      <span class="text-[8px] font-bold ${d.isToday ? 'text-white' : 'text-gray-600'}">${d.dayLabel}</span>
+                    </div>
+                  `;
+                }).join('');
+              })()}
+            </div>
+            <div class="flex justify-between items-center mt-2">
+              <p class="text-[10px] font-bold text-gray-700">Meta: 4h/dia</p>
+              <p class="text-[10px] font-black text-royal">${focusHours}h total</p>
+            </div>
+          </div>
+
+          <!-- ANÁLISE DE GUERRA COMPLETA -->
+          <button onclick="runFullAnalysis()"
+            class="w-full py-3.5 rounded-xl bg-red-950/20 border border-red-900/30 text-red-400 font-extrabold text-sm tracking-wider hover:bg-red-950/40 transition-all active:scale-[0.97] flex items-center justify-center gap-2">
+            <span>⚔️</span>
+            ANÁLISE DE GUERRA COMPLETA
+          </button>
+          <div id="fullAnalysisOutput" class="terminal-output hidden"></div>
+
+          <!-- INSTALAR APP -->
+          ${canInstallApp() ? `
+            <button onclick="triggerInstall()"
+              class="w-full py-3.5 rounded-xl bg-royal/10 border border-royal/30 text-royal font-extrabold text-sm tracking-wider hover:bg-royal/20 transition-all active:scale-[0.97] flex items-center justify-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+              INSTALAR NA TELA INICIAL
+            </button>
+          ` : ''}
+
+          <!-- ACESSO AO MENTOR -->
+          <button onclick="switchTab('mentor')"
+            class="w-full py-3.5 rounded-xl bg-[#111] border border-[#222] text-gray-400 font-extrabold text-sm tracking-wider hover:border-royal hover:text-royal transition-all active:scale-[0.97] flex items-center justify-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+            ABRIR AI MENTOR
+          </button>
+        </div>
+      `;
+    }
+
+    // =============================================
+    // AI MENTOR TAB
+    // =============================================
+    function renderMentor() {
+      return `
+        <div class="tab-enter space-y-4 max-w-lg mx-auto">
+          <div class="pt-1">
+            <h2 class="text-2xl font-extrabold">Mentor <span class="text-royal">Estoico</span></h2>
+            <p class="text-gray-500 text-sm font-semibold mt-1">Gemini AI — Coach implacável de alta performance.</p>
+          </div>
+
+          <!-- Gemini Status -->
+          <div class="ai-verdict-card rounded-xl p-3 border border-royal/20 flex items-center gap-3">
+            <div class="w-2.5 h-2.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(0,255,100,0.5)]"></div>
+            <div>
+              <p class="text-xs font-extrabold text-gray-300">Gemini ${GEMINI_MODEL}</p>
+              <p class="text-[10px] font-bold text-gray-600">Conectado — Mentor Estoico GigaChad ativo</p>
+            </div>
+          </div>
+
+          <!-- Chat Area -->
+          <div class="bg-card border border-border rounded-xl overflow-hidden">
+            <div id="chatMessages" class="p-4 space-y-3 max-h-80 overflow-y-auto min-h-[200px]">
+              ${userState.chatHistory.length === 0 ? `
+                <div class="text-center py-8">
+                  <p class="text-3xl mb-2">🧠</p>
+                  <p class="text-sm font-bold text-gray-500">Seu mentor está pronto.</p>
+                  <p class="text-xs text-gray-600 mt-1">Pergunte sobre disciplina, hábitos, finanças ou mindset.</p>
+                </div>
+              ` : userState.chatHistory.map(m => `
+                <div class="flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}">
+                  <div class="max-w-[80%] px-3 py-2 rounded-xl text-sm font-semibold ${m.role === 'user' ? 'bg-royal text-white' : 'bg-black text-gray-300 border border-border'}">
+                    ${escapeHtml(m.content)}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+
+            <!-- Input -->
+            <div class="border-t border-border p-3 flex gap-2">
+              <input type="text" id="chatInput" placeholder="Pergunte ao Mentor..."
+                class="flex-1 px-3 py-2.5 rounded-lg text-sm font-semibold"
+                onkeydown="if(event.key==='Enter')sendChat()">
+              <button onclick="sendChat()" id="sendBtn" class="btn-royal px-4 py-2.5 rounded-lg text-sm font-extrabold text-white">
+                ENVIAR
+              </button>
+            </div>
+          </div>
+
+          <!-- Quick Prompts -->
+          <div class="bg-card border border-border rounded-xl p-4">
+            <p class="text-xs font-bold text-gray-500 mb-2">PROMPTS RÁPIDOS</p>
+            <div class="flex flex-wrap gap-2">
+              ${['Como criar disciplina?', 'Dicas para acordar cedo', 'Como economizar mais', 'Rotina de um guerreiro'].map(p => `
+                <button onclick="quickPrompt('${p}')" class="px-3 py-1.5 rounded-full bg-black border border-border text-xs font-bold text-gray-400 hover:border-royal hover:text-royal transition-colors">
+                  ${p}
+                </button>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Clear Chat -->
+          ${userState.chatHistory.length > 0 ? `
+            <button onclick="clearChat()" class="w-full py-2 text-xs font-bold text-gray-600 hover:text-red-400 transition-colors">
+              Limpar conversa
+            </button>
+          ` : ''}
+        </div>
+      `;
+    }
+
+    // saveApiKey removed — Gemini API key is hardcoded in userState
+
+    function quickPrompt(text) {
+      const input = document.getElementById('chatInput');
+      if (input) {
+        input.value = text;
+        sendChat();
+      }
+    }
+
+    async function sendChat() {
+      const input = document.getElementById('chatInput');
+      const msg = input?.value?.trim();
+      if (!msg) return;
+
+      // Add user message
+      userState.chatHistory.push({ role: 'user', content: msg });
+      input.value = '';
+      saveData();
+      renderActiveTab();
+      scrollChat();
+
+      // Gemini AI mode
+      try {
+        const sendBtn = document.getElementById('sendBtn');
+        if (sendBtn) sendBtn.textContent = '...';
+
+        // Build conversation context for Gemini
+        const recentChat = userState.chatHistory.slice(-10).map(m =>
+          `${m.role === 'user' ? 'SOLDADO' : 'MENTOR'}: ${m.content}`
+        ).join('\n');
+
+        const prompt = `${MENTOR_PERSONA}\n\nHistórico recente:\n${recentChat}\n\nResponda a última mensagem do SOLDADO de forma direta, concisa (máx 3 frases). Seja implacável e motivador.`;
+
+        const reply = await callGemini(prompt, 200);
+        userState.chatHistory.push({ role: 'assistant', content: reply });
+      } catch (err) {
+        console.error('Gemini sendChat error:', err);
+        userState.chatHistory.push({ role: 'assistant', content: 'Erro de conexão com Gemini. Tente novamente.' });
+      }
+
+      saveData();
+      renderActiveTab();
+      scrollChat();
+    }
+
+    function scrollChat() {
+      setTimeout(() => {
+        const el = document.getElementById('chatMessages');
+        if (el) el.scrollTop = el.scrollHeight;
+      }, 50);
+    }
+
+    function clearChat() {
+      userState.chatHistory = [];
+      saveData();
+      renderActiveTab();
+    }
+
+    // =============================================
+    // UTILITIES
+    // =============================================
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function showToast(msg, duration = 2500) {
+      const toast = document.createElement('div');
+      toast.className = 'fixed top-20 left-4 right-4 mx-auto max-w-sm bg-emerald text-white text-xs font-bold px-4 py-3 rounded-lg z-[100] shadow-lg text-center leading-relaxed';
+      toast.textContent = msg;
+      document.body.appendChild(toast);
+      setTimeout(() => {
+        toast.style.transition = 'opacity 0.3s';
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 300);
+      }, duration);
+    }
+
+    // =============================================
+    // PWA: SERVICE WORKER + INSTALL PROMPT
+    // =============================================
+    let deferredInstallPrompt = null;
+    let appInstalled = false;
+
+    function registerServiceWorker() {
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('SW registered:', reg.scope))
+          .catch(err => console.warn('SW registration failed:', err));
+      }
+    }
+
+    function setupInstallPrompt() {
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredInstallPrompt = e;
+        // Show install banner after 3 seconds
+        setTimeout(showInstallBanner, 3000);
+      });
+
+      window.addEventListener('appinstalled', () => {
+        appInstalled = true;
+        deferredInstallPrompt = null;
+        hideInstallBanner();
+        showToast('App instalado com sucesso!');
+      });
+
+      // Check if already installed (standalone mode)
+      if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
+        appInstalled = true;
+      }
+    }
+
+    function showInstallBanner() {
+      if (appInstalled || !deferredInstallPrompt) return;
+      // Don't show if already dismissed this session
+      if (sessionStorage.getItem('install_dismissed')) return;
+      hideInstallBanner();
+      const banner = document.createElement('div');
+      banner.id = 'installBanner';
+      banner.className = 'install-banner';
+      banner.innerHTML = `
+        <div class="w-10 h-10 rounded-xl bg-royal/20 border border-royal/30 flex items-center justify-center flex-shrink-0">
+          <span class="text-lg font-black text-royal">U</span>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-extrabold text-white">Instalar na Tela Inicial</p>
+          <p class="text-[10px] font-semibold text-gray-500 mt-0.5">Acesso rápido, offline, sem navegador.</p>
+        </div>
+        <button onclick="triggerInstall()" class="btn-royal px-3 py-2 rounded-lg text-[11px] font-extrabold text-white flex-shrink-0">
+          INSTALAR
+        </button>
+        <button onclick="dismissInstallBanner()" class="text-gray-600 hover:text-gray-400 p-1 flex-shrink-0">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      `;
+      document.body.appendChild(banner);
+    }
+
+    function hideInstallBanner() {
+      const el = document.getElementById('installBanner');
+      if (el) el.remove();
+    }
+
+    function dismissInstallBanner() {
+      sessionStorage.setItem('install_dismissed', '1');
+      hideInstallBanner();
+    }
+
+    async function triggerInstall() {
+      if (!deferredInstallPrompt) return;
+      deferredInstallPrompt.prompt();
+      const result = await deferredInstallPrompt.userChoice;
+      if (result.outcome === 'accepted') {
+        appInstalled = true;
+      }
+      deferredInstallPrompt = null;
+      hideInstallBanner();
+    }
+
+    // Check if app can be installed (for use in Status tab)
+    function canInstallApp() {
+      return !!deferredInstallPrompt && !appInstalled;
+    }
+
+    // =============================================
+    // GEMINI AI ENGINE (v3.0)
+    // =============================================
+    const GEMINI_MODEL = 'gemini-1.5-flash';
+    const MENTOR_PERSONA = 'Você é o MENTOR ESTOICO — coach de alta performance implacável, estilo GigaChad. Respostas DIRETAS, CURTAS, BRUTALMENTE HONESTAS em português do Brasil. Não aceita desculpas. Cobra resultados. Referências a guerra, batalha e disciplina espartana. Sem emojis.';
+
+    async function callGemini(prompt, maxTokens = 300) {
+      try {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${userState.apiKey}`;
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: MENTOR_PERSONA + '\n\n' + prompt }] }],
+            generationConfig: { maxOutputTokens: maxTokens, temperature: 0.85 }
+          })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          console.error('Gemini API error response:', JSON.stringify(data));
+          throw new Error(`HTTP ${res.status}: ${data?.error?.message || 'Unknown error'}`);
+        }
+        return data.candidates?.[0]?.content?.parts?.[0]?.text || 'Sistema offline. Continue na disciplina.';
+      } catch (err) {
+        console.error('Gemini callGemini error:', err);
+        console.log('API Key used:', userState.apiKey ? userState.apiKey.substring(0, 10) + '...' : 'MISSING');
+        return 'Conexão com IA falhou. O guerreiro não depende de tecnologia.';
+      }
+    }
+
+    async function fetchAIVerdict() {
+      const today = getTodayKey();
+      const hourBlock = Math.floor(new Date().getHours() / 2);
+      const cacheKey = 'verdict_' + today + '_' + hourBlock;
+      if (userState.aiCache[cacheKey]) { displayVerdict(userState.aiCache[cacheKey]); return; }
+
+      const habits = userState.dailyHabits[today] || {};
+      const done = DEFAULT_HABITS.filter(h => habits[h.id]).length;
+      const total = DEFAULT_HABITS.length;
+      const score = calcDayScore(today);
+      const hour = new Date().getHours();
+      const mk = getMonthKey();
+      const todayExp = (userState.monthlyExpenses[mk] || []).filter(e => e.date === today);
+      const dopamina = todayExp.filter(e => e.category === 'dopamina').reduce((s, e) => s + e.amount, 0);
+      const essencial = todayExp.filter(e => e.category === 'essencial').reduce((s, e) => s + e.amount, 0);
+      const budget = userState.budget || 0;
+      const dopPct = budget > 0 ? (dopamina / budget * 100) : 0;
+
+      let extra = '';
+      if (hour >= 12 && done < total) extra += '\nALERTA: Passou do MEIO-DIA e hábitos INCOMPLETOS. Seja EXTRA AGRESSIVO sobre preguiça.';
+      if (dopPct > 15) extra += '\nALERTA: Dopamina Barata acima de 15%! Inclua uma ORDEM DE CORTE DE GASTOS.';
+
+      const prompt = `DADOS (${today} ${hour}h): Hábitos ${done}/${total}, Score ${score}/100, Gastos hoje: Essencial R$${essencial.toFixed(0)} Dopamina R$${dopamina.toFixed(0)}, Streak ${userState.streakCount || 0}d.${extra}\n\nVEREDITO: Exatamente 2 frases. Direto, estoico, cobrador.`;
+      const verdict = await callGemini(prompt, 150);
+
+      userState.aiCache[cacheKey] = verdict;
+      if (!userState.performanceLog[today]) userState.performanceLog[today] = {};
+      userState.performanceLog[today].score = score;
+      userState.performanceLog[today].verdict = verdict;
+      saveData();
+      displayVerdict(verdict);
+    }
+
+    function displayVerdict(text) {
+      const el = document.getElementById('aiVerdict');
+      if (el) { el.textContent = text; el.classList.remove('ai-loading'); el.style.opacity = '1'; }
+    }
+
+    async function fetchRecaidaFeedback(label) {
+      const msg = await callGemini(`O soldado RECAIU no vício "${label}". Bronca em 1 frase curta. Mande recomeçar AGORA.`, 80);
+      showToast(msg, 5000);
+    }
+
+    function getStagnationAlerts() {
+      const alerts = {};
+      const keys = Object.keys(userState.workoutLog).sort().reverse().slice(0, 30);
+      const exHist = {};
+      for (const k of keys) {
+        const dl = userState.workoutLog[k];
+        if (!dl?.exercises) continue;
+        for (const [id, d] of Object.entries(dl.exercises)) {
+          if (!d.load || d.load <= 0) continue;
+          if (!exHist[id]) exHist[id] = [];
+          if (exHist[id].length < 3) exHist[id].push(d.load);
+        }
+      }
+      for (const [id, loads] of Object.entries(exHist)) {
+        if (loads.length >= 3 && loads.every(l => l === loads[0])) alerts[id] = true;
+      }
+      return alerts;
+    }
+
+    async function fetchFullAnalysis() {
+      const weekScores = getWeekScores();
+      const avg = getWeekAvgScore();
+      const fin = getMonthFinancials();
+      const vicData = DEFAULT_VICIOS.map(v => {
+        const d = userState.vicios[v.id];
+        if (!d?.startedAt) return `${d?.label || v.label}: INATIVO`;
+        const t = calcTimeSince(d.startedAt);
+        return `${d.label || v.label}: ${t.days}d ${t.hours}h`;
+      }).join(', ');
+      const stag = Object.keys(getStagnationAlerts());
+      const prompt = `RELATÓRIO SEMANAL DO SOLDADO:
+Score Médio ${avg}/100, Streak ${userState.streakCount||0}d, Hábitos ${getWeekHabitRate()}%, Foco ${getWeekFocusHours()}h
+Scores: ${weekScores.map(d=>d.dayLabel+':'+d.score).join(' ')}
+Finanças: Budget R$${fin.budget}, Gasto R$${fin.totalGasto}, Essencial R$${fin.totalEssencial}, Dopamina R$${fin.totalDopamina}, Saldo R$${fin.saldo}
+Vícios: ${vicData}
+Treino estagnado: ${stag.length>0?stag.join(', '):'nenhum'}
+
+ANÁLISE COMPLETA no formato:
+[VEREDITO ESTOICO] 2 frases estado geral
+[ANÁLISE DE FALHAS] max 4 pontos fracos
+[MISSÃO PRÓXIMA SEMANA] 3 ordens executáveis
+Formato terminal militar. Sem emojis. Direto e brutal.`;
+      return await callGemini(prompt, 600);
+    }
+
+    function getFocusAdaptiveFeedback() {
+      const today = getTodayKey();
+      let totalSec = 0, activeDays = 0;
+      for (let i = 6; i >= 0; i--) {
+        const dk = getDateOffset(today, -i);
+        const fs = userState.focusSessions[dk];
+        if (fs && fs.totalSeconds > 0) { totalSec += fs.totalSeconds; activeDays++; }
+      }
+      if (activeDays === 0) return null;
+      const avgH = totalSec / activeDays / 3600;
+      const goal = userState.profile?.focusGoalHours || 4;
+      if ((avgH / goal * 100) < 50) {
+        return 'ALERTA TÁTICO: Sua média de foco semanal está abaixo de 50% da meta. Estratégia: blocos Pomodoro de 25min com 5min de pausa. Construa a base antes de mirar 4h direto.';
+      }
+      return null;
+    }
+
+    async function runFullAnalysis() {
+      const btn = document.getElementById('analysisBtn');
+      const result = document.getElementById('analysisResult');
+      if (btn) { btn.textContent = 'PROCESSANDO...'; btn.disabled = true; }
+      if (result) { result.classList.remove('hidden'); result.textContent = '> Conectando ao Mentor Estoico...\n> Analisando dados de combate...\n> Processando...'; }
+      const analysis = await fetchFullAnalysis();
+      if (result) result.textContent = analysis;
+      if (btn) { btn.textContent = 'ANÁLISE DE GUERRA COMPLETA'; btn.disabled = false; }
+    }
+
+    // =============================================
+    // HAPTIC FEEDBACK
+    // =============================================
+    function haptic(pattern = 30) {
+      if (navigator.vibrate) navigator.vibrate(pattern);
+    }
+
+    // =============================================
+    // SCARCITY DETECTION
+    // =============================================
+    function checkScarcity() {
+      const budget = userState.budget || 0;
+      if (budget <= 0) { document.body.classList.remove('scarcity-vignette'); return; }
+      const mk = getMonthKey();
+      const expenses = userState.monthlyExpenses[mk] || [];
+      const totalGasto = expenses.reduce((s, e) => s + e.amount, 0);
+      const saldo = budget - totalGasto;
+      if (saldo < budget * 0.1) {
+        document.body.classList.add('scarcity-vignette');
+      } else {
+        document.body.classList.remove('scarcity-vignette');
+      }
+    }
+
+    // =============================================
+    // REST TIMER (TREINO)
+    // =============================================
+    function startRestTimer(seconds = 90) {
+      stopRestTimer();
+      restTimerSeconds = seconds;
+      const totalSec = seconds;
+      restTimerInterval = setInterval(() => {
+        restTimerSeconds--;
+        const bar = document.getElementById('restTimerBar');
+        const label = document.getElementById('restTimerLabel');
+        if (bar) bar.style.width = `${(restTimerSeconds / totalSec) * 100}%`;
+        if (label) label.textContent = `Descanso: ${restTimerSeconds}s`;
+        if (restTimerSeconds <= 0) {
+          stopRestTimer();
+          haptic([100, 50, 100]);
+          showToast('DESCANSO ACABOU. PRÓXIMA SÉRIE.');
+          const container = document.getElementById('restTimerContainer');
+          if (container) container.classList.add('hidden');
+        }
+      }, 1000);
+    }
+
+    function stopRestTimer() {
+      if (restTimerInterval) { clearInterval(restTimerInterval); restTimerInterval = null; }
+      restTimerSeconds = 0;
+    }
+
+    // =============================================
+    // EXERCISE HISTORY
+    // =============================================
+    function getExerciseHistory(exerciseId) {
+      const logs = userState.workoutLog;
+      const keys = Object.keys(logs).sort().reverse();
+      const history = [];
+      for (const k of keys) {
+        if (history.length >= 3) break;
+        const ex = logs[k]?.exercises?.[exerciseId];
+        if (ex && ex.load > 0) {
+          history.push({ date: k, load: ex.load, done: ex.done });
+        }
+      }
+      return history;
+    }
+
+    function toggleExerciseHistory(exerciseId) {
+      const el = document.getElementById('history-' + exerciseId);
+      if (el) el.classList.toggle('hidden');
+    }
+
+    // =============================================
+    // RECAÍDA OVERLAY
+    // =============================================
+    function showRecaidaOverlay(vicioId) {
+      const data = userState.vicios[vicioId];
+      const time = calcTimeSince(data?.startedAt);
+      const days = time ? time.days : 0;
+      const impactMsg = days >= 7
+        ? `Você construiu ${days} DIAS de soberania. Cada dia foi uma batalha vencida. Vai destruir tudo agora?`
+        : days >= 3
+        ? `${days} dias de progresso serão ZERADOS. A dor da recaída dura mais que o prazer. Tem certeza?`
+        : 'O cronômetro volta a zero. Mas lembre-se: cada recomeço é uma chance de ir mais longe.';
+      const overlay = document.createElement('div');
+      overlay.id = 'recaidaOverlay';
+      overlay.className = 'recaida-overlay';
+      overlay.innerHTML = `
+        <div class="w-full max-w-sm mx-4 p-6 rounded-2xl card-neu text-center">
+          <p class="text-4xl mb-4">\u{1F480}</p>
+          <p class="text-lg font-black neon-red mb-2">CONFIRMAR RECAÍDA?</p>
+          <p class="text-sm font-bold text-gray-400 mb-6 leading-relaxed">${impactMsg}</p>
+          ${days >= 7 ? '<p class="text-xs font-extrabold neon-red mb-4">VOCÊ VAI PERDER ' + days + ' DIAS DE PROGRESSO</p>' : ''}
+          <div class="flex gap-3">
+            <button onclick="closeRecaidaOverlay()" class="flex-1 py-3 rounded-xl bg-[#111] border border-[#333] text-gray-400 font-extrabold text-sm tracking-wider active:scale-95 transition-all">
+              CANCELAR
+            </button>
+            <button onclick="confirmRecaida('${vicioId}')" class="flex-1 py-3 rounded-xl bg-red-950/50 border-2 border-red-900/60 text-red-400 font-extrabold text-sm tracking-wider active:scale-95 transition-all">
+              CONFIRMAR
+            </button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+      haptic([50, 30, 50]);
+    }
+
+    function closeRecaidaOverlay() {
+      const el = document.getElementById('recaidaOverlay');
+      if (el) el.remove();
+    }
+
+    function confirmRecaida(vicioId) {
+      closeRecaidaOverlay();
+      userState.vicios[vicioId].startedAt = new Date().toISOString();
+      haptic(100);
+      // Invalidate verdict cache (force refresh)
+      const today = getTodayKey();
+      Object.keys(userState.aiCache).forEach(k => { if (k.startsWith('verdict_' + today)) delete userState.aiCache[k]; });
+      saveData();
+      renderActiveTab();
+      const label = userState.vicios[vicioId]?.label || vicioId;
+      fetchRecaidaFeedback(label);
+    }
+
+    // =============================================
+    // EXTREME FOCUS MODE
+    // =============================================
+    function toggleExtremeFocus() {
+      extremeFocusMode = !extremeFocusMode;
+      const nav = document.querySelector('nav');
+      if (nav) nav.classList.toggle('nav-hidden', extremeFocusMode);
+      const main = document.getElementById('mainContent');
+      if (main) main.style.marginBottom = extremeFocusMode ? '0' : '';
+      haptic(20);
+    }
+
+    // =============================================
+    // INIT
+    // =============================================
+    (function init() {
+      loadData();
+      updateHeaderDate();
+      registerServiceWorker();
+      setupInstallPrompt();
+      switchTab('dashboard');
+      checkScarcity();
+      // Update date every minute
+      setInterval(updateHeaderDate, 60000);
+    })();
+  </script>
+</body>
+</html>
