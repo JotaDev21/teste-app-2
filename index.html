@@ -393,6 +393,47 @@
     .avatar-option:hover { transform: scale(1.2); }
     .avatar-option.selected { box-shadow: 0 0 12px rgba(37,99,235,0.6); border-color: #2563EB !important; }
 
+    /* ===== ATLAS — BOSS FIGHT ===== */
+    .boss-banner {
+      background: linear-gradient(135deg, #1a0000 0%, #0a0a0a 50%, #1a0000 100%);
+      border: 2px solid rgba(255,60,0,0.4);
+      animation: bossPulse 2.5s ease-in-out infinite;
+    }
+    @keyframes bossPulse {
+      0%, 100% { box-shadow: 0 0 15px rgba(255,60,0,0.2), inset 0 0 20px rgba(0,0,0,0.6); border-color: rgba(255,60,0,0.4); }
+      50% { box-shadow: 0 0 35px rgba(255,60,0,0.5), 0 0 60px rgba(255,60,0,0.1), inset 0 0 20px rgba(0,0,0,0.4); border-color: rgba(255,60,0,0.7); }
+    }
+    .campaign-bar-track {
+      background: #0a0a0a;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+    }
+    .campaign-bar-fill {
+      background: linear-gradient(90deg, #2563EB 0%, #7C3AED 60%, #00FF64 100%);
+      box-shadow: 0 0 10px rgba(37,99,235,0.5);
+      transition: width 0.7s ease-out;
+    }
+    .boss-bar-fill {
+      background: linear-gradient(90deg, #FF3C00 0%, #FF6B00 50%, #FFAA00 100%);
+      box-shadow: 0 0 12px rgba(255,60,0,0.6);
+      transition: width 0.7s ease-out;
+    }
+    @keyframes victoryBurst {
+      0% { transform: scale(0); opacity: 1; }
+      50% { transform: scale(1.5); opacity: 0.8; }
+      100% { transform: scale(2.5); opacity: 0; }
+    }
+    .victory-burst {
+      position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 300px; height: 300px; border-radius: 50%; pointer-events: none; z-index: 200;
+      background: radial-gradient(circle, rgba(0,255,100,0.4) 0%, rgba(0,255,100,0) 70%);
+      animation: victoryBurst 1.2s ease-out forwards;
+    }
+    .forja-input {
+      background: #0a0a0a; border: 1px solid #222; color: #fff;
+      transition: border-color 0.2s;
+    }
+    .forja-input:focus { border-color: #2563EB; outline: none; }
+
     /* ===== PWA INSTALL BANNER ===== */
     .install-banner {
       position: fixed; bottom: 72px; left: 16px; right: 16px; z-index: 55;
@@ -1048,6 +1089,207 @@
       ]},
     };
 
+    // =============================================
+    // ATLAS — BIBLIOTECA DE EXERCÍCIOS
+    // =============================================
+    const EXERCISE_LIBRARY = [
+      'Supino Reto', 'Supino Inclinado', 'Supino Declinado', 'Crucifixo', 'Crossover',
+      'Puxada Frontal', 'Remada Curvada', 'Remada Unilateral', 'Remada Cavalinho', 'Pulldown',
+      'Agachamento', 'Leg Press', 'Cadeira Extensora', 'Mesa Flexora', 'Stiff',
+      'Panturrilha', 'Hack Squat', 'Búlgaro', 'Afundo', 'Elevação Pélvica',
+      'Desenvolvimento', 'Elevação Lateral', 'Elevação Frontal', 'Remada Alta', 'Face Pull',
+      'Rosca Direta', 'Rosca Martelo', 'Rosca Concentrada', 'Rosca Scott',
+      'Tríceps Corda', 'Tríceps Testa', 'Tríceps Banco', 'Mergulho',
+      'Abdominais', 'Prancha', 'Barra Fixa', 'Terra', 'Levantamento Terra',
+    ];
+
+    // =============================================
+    // ATLAS — PR CAMPAIGN ENGINE
+    // =============================================
+    const PR_CAMPAIGN_NAMES = [
+      'Operação Peito de Aço', 'Operação Titã', 'Protocolo Brutus', 'Missão Olympus',
+      'Operação Leviatã', 'Protocolo Espartano', 'Missão Atlas', 'Operação Centurião',
+      'Protocolo Berserker', 'Operação Ragnarok', 'Missão Hércules', 'Protocolo Colossus',
+    ];
+
+    function gerarTrilhaPR(prAtual, prObjetivo) {
+      const diff = prObjetivo - prAtual;
+      const carga85 = Math.round(prObjetivo * 0.85);
+      const carga90 = Math.round(prObjetivo * 0.90);
+      return [
+        { fase: 1, titulo: 'Fase 1 — Hipertrofia Auxiliar', descricao: `3 treinos focados em volume (4x12 a ${Math.round(prAtual * 0.65)}kg)`, meta: 3, progresso: 0, tipo: 'treinos' },
+        { fase: 2, titulo: 'Fase 2 — Força Progressiva', descricao: `2 treinos pesados (4x6 a ${carga85}kg — 85% do objetivo)`, meta: 2, progresso: 0, tipo: 'treinos' },
+        { fase: 3, titulo: 'Fase 3 — Pico de Força', descricao: `2 treinos de pico (3x3 a ${carga90}kg — 90% do objetivo)`, meta: 2, progresso: 0, tipo: 'treinos' },
+        { fase: 4, titulo: 'BOSS FIGHT — Dia do PR', descricao: `Tente ${prObjetivo}kg. Tudo ou nada.`, meta: 1, progresso: 0, tipo: 'boss' },
+      ];
+    }
+
+    function getCampanhaAtiva() {
+      return userState.prCampaign || null;
+    }
+
+    function iniciarCampanhaPR(exercicio, prAtual, prObjetivo) {
+      if (userState.prCampaign) {
+        showToast('Já existe uma campanha ativa. Conclua antes.', 3000);
+        return false;
+      }
+      const nome = PR_CAMPAIGN_NAMES[Math.floor(Math.random() * PR_CAMPAIGN_NAMES.length)];
+      userState.prCampaign = {
+        nome,
+        exercicio,
+        prAtual: parseFloat(prAtual),
+        prObjetivo: parseFloat(prObjetivo),
+        trilha: gerarTrilhaPR(parseFloat(prAtual), parseFloat(prObjetivo)),
+        faseAtual: 0,
+        criadaEm: getTodayKey(),
+        concluida: false,
+      };
+      saveData();
+      showToast(`CAMPANHA INICIADA: ${nome}`, 4000);
+      haptic([100, 50, 100]);
+      renderActiveTab();
+      return true;
+    }
+
+    function avancarFaseCampanha() {
+      const c = userState.prCampaign;
+      if (!c || c.concluida) return;
+      const fase = c.trilha[c.faseAtual];
+      if (!fase) return;
+      fase.progresso++;
+      if (fase.progresso >= fase.meta) {
+        if (c.faseAtual < c.trilha.length - 1) {
+          c.faseAtual++;
+          showToast(`FASE ${c.faseAtual + 1} DESBLOQUEADA: ${c.trilha[c.faseAtual].titulo}`, 4000);
+          haptic(60);
+        }
+      }
+      saveData();
+      renderActiveTab();
+    }
+
+    function concluirBossFight(conseguiu) {
+      const c = userState.prCampaign;
+      if (!c || c.concluida) return;
+      if (conseguiu) {
+        c.concluida = true;
+        c.trilha[c.faseAtual].progresso = 1;
+        // XP massivo
+        const xpGanho = 500 + Math.round((c.prObjetivo - c.prAtual) * 10);
+        adicionarXP(xpGanho);
+        // Update PR record
+        const exId = c.exercicio.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+        if (!userState.workoutLoads[exId]) userState.workoutLoads[exId] = { lastLoad: 0, pr: 0 };
+        userState.workoutLoads[exId].pr = c.prObjetivo;
+        userState.workoutLoads[exId].lastLoad = c.prObjetivo;
+        haptic([100, 50, 100, 50, 200]);
+        showToast(`PR ESMAGADO! ${c.prObjetivo}kg! +${xpGanho} XP`, 5000);
+        // Victory burst effect
+        const burst = document.createElement('div');
+        burst.className = 'victory-burst';
+        document.body.appendChild(burst);
+        setTimeout(() => burst.remove(), 1500);
+        saveData();
+        renderActiveTab();
+      } else {
+        showToast('Ainda não foi dessa vez. Tente de novo ou ajuste a meta.', 4000);
+      }
+    }
+
+    function abandonarCampanha() {
+      userState.prCampaign = null;
+      saveData();
+      showToast('Campanha abandonada. O guerreiro sabe quando recuar.', 3000);
+      renderActiveTab();
+    }
+
+    // =============================================
+    // ATLAS — A FORJA (Editor de Treinos)
+    // =============================================
+    let forjaExercicios = []; // temp state for editor
+    let forjaShowingLibrary = false;
+
+    function getForjaTreino(dateKey) {
+      if (!userState.forjaTreinos) userState.forjaTreinos = {};
+      return userState.forjaTreinos[dateKey] || null;
+    }
+
+    function saveForjaTreino() {
+      if (forjaExercicios.length === 0) {
+        showToast('Adicione pelo menos um exercício.', 2500);
+        return;
+      }
+      const today = getTodayKey();
+      if (!userState.forjaTreinos) userState.forjaTreinos = {};
+      userState.forjaTreinos[today] = {
+        exercicios: forjaExercicios.map(e => ({ ...e })),
+        salvoEm: new Date().toISOString(),
+      };
+      saveData();
+      showToast('TREINO SALVO NA FORJA.', 3000);
+      haptic(40);
+      renderActiveTab();
+    }
+
+    function addForjaExercicio(nome) {
+      if (!nome || !nome.trim()) return;
+      const id = 'forja_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
+      forjaExercicios.push({ id, nome: nome.trim(), series: 3, reps: 10, carga: 0, concluido: false });
+      forjaShowingLibrary = false;
+      renderActiveTab();
+    }
+
+    function removeForjaExercicio(id) {
+      forjaExercicios = forjaExercicios.filter(e => e.id !== id);
+      renderActiveTab();
+    }
+
+    function updateForjaExercicio(id, campo, valor) {
+      const ex = forjaExercicios.find(e => e.id === id);
+      if (!ex) return;
+      if (campo === 'series' || campo === 'reps' || campo === 'carga') {
+        ex[campo] = parseFloat(valor) || 0;
+      }
+      // No re-render needed for input changes
+    }
+
+    function toggleForjaConcluido(id) {
+      const ex = forjaExercicios.find(e => e.id === id);
+      if (!ex) return;
+      ex.concluido = !ex.concluido;
+      haptic(ex.concluido ? 40 : 15);
+      if (ex.concluido) startRestTimer(90);
+      renderActiveTab();
+    }
+
+    function carregarForjaHoje() {
+      const today = getTodayKey();
+      const treino = getForjaTreino(today);
+      if (treino) {
+        forjaExercicios = treino.exercicios.map(e => ({ ...e }));
+      } else {
+        forjaExercicios = [];
+      }
+    }
+
+    function finalizarForjaTreino() {
+      if (forjaExercicios.length === 0) return;
+      saveForjaTreino();
+      // Auto-mark workout habit
+      const today = getTodayKey();
+      if (userState.dailyHabits[today]) {
+        userState.dailyHabits[today].workout = true;
+      }
+      // XP for each completed exercise
+      const done = forjaExercicios.filter(e => e.concluido).length;
+      if (done > 0) adicionarXP(done * 15);
+      stopRestTimer();
+      haptic([100, 50, 100, 50, 100]);
+      saveData();
+      showToast(`TREINO FORJADO! ${done}/${forjaExercicios.length} exercícios. +${done * 15} XP`, 4000);
+      renderActiveTab();
+    }
+
     const FOCUS_PHRASES = [
       'ELIMINE DISTRAÇÕES. FOCO ABSOLUTO.',
       'SEU CELULAR PODE ESPERAR. SUA GRANDEZA NÃO.',
@@ -1161,6 +1403,10 @@
       if (!userState.profile.avatar) userState.profile.avatar = '⚔️';
       if (typeof userState.xpTotal !== 'number') userState.xpTotal = 0;
       if (!Array.isArray(userState.cartasSecretas)) userState.cartasSecretas = [];
+      if (!userState.forjaTreinos || typeof userState.forjaTreinos !== 'object') userState.forjaTreinos = {};
+      if (userState.prCampaign && userState.prCampaign.concluida) {
+        // Keep completed campaigns for history, but user can start new ones
+      }
       if (!userState.missoesDiarias) userState.missoesDiarias = null;
       // Clean stale AI cache (keep only today's)
       const todayPrefix = 'verdict_' + today;
@@ -1974,6 +2220,235 @@
       renderActiveTab();
     }
 
+    // Atlas tab mode: 'ficha' (default plan) or 'forja' (custom editor)
+    let atlasMode = 'ficha';
+    let showCampaignModal = false;
+
+    function setAtlasMode(mode) {
+      atlasMode = mode;
+      if (mode === 'forja') carregarForjaHoje();
+      renderActiveTab();
+    }
+
+    function toggleCampaignModal() {
+      showCampaignModal = !showCampaignModal;
+      renderActiveTab();
+    }
+
+    function submitNovaCampanha() {
+      const ex = document.getElementById('campExercicio')?.value?.trim();
+      const prAtual = document.getElementById('campPRAtual')?.value;
+      const prObj = document.getElementById('campPRObj')?.value;
+      if (!ex || !prAtual || !prObj) { showToast('Preencha todos os campos.', 2500); return; }
+      if (parseFloat(prObj) <= parseFloat(prAtual)) { showToast('O objetivo deve ser maior que o PR atual.', 2500); return; }
+      showCampaignModal = false;
+      iniciarCampanhaPR(ex, prAtual, prObj);
+    }
+
+    function renderCampaignBanner() {
+      const c = getCampanhaAtiva();
+      if (!c) {
+        return `
+          <button onclick="toggleCampaignModal()"
+            class="w-full card-neu p-5 rounded-2xl text-center active:scale-[0.97] transition-all border-2 border-dashed border-[#333] hover:border-royal">
+            <p class="text-3xl mb-2">🎯</p>
+            <p class="text-lg font-black text-white">Iniciar Campanha de PR</p>
+            <p class="text-sm font-bold text-gray-500 mt-1">Escolha um exercício e conquiste um novo recorde pessoal.</p>
+          </button>
+        `;
+      }
+      if (c.concluida) {
+        return `
+          <div class="card-neu p-5 rounded-2xl text-center border border-[#00FF64]/30" style="background:rgba(0,255,100,0.03);">
+            <p class="text-3xl mb-2">🏆</p>
+            <p class="neon-text font-black text-xl">${c.nome} — CONCLUÍDA</p>
+            <p class="text-sm font-bold text-gray-500 mt-1">${c.exercicio}: ${c.prAtual}kg → ${c.prObjetivo}kg</p>
+            <button onclick="userState.prCampaign = null; saveData(); renderActiveTab();" class="mt-4 px-5 py-3 rounded-xl btn-royal text-white font-extrabold text-sm min-h-[48px] active:scale-[0.97]">NOVA CAMPANHA</button>
+          </div>
+        `;
+      }
+      const fase = c.trilha[c.faseAtual];
+      const isBoss = fase.tipo === 'boss';
+      const totalFases = c.trilha.length;
+      const progressoTotal = c.trilha.reduce((sum, f, i) => sum + (i < c.faseAtual ? 1 : (i === c.faseAtual ? f.progresso / f.meta : 0)), 0);
+      const pctTotal = Math.round((progressoTotal / totalFases) * 100);
+
+      return `
+        <div class="${isBoss ? 'boss-banner' : 'card-neu border border-royal/20'} p-5 rounded-2xl">
+          <div class="flex items-center justify-between mb-3">
+            <div>
+              <p class="text-xs font-extrabold tracking-[0.15em] ${isBoss ? 'text-orange-400' : 'text-royal'}">${c.nome}</p>
+              <p class="text-xl font-black text-white mt-1">${c.exercicio}</p>
+            </div>
+            <div class="text-right">
+              <p class="text-xs font-bold text-gray-500">${c.prAtual}kg → <span class="${isBoss ? 'text-orange-400' : 'text-royal'} font-black">${c.prObjetivo}kg</span></p>
+              <p class="text-xs font-extrabold ${isBoss ? 'text-orange-400' : 'text-gray-400'} mt-1">FASE ${c.faseAtual + 1}/${totalFases}</p>
+            </div>
+          </div>
+
+          <!-- Campaign progress bar -->
+          <div class="campaign-bar-track w-full h-4 rounded-full overflow-hidden mb-3">
+            <div class="${isBoss ? 'boss-bar-fill' : 'campaign-bar-fill'} h-full rounded-full" style="width:${pctTotal}%"></div>
+          </div>
+
+          <!-- Current phase -->
+          <div class="bg-black/40 rounded-xl p-4 mb-3">
+            <p class="text-base font-black ${isBoss ? 'text-orange-400' : 'text-white'}">${isBoss ? '💀 ' : ''}${fase.titulo}</p>
+            <p class="text-sm font-semibold text-gray-500 mt-1">${fase.descricao}</p>
+            <div class="flex items-center gap-3 mt-3">
+              <div class="flex-1 campaign-bar-track h-2.5 rounded-full overflow-hidden">
+                <div class="${isBoss ? 'boss-bar-fill' : 'campaign-bar-fill'} h-full rounded-full" style="width:${Math.round((fase.progresso / fase.meta) * 100)}%"></div>
+              </div>
+              <span class="text-sm font-black ${isBoss ? 'text-orange-400' : 'text-royal'}">${fase.progresso}/${fase.meta}</span>
+            </div>
+          </div>
+
+          <!-- Action buttons -->
+          <div class="flex gap-2">
+            ${isBoss ? `
+              <button onclick="concluirBossFight(true)" class="flex-1 py-3.5 rounded-xl font-extrabold text-sm text-black min-h-[48px] active:scale-[0.97] transition-all" style="background:linear-gradient(135deg,#FF6B00,#FFAA00); box-shadow:0 0 20px rgba(255,107,0,0.3);">BATI O PR!</button>
+              <button onclick="concluirBossFight(false)" class="px-4 py-3.5 rounded-xl bg-[#111] border border-[#333] text-gray-500 font-extrabold text-sm min-h-[48px] active:scale-[0.97]">FALHOU</button>
+            ` : `
+              <button onclick="avancarFaseCampanha()" class="flex-1 py-3.5 rounded-xl btn-royal text-white font-extrabold text-sm min-h-[48px] active:scale-[0.97] transition-all">TREINO CONCLUÍDO (+1)</button>
+            `}
+            <button onclick="if(confirm('Abandonar campanha?')) abandonarCampanha()" class="px-4 py-3.5 rounded-xl bg-[#111] border border-[#333] text-gray-600 font-bold text-xs min-h-[48px] active:scale-[0.97]">SAIR</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderCampaignModal() {
+      if (!showCampaignModal) return '';
+      return `
+        <div class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] flex items-end justify-center" onclick="if(event.target===this){showCampaignModal=false;renderActiveTab();}">
+          <div class="bg-[#111] border-t border-[#333] rounded-t-3xl w-full max-w-lg p-6 space-y-5" style="max-height:80vh; overflow-y:auto;">
+            <div class="text-center">
+              <div class="w-12 h-1.5 bg-[#333] rounded-full mx-auto mb-4"></div>
+              <p class="text-xl font-black text-white">Nova Campanha de PR</p>
+              <p class="text-sm font-bold text-gray-500 mt-1">Defina o exercício e sua meta de recorde.</p>
+            </div>
+
+            <div>
+              <label class="text-xs font-extrabold text-gray-500 tracking-wider block mb-2">EXERCÍCIO ALVO</label>
+              <input id="campExercicio" type="text" list="exerciseListCamp" placeholder="Ex: Supino Reto"
+                class="forja-input w-full px-4 py-3.5 rounded-xl text-base font-bold min-h-[48px]">
+              <datalist id="exerciseListCamp">
+                ${EXERCISE_LIBRARY.map(e => `<option value="${e}">`).join('')}
+              </datalist>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="text-xs font-extrabold text-gray-500 tracking-wider block mb-2">PR ATUAL (kg)</label>
+                <input id="campPRAtual" type="number" placeholder="60"
+                  class="forja-input w-full px-4 py-3.5 rounded-xl text-base font-black text-center min-h-[48px]">
+              </div>
+              <div>
+                <label class="text-xs font-extrabold text-gray-500 tracking-wider block mb-2">PR OBJETIVO (kg)</label>
+                <input id="campPRObj" type="number" placeholder="70"
+                  class="forja-input w-full px-4 py-3.5 rounded-xl text-base font-black text-center min-h-[48px]">
+              </div>
+            </div>
+
+            <button onclick="submitNovaCampanha()"
+              class="w-full py-4 rounded-xl btn-royal text-white font-extrabold text-base min-h-[52px] active:scale-[0.97] transition-all">
+              INICIAR CAMPANHA
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderForja() {
+      const today = getTodayKey();
+      const saved = getForjaTreino(today);
+      const doneCount = forjaExercicios.filter(e => e.concluido).length;
+
+      return `
+        <!-- A FORJA — Editor de Treinos -->
+        <div class="space-y-3">
+          ${forjaExercicios.length === 0 && !saved ? `
+            <div class="card-neu p-6 rounded-2xl text-center">
+              <p class="text-3xl mb-3">🔨</p>
+              <p class="text-lg font-black text-white">A Forja está vazia</p>
+              <p class="text-sm font-bold text-gray-500 mt-1">Adicione exercícios para montar seu treino livre.</p>
+            </div>
+          ` : ''}
+
+          ${forjaExercicios.map(ex => `
+            <div class="card-neu p-4 rounded-2xl ${ex.concluido ? 'opacity-60' : ''}">
+              <div class="flex items-center justify-between mb-3">
+                <p class="text-base font-black ${ex.concluido ? 'text-green-400 line-through' : 'text-white'}">${ex.nome}</p>
+                <div class="flex items-center gap-2">
+                  <button onclick="toggleForjaConcluido('${ex.id}')"
+                    class="w-8 h-8 rounded-lg border-2 flex items-center justify-center transition-all active:scale-90 min-w-[44px] min-h-[44px] ${ex.concluido ? 'bg-[#00FF64] border-[#00FF64]' : 'border-[#444]'}">
+                    ${ex.concluido ? '<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="black" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>' : ''}
+                  </button>
+                  <button onclick="removeForjaExercicio('${ex.id}')" class="min-w-[44px] min-h-[44px] flex items-center justify-center text-gray-600 hover:text-red-400 rounded-lg active:bg-white/5">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                  </button>
+                </div>
+              </div>
+              <div class="grid grid-cols-3 gap-2">
+                <div>
+                  <label class="text-xs font-extrabold text-gray-600 block mb-1">SÉRIES</label>
+                  <input type="number" value="${ex.series}" onchange="updateForjaExercicio('${ex.id}','series',this.value)"
+                    class="forja-input w-full px-3 py-2.5 rounded-xl text-center text-sm font-black min-h-[44px]">
+                </div>
+                <div>
+                  <label class="text-xs font-extrabold text-gray-600 block mb-1">REPS</label>
+                  <input type="number" value="${ex.reps}" onchange="updateForjaExercicio('${ex.id}','reps',this.value)"
+                    class="forja-input w-full px-3 py-2.5 rounded-xl text-center text-sm font-black min-h-[44px]">
+                </div>
+                <div>
+                  <label class="text-xs font-extrabold text-gray-600 block mb-1">KG</label>
+                  <input type="number" value="${ex.carga || ''}" placeholder="—" onchange="updateForjaExercicio('${ex.id}','carga',this.value)"
+                    class="forja-input w-full px-3 py-2.5 rounded-xl text-center text-sm font-black min-h-[44px]">
+                </div>
+              </div>
+            </div>
+          `).join('')}
+
+          <!-- Add Exercise -->
+          ${forjaShowingLibrary ? `
+            <div class="card-neu p-4 rounded-2xl space-y-3">
+              <input id="forjaCustomInput" type="text" list="exerciseListForja" placeholder="Nome do exercício..."
+                class="forja-input w-full px-4 py-3.5 rounded-xl text-base font-bold min-h-[48px]"
+                onkeydown="if(event.key==='Enter'){addForjaExercicio(this.value);}">
+              <datalist id="exerciseListForja">
+                ${EXERCISE_LIBRARY.map(e => `<option value="${e}">`).join('')}
+              </datalist>
+              <div class="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto">
+                ${EXERCISE_LIBRARY.slice(0, 20).map(e => `
+                  <button onclick="addForjaExercicio('${e}')" class="text-left px-3 py-2.5 rounded-lg bg-black border border-[#222] text-sm font-bold text-gray-400 hover:border-royal hover:text-white transition-all min-h-[44px] active:bg-white/5">${e}</button>
+                `).join('')}
+              </div>
+              <button onclick="forjaShowingLibrary=false;renderActiveTab();" class="w-full py-2.5 text-sm font-bold text-gray-600 min-h-[44px]">Cancelar</button>
+            </div>
+          ` : `
+            <button onclick="forjaShowingLibrary=true;renderActiveTab();"
+              class="w-full py-4 rounded-2xl border-2 border-dashed border-[#333] hover:border-royal text-gray-500 hover:text-white font-extrabold text-base transition-all min-h-[52px] active:scale-[0.97]">
+              + Adicionar Exercício
+            </button>
+          `}
+
+          <!-- Forja Actions -->
+          ${forjaExercicios.length > 0 ? `
+            <div class="flex gap-2">
+              <button onclick="saveForjaTreino()"
+                class="flex-1 py-3.5 rounded-xl bg-[#111] border border-[#333] text-white font-extrabold text-sm min-h-[48px] active:scale-[0.97]">
+                SALVAR TREINO
+              </button>
+              <button onclick="finalizarForjaTreino()"
+                class="flex-1 py-3.5 rounded-xl btn-royal text-white font-extrabold text-sm min-h-[48px] active:scale-[0.97] transition-all">
+                FINALIZAR (${doneCount}/${forjaExercicios.length})
+              </button>
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }
+
     function renderTreino() {
       const today = getTodayKey();
       const todayDay = getTodayWorkoutDay();
@@ -1981,157 +2456,165 @@
       const plan = DEFAULT_WORKOUT_PLAN[viewDay];
       const isToday = viewDay === todayDay;
       const log = isToday ? getWorkoutLog(today) : { exercises: {}, finalized: false };
-      const isRest = !plan; // Sunday
+      const isRest = !plan;
       const isFinalized = isToday && log.finalized;
-
-      // Count completed exercises
       const doneCount = plan ? plan.exercises.filter(e => log.exercises[e.id]?.done).length : 0;
       const totalExercises = plan ? plan.exercises.length : 0;
       const stagnationAlerts = getStagnationAlerts();
 
       return `
-        <div class="tab-enter space-y-4 max-w-lg mx-auto">
+        <div class="tab-enter space-y-5 max-w-lg mx-auto">
           <div class="pt-1">
             <h2 class="text-2xl font-extrabold">Atlas <span class="text-royal">Treino</span></h2>
-            <p class="text-gray-500 text-sm font-semibold mt-1">Sua ficha de guerra. Sem papel, sem desculpa.</p>
+            <p class="text-gray-500 text-base font-semibold mt-1">Sua ficha de guerra. Sem papel, sem desculpa.</p>
           </div>
 
-          <!-- DAY SELECTOR -->
-          <div class="flex gap-1.5">
-            ${WORKOUT_DAYS.map((d, i) => {
-              const isActive = d === viewDay;
-              const hasPlan = !!DEFAULT_WORKOUT_PLAN[d];
-              return `
-                <button onclick="selectWorkoutDay('${d}')"
-                  class="day-selector-btn flex-1 py-2 rounded-lg text-[10px] font-extrabold border transition-all ${isActive ? 'active-day' : hasPlan ? 'bg-[#111] border-[#333] text-gray-400 hover:border-gray-500' : 'bg-[#0a0a0a] border-[#222] text-gray-700'}">
-                  ${WORKOUT_DAY_LABELS[i]}
-                </button>
-              `;
-            }).join('')}
+          <!-- ===== PR CAMPAIGN BANNER ===== -->
+          ${renderCampaignBanner()}
+
+          <!-- ===== MODE TOGGLE: Ficha / Forja ===== -->
+          <div class="flex gap-2">
+            <button onclick="setAtlasMode('ficha')"
+              class="flex-1 py-3 rounded-xl font-extrabold text-sm min-h-[48px] transition-all active:scale-[0.97] ${atlasMode === 'ficha' ? 'btn-royal text-white' : 'bg-[#111] border border-[#333] text-gray-500'}">
+              FICHA PADRÃO
+            </button>
+            <button onclick="setAtlasMode('forja')"
+              class="flex-1 py-3 rounded-xl font-extrabold text-sm min-h-[48px] transition-all active:scale-[0.97] ${atlasMode === 'forja' ? 'btn-royal text-white' : 'bg-[#111] border border-[#333] text-gray-500'}">
+              A FORJA
+            </button>
           </div>
 
-          ${isRest ? `
-            <!-- REST DAY -->
-            <div class="bg-[#111] border border-[#333] rounded-xl p-8 text-center">
-              <p class="text-4xl mb-3">😴</p>
-              <p class="text-xl font-black text-gray-400">DIA DE DESCANSO</p>
-              <p class="text-xs font-bold text-gray-600 mt-2">Recuperação é parte do processo. Descanse para voltar mais forte.</p>
-            </div>
-          ` : `
-            <!-- WORKOUT HEADER -->
-            <div class="card-neu p-4">
-              <div class="flex items-center justify-between">
-                <div>
-                  <p class="text-[10px] font-extrabold tracking-widest text-gray-500">${isToday ? 'TREINO DE HOJE' : 'VISUALIZANDO'}</p>
-                  <p class="text-lg font-black text-white mt-1">${plan.label}</p>
-                </div>
-                <div class="text-center">
-                  <p class="text-3xl font-black workout-load ${doneCount === totalExercises && totalExercises > 0 ? 'neon-text' : 'text-gray-500'}">${doneCount}/${totalExercises}</p>
-                  <p class="text-[9px] font-bold text-gray-600">EXERCÍCIOS</p>
-                </div>
-              </div>
-              ${isToday && totalExercises > 0 ? `
-                <div class="w-full h-2 bg-black rounded-full overflow-hidden mt-3">
-                  <div class="h-full rounded-full transition-all duration-500 ease-out ${doneCount === totalExercises ? 'neon-bar' : 'bg-royal'}" style="width:${Math.round((doneCount / totalExercises) * 100)}%"></div>
-                </div>
-              ` : ''}
-            </div>
-
-            <!-- REST TIMER -->
-            ${isToday && restTimerSeconds > 0 ? `
-              <div class="card-neu p-3" id="restTimerContainer">
-                <div class="flex items-center justify-between mb-1">
-                  <span id="restTimerLabel" class="text-[10px] font-extrabold text-royal tracking-wider">Descanso: ${restTimerSeconds}s</span>
-                  <button onclick="stopRestTimer(); document.getElementById('restTimerContainer').style.display='none'" class="text-[10px] font-bold text-gray-600 hover:text-red-400 transition-colors">PULAR</button>
-                </div>
-                <div class="w-full h-1 bg-black rounded-full overflow-hidden">
-                  <div id="restTimerBar" class="rest-timer-bar" style="width:100%"></div>
-                </div>
-              </div>
-            ` : ''}
-
-            <!-- EXERCISE TABLE -->
-            <div class="card-neu overflow-hidden">
-              <!-- Table Header -->
-              <div class="grid grid-cols-[1fr_80px_80px_40px] gap-0 px-4 py-2.5 border-b border-[#222]">
-                <span class="text-[9px] font-extrabold tracking-widest text-gray-600">EXERCÍCIO</span>
-                <span class="text-[9px] font-extrabold tracking-widest text-gray-600 text-center">SxR</span>
-                <span class="text-[9px] font-extrabold tracking-widest text-gray-600 text-center">KG</span>
-                <span class="text-[9px] font-extrabold tracking-widest text-gray-600 text-center">OK</span>
-              </div>
-
-              <!-- Exercise Rows -->
-              ${plan.exercises.map(ex => {
-                const exLog = log.exercises[ex.id] || { done: false, load: 0 };
-                const loadHistory = userState.workoutLoads[ex.id] || { lastLoad: 0, pr: 0 };
-                const currentLoad = isToday ? (exLog.load || loadHistory.lastLoad) : loadHistory.lastLoad;
-                const isPR = isToday && exLog.load > 0 && exLog.load >= loadHistory.pr && loadHistory.pr > 0;
-                const isDone = isToday && exLog.done;
-
-                const history = getExerciseHistory(ex.id);
+          ${atlasMode === 'forja' ? renderForja() : `
+            <!-- ===== FICHA PADRÃO ===== -->
+            <!-- DAY SELECTOR -->
+            <div class="flex gap-1.5">
+              ${WORKOUT_DAYS.map((d, i) => {
+                const isActive = d === viewDay;
+                const hasPlan = !!DEFAULT_WORKOUT_PLAN[d];
                 return `
-                  <div class="exercise-row grid grid-cols-[1fr_80px_80px_40px] gap-0 px-4 py-3 border-b border-[#1a1a1a] items-center ${isDone ? 'done-exercise' : ''}">
-                    <div class="min-w-0">
-                      <div class="flex items-center gap-1">
-                        <p class="exercise-name text-sm font-bold ${isDone ? 'text-gray-600' : 'text-gray-200'} truncate">${ex.name}</p>
-                        ${history.length > 0 ? `<button onclick="event.stopPropagation(); toggleExerciseHistory('${ex.id}')" class="text-[9px] text-gray-600 hover:text-royal px-1 transition-colors">\u25BC</button>` : ''}
-                      </div>
-                      ${isPR ? '<span class="pr-badge text-[8px] font-black px-1.5 py-0.5 rounded mt-0.5 inline-block">PR!</span>' : ''}
-                      ${stagnationAlerts[ex.id] ? '<span class="stagnation-tag text-[8px] font-black px-1.5 py-0.5 rounded mt-0.5 inline-block">⚠ AUMENTE A CARGA</span>' : ''}
-                      ${!isToday && loadHistory.pr > 0 ? `<p class="text-[9px] font-bold text-gray-700 mt-0.5">PR: ${loadHistory.pr}kg</p>` : ''}
-                      ${history.length > 0 ? `
-                        <div id="history-${ex.id}" class="hidden mt-1 space-y-0.5">
-                          <p class="text-[8px] font-extrabold text-gray-600 tracking-wider">ÚLTIMAS CARGAS:</p>
-                          ${history.map(h => `<p class="text-[9px] font-bold text-gray-600">${h.date.slice(5)}: <span class="text-gray-400 workout-load">${h.load}kg</span></p>`).join('')}
-                        </div>
-                      ` : ''}
-                    </div>
-                    <div class="text-center">
-                      <span class="workout-load text-sm font-black ${isDone ? 'text-gray-600' : 'text-gray-400'}">${ex.sets}x${ex.reps}</span>
-                    </div>
-                    <div class="flex justify-center">
-                      ${isToday ? `
-                        <input type="number" value="${currentLoad || ''}" placeholder="—"
-                          class="w-16 px-1 py-1.5 rounded text-center text-sm font-black workout-load"
-                          style="background:#0a0a0a !important; border:1px solid #222 !important;"
-                          onchange="updateExerciseLoad('${ex.id}', this.value)"
-                          ${isDone ? '' : ''}>
-                      ` : `
-                        <span class="workout-load text-sm font-black ${loadHistory.lastLoad > 0 ? 'text-gray-400' : 'text-gray-700'}">${loadHistory.lastLoad > 0 ? loadHistory.lastLoad : '—'}</span>
-                      `}
-                    </div>
-                    <div class="flex justify-center">
-                      ${isToday ? `
-                        <button onclick="toggleExerciseDone('${ex.id}')"
-                          class="w-7 h-7 rounded-lg border-2 flex items-center justify-center transition-all active:scale-90 ${isDone ? 'bg-[#00FF64] border-[#00FF64]' : 'border-[#444] hover:border-gray-400'}">
-                          ${isDone ? '<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="black" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>' : ''}
-                        </button>
-                      ` : `
-                        <span class="text-gray-700">—</span>
-                      `}
-                    </div>
-                  </div>
+                  <button onclick="selectWorkoutDay('${d}')"
+                    class="day-selector-btn flex-1 py-2.5 rounded-xl text-xs font-extrabold border transition-all min-h-[44px] ${isActive ? 'active-day' : hasPlan ? 'bg-[#111] border-[#333] text-gray-400 hover:border-gray-500' : 'bg-[#0a0a0a] border-[#222] text-gray-700'}">
+                    ${WORKOUT_DAY_LABELS[i]}
+                  </button>
                 `;
               }).join('')}
             </div>
 
-            ${isToday && !isFinalized ? `
-              <!-- FINALIZAR TREINO -->
-              <button onclick="finalizeWorkout()"
-                class="w-full py-4 rounded-xl ${doneCount === totalExercises && doneCount > 0 ? 'btn-royal' : 'bg-[#111] border-2 border-[#333]'} text-white font-extrabold text-base tracking-wider active:scale-[0.97] transition-all">
-                ${doneCount === totalExercises && doneCount > 0 ? '🏋️ FINALIZAR TREINO' : `🏋️ FINALIZAR TREINO (${doneCount}/${totalExercises})`}
-              </button>
-            ` : ''}
-
-            ${isFinalized ? `
-              <div class="rounded-xl p-5 text-center border border-[#00FF64]/30" style="background: rgba(0,255,100,0.05); box-shadow: 0 0 30px rgba(0,255,100,0.1);">
-                <p class="text-3xl mb-2">🏆</p>
-                <p class="neon-text font-black text-xl tracking-wide">TREINO CONCLUÍDO</p>
-                <p class="text-gray-400 text-xs font-bold mt-2">Hábito 'Treino de Força' marcado automaticamente.</p>
+            ${isRest ? `
+              <div class="bg-[#111] border border-[#333] rounded-2xl p-8 text-center">
+                <p class="text-4xl mb-3">😴</p>
+                <p class="text-xl font-black text-gray-400">DIA DE DESCANSO</p>
+                <p class="text-sm font-bold text-gray-600 mt-2">Recuperação é parte do processo.</p>
               </div>
-            ` : ''}
+            ` : `
+              <!-- WORKOUT HEADER -->
+              <div class="card-neu p-5">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-xs font-extrabold tracking-widest text-gray-500">${isToday ? 'TREINO DE HOJE' : 'VISUALIZANDO'}</p>
+                    <p class="text-xl font-black text-white mt-1">${plan.label}</p>
+                  </div>
+                  <div class="text-center">
+                    <p class="text-3xl font-black workout-load ${doneCount === totalExercises && totalExercises > 0 ? 'neon-text' : 'text-gray-500'}">${doneCount}/${totalExercises}</p>
+                    <p class="text-xs font-bold text-gray-600">EXERCÍCIOS</p>
+                  </div>
+                </div>
+                ${isToday && totalExercises > 0 ? `
+                  <div class="w-full h-3 bg-black rounded-full overflow-hidden mt-4">
+                    <div class="h-full rounded-full transition-all duration-500 ease-out ${doneCount === totalExercises ? 'neon-bar' : 'bg-royal'}" style="width:${Math.round((doneCount / totalExercises) * 100)}%"></div>
+                  </div>
+                ` : ''}
+              </div>
+
+              <!-- REST TIMER -->
+              ${isToday && restTimerSeconds > 0 ? `
+                <div class="card-neu p-4" id="restTimerContainer">
+                  <div class="flex items-center justify-between mb-2">
+                    <span id="restTimerLabel" class="text-sm font-extrabold text-royal tracking-wider">Descanso: ${restTimerSeconds}s</span>
+                    <button onclick="stopRestTimer(); document.getElementById('restTimerContainer').style.display='none'" class="text-sm font-bold text-gray-600 hover:text-red-400 transition-colors min-h-[44px] px-3">PULAR</button>
+                  </div>
+                  <div class="w-full h-2 bg-black rounded-full overflow-hidden">
+                    <div id="restTimerBar" class="rest-timer-bar" style="width:100%"></div>
+                  </div>
+                </div>
+              ` : ''}
+
+              <!-- EXERCISE TABLE -->
+              <div class="card-neu overflow-hidden rounded-2xl">
+                <div class="grid grid-cols-[1fr_65px_65px_48px] gap-0 px-4 py-3 border-b border-[#222]">
+                  <span class="text-xs font-extrabold tracking-widest text-gray-600">EXERCÍCIO</span>
+                  <span class="text-xs font-extrabold tracking-widest text-gray-600 text-center">SxR</span>
+                  <span class="text-xs font-extrabold tracking-widest text-gray-600 text-center">KG</span>
+                  <span class="text-xs font-extrabold tracking-widest text-gray-600 text-center">OK</span>
+                </div>
+
+                ${plan.exercises.map(ex => {
+                  const exLog = log.exercises[ex.id] || { done: false, load: 0 };
+                  const loadHistory = userState.workoutLoads[ex.id] || { lastLoad: 0, pr: 0 };
+                  const currentLoad = isToday ? (exLog.load || loadHistory.lastLoad) : loadHistory.lastLoad;
+                  const isPR = isToday && exLog.load > 0 && exLog.load >= loadHistory.pr && loadHistory.pr > 0;
+                  const isDone = isToday && exLog.done;
+                  const history = getExerciseHistory(ex.id);
+                  return `
+                    <div class="exercise-row grid grid-cols-[1fr_65px_65px_48px] gap-0 px-4 py-3.5 border-b border-[#1a1a1a] items-center ${isDone ? 'done-exercise' : ''}">
+                      <div class="min-w-0">
+                        <div class="flex items-center gap-1">
+                          <p class="exercise-name text-sm font-bold ${isDone ? 'text-gray-600' : 'text-gray-200'} truncate">${ex.name}</p>
+                          ${history.length > 0 ? `<button onclick="event.stopPropagation(); toggleExerciseHistory('${ex.id}')" class="text-xs text-gray-600 hover:text-royal px-1 transition-colors min-w-[28px] min-h-[28px]">\u25BC</button>` : ''}
+                        </div>
+                        ${isPR ? '<span class="pr-badge text-[9px] font-black px-2 py-0.5 rounded mt-0.5 inline-block">PR!</span>' : ''}
+                        ${stagnationAlerts[ex.id] ? '<span class="stagnation-tag text-[9px] font-black px-2 py-0.5 rounded mt-0.5 inline-block">AUMENTE A CARGA</span>' : ''}
+                        ${!isToday && loadHistory.pr > 0 ? `<p class="text-xs font-bold text-gray-700 mt-0.5">PR: ${loadHistory.pr}kg</p>` : ''}
+                        ${history.length > 0 ? `
+                          <div id="history-${ex.id}" class="hidden mt-1.5 space-y-0.5">
+                            <p class="text-[9px] font-extrabold text-gray-600 tracking-wider">ÚLTIMAS CARGAS:</p>
+                            ${history.map(h => `<p class="text-xs font-bold text-gray-600">${h.date.slice(5)}: <span class="text-gray-400 workout-load">${h.load}kg</span></p>`).join('')}
+                          </div>
+                        ` : ''}
+                      </div>
+                      <div class="text-center">
+                        <span class="workout-load text-sm font-black ${isDone ? 'text-gray-600' : 'text-gray-400'}">${ex.sets}x${ex.reps}</span>
+                      </div>
+                      <div class="flex justify-center">
+                        ${isToday ? `
+                          <input type="number" value="${currentLoad || ''}" placeholder="—"
+                            class="w-14 px-1 py-2 rounded-lg text-center text-sm font-black workout-load forja-input min-h-[40px]"
+                            onchange="updateExerciseLoad('${ex.id}', this.value)">
+                        ` : `
+                          <span class="workout-load text-sm font-black ${loadHistory.lastLoad > 0 ? 'text-gray-400' : 'text-gray-700'}">${loadHistory.lastLoad > 0 ? loadHistory.lastLoad : '—'}</span>
+                        `}
+                      </div>
+                      <div class="flex justify-center">
+                        ${isToday ? `
+                          <button onclick="toggleExerciseDone('${ex.id}')"
+                            class="w-8 h-8 rounded-lg border-2 flex items-center justify-center transition-all active:scale-90 min-w-[44px] min-h-[44px] ${isDone ? 'bg-[#00FF64] border-[#00FF64]' : 'border-[#444] hover:border-gray-400'}">
+                            ${isDone ? '<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="black" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>' : ''}
+                          </button>
+                        ` : `<span class="text-gray-700">—</span>`}
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+
+              ${isToday && !isFinalized ? `
+                <button onclick="finalizeWorkout()"
+                  class="w-full py-4 rounded-2xl ${doneCount === totalExercises && doneCount > 0 ? 'btn-royal' : 'bg-[#111] border-2 border-[#333]'} text-white font-extrabold text-base tracking-wider min-h-[52px] active:scale-[0.97] transition-all">
+                  ${doneCount === totalExercises && doneCount > 0 ? 'FINALIZAR TREINO' : `FINALIZAR TREINO (${doneCount}/${totalExercises})`}
+                </button>
+              ` : ''}
+
+              ${isFinalized ? `
+                <div class="rounded-2xl p-6 text-center border border-[#00FF64]/30" style="background: rgba(0,255,100,0.05); box-shadow: 0 0 30px rgba(0,255,100,0.1);">
+                  <p class="text-4xl mb-3">🏆</p>
+                  <p class="neon-text font-black text-2xl tracking-wide">TREINO CONCLUÍDO</p>
+                  <p class="text-gray-400 text-sm font-bold mt-2">Hábito marcado automaticamente.</p>
+                </div>
+              ` : ''}
+            `}
           `}
         </div>
+        ${renderCampaignModal()}
       `;
     }
 
