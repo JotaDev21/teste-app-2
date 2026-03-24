@@ -113,7 +113,7 @@
       background: linear-gradient(135deg, #2563EB, #1d4ed8);
       transition: all 0.25s cubic-bezier(.4,0,.2,1);
       box-shadow: 0 2px 12px rgba(37,99,235,0.3);
-      border-radius: 14px;
+      border-radius: 16px;
     }
     .btn-royal:hover { box-shadow: 0 4px 20px rgba(37,99,235,0.5); transform: translateY(-1px); }
     .btn-royal:active { transform: scale(0.96) translateY(0); box-shadow: 0 1px 6px rgba(37,99,235,0.3), 0 0 20px rgba(37,99,235,0.25); }
@@ -258,7 +258,7 @@
 
     /* ===== STATUS MODULE ===== */
     .status-bar { transition: height 0.6s ease-out; border-radius: 4px 4px 0 0; }
-    .status-metric-card { background: #111; border: 1px solid rgba(255,255,255,0.04); border-radius: 12px; transition: all 0.2s ease; box-shadow: 4px 4px 12px rgba(0,0,0,0.5), -2px -2px 6px rgba(255,255,255,0.02); }
+    .status-metric-card { background: rgba(17,17,17,0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; transition: all 0.2s ease; box-shadow: 4px 4px 12px rgba(0,0,0,0.5), -2px -2px 6px rgba(255,255,255,0.02); }
     .verdict-card { border-radius: 16px; position: relative; overflow: hidden; }
     .verdict-card::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255,255,255,0.01) 3px, rgba(255,255,255,0.01) 6px); pointer-events: none; }
 
@@ -862,7 +862,7 @@
     }
   </style>
 </head>
-<body class="bg-dark text-white min-h-screen flex flex-col select-none">
+<body class="bg-black text-white min-h-screen flex flex-col select-none">
 
   <!-- ========== AUTH SCREEN ========== -->
   <div id="authScreen" class="auth-screen">
@@ -931,7 +931,7 @@
 
   <!-- ========== BOTTOM NAV ========== -->
   <nav class="fixed bottom-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-xl border-t border-border" style="padding-bottom: env(safe-area-inset-bottom, 8px);">
-    <div class="flex justify-around items-center py-2 max-w-lg mx-auto">
+    <div class="flex justify-around items-center py-2 max-w-md mx-auto">
       <button class="nav-btn flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[56px] px-2 py-2 rounded-xl active:bg-white/5" onclick="switchTab('dashboard')">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
         <span class="text-[10px] font-bold">Home</span>
@@ -2137,7 +2137,7 @@
       setTimeout(fetchAIVerdict, 300);
 
       return `
-        <div class="tab-enter stagger-enter space-y-4 max-w-lg mx-auto">
+        <div class="tab-enter stagger-enter space-y-5 max-w-md mx-auto">
 
           <!-- O VEREDITO DO MENTOR -->
           <div class="ai-verdict-card glass-panel rounded-2xl p-5 border border-red-900/20">
@@ -2179,7 +2179,7 @@
             ${(() => {
               const lvl = calcularNivel(userState.xpTotal || 0);
               return `
-                <button onclick="switchTab('perfil')" class="mt-4 flex items-center gap-3 px-4 py-3 rounded-xl bg-black border border-[#222] hover:border-royal transition-all min-h-[48px] active:bg-white/5">
+                <button onclick="switchTab('perfil')" class="mt-4 flex items-center gap-3 px-5 py-3.5 rounded-2xl bg-black border border-[#222] hover:border-royal transition-all min-h-[56px] active:bg-white/5 haptic">
                   <span class="text-xl">${userState.profile?.avatar || '⚔️'}</span>
                   <span class="text-sm font-black ${lvl.isMax ? 'text-yellow-400' : 'text-royal'}">LVL ${lvl.nivel}</span>
                   <span class="text-xs font-bold text-gray-600">${(userState.xpTotal || 0).toLocaleString('pt-BR')} XP</span>
@@ -2332,10 +2332,10 @@
       const streak = userState.streakCount || 0;
 
       return `
-        <div class="tab-enter stagger-enter space-y-4 max-w-lg mx-auto">
+        <div class="tab-enter stagger-enter space-y-5 max-w-md mx-auto">
           <div class="pt-1">
-            <h2 class="text-2xl font-extrabold">The <span class="text-royal">Grind</span></h2>
-            <p class="text-gray-500 text-base font-semibold mt-1">10 missões de guerra. Sorteio diário. Sem moleza.</p>
+            <h2 class="text-3xl font-black">The <span class="text-royal">Grind</span></h2>
+            <p class="text-gray-400 text-base font-semibold mt-1">10 missões de guerra. Sorteio diário. Sem moleza.</p>
           </div>
 
           <!-- STREAK + XP HEADER -->
@@ -2405,7 +2405,7 @@
           </div>
 
           ${done > 0 && pct < 100 ? `
-            <div class="bg-[#111] border border-[#222] rounded-2xl p-5 text-center">
+            <div class="glass-panel rounded-2xl p-5 text-center">
               <p class="text-gray-500 text-sm font-bold mb-1">FALTAM</p>
               <p class="text-4xl font-black text-white">${total - done}</p>
               <p class="text-gray-600 text-sm font-bold mt-1">MISSÕES PARA COMPLETAR O DIA</p>
@@ -2439,10 +2439,10 @@
       const monthLabel = new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }).toUpperCase();
 
       return `
-        <div class="tab-enter stagger-enter space-y-4 max-w-lg mx-auto">
+        <div class="tab-enter stagger-enter space-y-5 max-w-md mx-auto">
           <div class="pt-1">
-            <h2 class="text-2xl font-extrabold">War <span class="text-royal">Chest</span></h2>
-            <p class="text-gray-500 text-sm font-semibold mt-1">Controle rigoroso de capital. ${monthLabel}.</p>
+            <h2 class="text-3xl font-black">War <span class="text-royal">Chest</span></h2>
+            <p class="text-gray-400 text-base font-semibold mt-1">Controle rigoroso de capital. ${monthLabel}.</p>
           </div>
 
           <!-- SALDO PRINCIPAL -->
@@ -2456,16 +2456,16 @@
           </div>
 
           <!-- Stats Row -->
-          <div class="grid grid-cols-3 gap-2">
-            <div class="bg-[#111] border border-[#333] rounded-xl p-3 text-center">
+          <div class="grid grid-cols-3 gap-3">
+            <div class="glass-panel rounded-xl p-3 text-center">
               <p class="text-[10px] font-bold text-gray-500">GASTO TOTAL</p>
               <p class="text-lg font-black text-gray-300 mt-1">R$${totalGasto.toLocaleString('pt-BR')}</p>
             </div>
-            <div class="bg-[#111] border border-[#333] rounded-xl p-3 text-center">
+            <div class="glass-panel rounded-xl p-3 text-center">
               <p class="text-[10px] font-bold text-gray-500">ESSENCIAL</p>
               <p class="text-lg font-black text-gray-400 mt-1">R$${totalEssencial.toLocaleString('pt-BR')}</p>
             </div>
-            <div class="bg-[#111] border border-[#333] rounded-xl p-3 text-center ${dopaminaAlert ? 'neon-red-glow' : ''}">
+            <div class="glass-panel rounded-xl p-3 text-center ${dopaminaAlert ? 'neon-red-glow' : ''}">
               <p class="text-[10px] font-bold ${dopaminaAlert ? 'text-red-400' : 'text-gray-500'}">DOPAMINA</p>
               <p class="text-lg font-black ${dopaminaAlert ? 'neon-red' : 'text-red-900'} mt-1">R$${totalDopamina.toLocaleString('pt-BR')}</p>
               ${budget > 0 ? `<p class="text-[8px] font-bold ${dopaminaAlert ? 'text-red-400' : 'text-gray-600'} mt-0.5">${dopaminaPct.toFixed(1)}% DO BUDGET</p>` : ''}
@@ -2554,7 +2554,7 @@
 
           <!-- GESTOR DE CAPITAL IA -->
           <button onclick="showWarChestAdvisor=true;renderActiveTab();"
-            class="w-full py-4 rounded-xl font-extrabold text-sm text-white active:scale-[0.93] haptic transition-transform ${showWarChestAdvisor ? 'hidden' : ''}"
+            class="w-full py-4 rounded-2xl font-extrabold text-sm text-white min-h-[56px] active:scale-[0.93] haptic transition-transform ${showWarChestAdvisor ? 'hidden' : ''}"
             style="background: linear-gradient(135deg, #1e3a5f 0%, #0a1a2e 50%, #000 100%); border: 1px solid rgba(37,99,235,0.3);">
             <span class="text-lg mr-2">🏦</span> CONSULTAR GESTOR DE CAPITAL — IA
           </button>
@@ -2562,7 +2562,7 @@
 
           <!-- Últimos 5 Registros -->
           ${last5.length > 0 ? `
-            <div class="bg-[#111] border border-[#333] rounded-xl p-4">
+            <div class="glass-panel rounded-xl p-4">
               <div class="flex justify-between items-center mb-3">
                 <h3 class="text-sm font-extrabold text-gray-300">ÚLTIMOS REGISTROS</h3>
                 <button onclick="clearMonthExpenses()" class="text-[10px] font-bold text-gray-600 hover:text-red-400 transition-colors">LIMPAR MÊS</button>
@@ -2593,7 +2593,7 @@
               ${expenses.length > 5 ? `<p class="text-[10px] text-gray-700 font-bold text-center mt-2">+ ${expenses.length - 5} registros anteriores</p>` : ''}
             </div>
           ` : `
-            <div class="bg-[#111] border border-[#333] rounded-xl p-6 text-center">
+            <div class="glass-panel rounded-xl p-6 text-center">
               <p class="text-gray-700 text-sm font-bold">Nenhum gasto registrado este mês.</p>
               <p class="text-gray-800 text-xs font-semibold mt-1">Mantenha a disciplina.</p>
             </div>
@@ -2852,7 +2852,7 @@
             <p class="text-3xl mb-2">🏆</p>
             <p class="neon-text font-black text-xl">${c.nome} — CONCLUÍDA</p>
             <p class="text-sm font-bold text-gray-500 mt-1">${c.exercicio}: ${c.prAtual}kg → ${c.prObjetivo}kg</p>
-            <button onclick="userState.prCampaign = null; saveData(); renderActiveTab();" class="mt-4 px-5 py-3 rounded-xl btn-royal text-white font-extrabold text-sm min-h-[48px] active:scale-[0.93] haptic">NOVA CAMPANHA</button>
+            <button onclick="userState.prCampaign = null; saveData(); renderActiveTab();" class="mt-4 px-5 py-3.5 rounded-2xl btn-royal text-white font-extrabold text-sm min-h-[56px] active:scale-[0.93] haptic">NOVA CAMPANHA</button>
           </div>
         `;
       }
@@ -2893,14 +2893,14 @@
           </div>
 
           <!-- Action buttons -->
-          <div class="flex gap-2">
+          <div class="flex gap-3">
             ${isBoss ? `
-              <button onclick="concluirBossFight(true)" class="flex-1 py-3.5 rounded-xl font-extrabold text-sm text-black min-h-[48px] active:scale-[0.93] haptic transition-all" style="background:linear-gradient(135deg,#FF6B00,#FFAA00); box-shadow:0 0 20px rgba(255,107,0,0.3);">BATI O PR!</button>
-              <button onclick="concluirBossFight(false)" class="px-4 py-3.5 rounded-xl bg-[#111] border border-[#333] text-gray-500 font-extrabold text-sm min-h-[48px] active:scale-[0.93] haptic">FALHOU</button>
+              <button onclick="concluirBossFight(true)" class="flex-1 py-4 rounded-2xl font-extrabold text-sm text-black min-h-[56px] active:scale-[0.93] haptic transition-all" style="background:linear-gradient(135deg,#FF6B00,#FFAA00); box-shadow:0 0 20px rgba(255,107,0,0.3);">BATI O PR!</button>
+              <button onclick="concluirBossFight(false)" class="px-5 py-4 rounded-2xl glass-panel text-gray-500 font-extrabold text-sm min-h-[56px] active:scale-[0.93] haptic">FALHOU</button>
             ` : `
-              <button onclick="avancarFaseCampanha()" class="flex-1 py-3.5 rounded-xl btn-royal text-white font-extrabold text-sm min-h-[48px] active:scale-[0.93] haptic transition-all">TREINO CONCLUÍDO (+1)</button>
+              <button onclick="avancarFaseCampanha()" class="flex-1 py-4 rounded-2xl btn-royal text-white font-extrabold text-sm min-h-[56px] active:scale-[0.93] haptic transition-all">TREINO CONCLUÍDO (+1)</button>
             `}
-            <button onclick="if(confirm('Abandonar campanha?')) abandonarCampanha()" class="px-4 py-3.5 rounded-xl bg-[#111] border border-[#333] text-gray-600 font-bold text-xs min-h-[48px] active:scale-[0.93] haptic">SAIR</button>
+            <button onclick="if(confirm('Abandonar campanha?')) abandonarCampanha()" class="px-5 py-4 rounded-2xl glass-panel text-gray-600 font-bold text-xs min-h-[56px] active:scale-[0.93] haptic">SAIR</button>
           </div>
         </div>
       `;
@@ -3023,13 +3023,13 @@
 
           <!-- Forja Actions -->
           ${forjaExercicios.length > 0 ? `
-            <div class="flex gap-2">
+            <div class="flex gap-3">
               <button onclick="saveForjaTreino()"
-                class="flex-1 py-3.5 rounded-xl bg-[#111] border border-[#333] text-white font-extrabold text-sm min-h-[48px] active:scale-[0.93] haptic">
+                class="flex-1 py-4 rounded-2xl glass-panel text-white font-extrabold text-sm min-h-[56px] active:scale-[0.93] haptic">
                 SALVAR TREINO
               </button>
               <button onclick="finalizarForjaTreino()"
-                class="flex-1 py-3.5 rounded-xl btn-royal text-white font-extrabold text-sm min-h-[48px] active:scale-[0.93] haptic transition-all">
+                class="flex-1 py-4 rounded-2xl btn-royal text-white font-extrabold text-sm min-h-[56px] active:scale-[0.93] haptic transition-all">
                 FINALIZAR (${doneCount}/${forjaExercicios.length})
               </button>
             </div>
@@ -3052,10 +3052,10 @@
       const stagnationAlerts = getStagnationAlerts();
 
       return `
-        <div class="tab-enter stagger-enter space-y-5 max-w-lg mx-auto">
+        <div class="tab-enter stagger-enter space-y-5 max-w-md mx-auto">
           <div class="pt-1">
-            <h2 class="text-2xl font-extrabold">Atlas <span class="text-royal">Treino</span></h2>
-            <p class="text-gray-500 text-base font-semibold mt-1">Sua ficha de guerra. Sem papel, sem desculpa.</p>
+            <h2 class="text-3xl font-black">Atlas <span class="text-royal">Treino</span></h2>
+            <p class="text-gray-400 text-base font-semibold mt-1">Sua ficha de guerra. Sem papel, sem desculpa.</p>
           </div>
 
           <!-- ===== PR CAMPAIGN BANNER ===== -->
@@ -3064,11 +3064,11 @@
           <!-- ===== MODE TOGGLE: Ficha / Forja ===== -->
           <div class="flex gap-2">
             <button onclick="setAtlasMode('ficha')"
-              class="flex-1 py-3 rounded-xl font-extrabold text-sm min-h-[48px] transition-all active:scale-[0.93] haptic ${atlasMode === 'ficha' ? 'btn-royal text-white' : 'bg-[#111] border border-[#333] text-gray-500'}">
+              class="flex-1 py-3.5 rounded-2xl font-extrabold text-sm min-h-[56px] transition-all active:scale-[0.93] haptic ${atlasMode === 'ficha' ? 'btn-royal text-white' : 'glass-panel text-gray-500'}">
               FICHA PADRÃO
             </button>
             <button onclick="setAtlasMode('forja')"
-              class="flex-1 py-3 rounded-xl font-extrabold text-sm min-h-[48px] transition-all active:scale-[0.93] haptic ${atlasMode === 'forja' ? 'btn-royal text-white' : 'bg-[#111] border border-[#333] text-gray-500'}">
+              class="flex-1 py-3.5 rounded-2xl font-extrabold text-sm min-h-[56px] transition-all active:scale-[0.93] haptic ${atlasMode === 'forja' ? 'btn-royal text-white' : 'glass-panel text-gray-500'}">
               A FORJA
             </button>
           </div>
@@ -3090,7 +3090,7 @@
             </div>
 
             ${isRest ? `
-              <div class="bg-[#111] border border-[#333] rounded-2xl p-8 text-center">
+              <div class="glass-panel rounded-2xl p-8 text-center">
                 <p class="text-4xl mb-3">😴</p>
                 <p class="text-xl font-black text-gray-400">DIA DE DESCANSO</p>
                 <p class="text-sm font-bold text-gray-600 mt-2">Recuperação é parte do processo.</p>
@@ -3410,11 +3410,11 @@
           </p>
           <div class="flex gap-3">
             <button onclick="showStudyMentor=true;removeImmersiveOverlay();renderActiveTab();"
-              class="px-5 py-4 rounded-xl border-2 border-purple-700/40 bg-purple-950/30 text-purple-400 font-extrabold text-sm min-h-[48px] active:scale-95 transition-all">
+              class="px-5 py-4 rounded-2xl border-2 border-purple-700/40 bg-purple-950/30 text-purple-400 font-extrabold text-sm min-h-[56px] active:scale-[0.93] haptic transition-all">
               INVOCAR MENTOR
             </button>
             <button onclick="endFocusSession()"
-              class="px-5 py-4 rounded-xl border-2 border-red-900/60 bg-red-950/30 text-red-400 font-extrabold text-sm min-h-[48px] active:scale-95 transition-all">
+              class="px-5 py-4 rounded-2xl border-2 border-red-900/60 bg-red-950/30 text-red-400 font-extrabold text-sm min-h-[56px] active:scale-[0.93] haptic transition-all">
               FINALIZAR
             </button>
           </div>
@@ -3529,7 +3529,7 @@
       const logs = getStudyLogs().slice().reverse();
       if (logs.length === 0) {
         return `
-          <div class="bg-[#111] border border-[#333] rounded-2xl p-8 text-center">
+          <div class="glass-panel rounded-2xl p-8 text-center">
             <p class="text-3xl mb-3">📜</p>
             <p class="text-lg font-black text-gray-400">O Arquivo está vazio</p>
             <p class="text-sm font-bold text-gray-600 mt-2">Complete sessões de Deep Work e registre dossiês para preencher seu histórico intelectual.</p>
@@ -3572,23 +3572,23 @@
       const sessions = todayFocus.sessions || [];
 
       return `
-        <div class="tab-enter stagger-enter space-y-5 max-w-lg mx-auto">
+        <div class="tab-enter stagger-enter space-y-5 max-w-md mx-auto">
           <div class="pt-1 flex items-center justify-between">
             <div>
-              <h2 class="text-2xl font-extrabold">Deep <span class="text-purple-400">Work</span></h2>
-              <p class="text-gray-500 text-base font-semibold mt-1">A Biblioteca de Alexandria.</p>
+              <h2 class="text-3xl font-black">Deep <span class="text-purple-400">Work</span></h2>
+              <p class="text-gray-400 text-base font-semibold mt-1">A Biblioteca de Alexandria.</p>
             </div>
           </div>
 
           <!-- SUB-TAB TOGGLE -->
           <div class="flex gap-2">
             <button onclick="deepWorkSubTab='timer';renderActiveTab();"
-              class="flex-1 py-3 rounded-xl font-extrabold text-sm min-h-[48px] transition-all active:scale-[0.93] haptic ${deepWorkSubTab === 'timer' ? 'text-white' : 'bg-[#111] border border-[#333] text-gray-500'}"
+              class="flex-1 py-3.5 rounded-2xl font-extrabold text-sm min-h-[56px] transition-all active:scale-[0.93] haptic ${deepWorkSubTab === 'timer' ? 'text-white' : 'glass-panel text-gray-500'}"
               ${deepWorkSubTab === 'timer' ? 'style="background:linear-gradient(135deg,#7C3AED,#5B21B6);box-shadow:0 0 15px rgba(124,58,237,0.3);"' : ''}>
               DEEP WORK
             </button>
             <button onclick="deepWorkSubTab='arquivo';renderActiveTab();"
-              class="flex-1 py-3 rounded-xl font-extrabold text-sm min-h-[48px] transition-all active:scale-[0.93] haptic ${deepWorkSubTab === 'arquivo' ? 'text-white' : 'bg-[#111] border border-[#333] text-gray-500'}"
+              class="flex-1 py-3.5 rounded-2xl font-extrabold text-sm min-h-[56px] transition-all active:scale-[0.93] haptic ${deepWorkSubTab === 'arquivo' ? 'text-white' : 'glass-panel text-gray-500'}"
               ${deepWorkSubTab === 'arquivo' ? 'style="background:linear-gradient(135deg,#7C3AED,#5B21B6);box-shadow:0 0 15px rgba(124,58,237,0.3);"' : ''}>
               O ARQUIVO
             </button>
@@ -3613,13 +3613,13 @@
 
               ${isActive ? `
                 <p class="text-sm font-extrabold text-purple-400/60 mb-4 tracking-wider">SESSÃO EM ANDAMENTO</p>
-                <div class="flex gap-3 w-full max-w-xs">
+                <div class="flex gap-3 w-full">
                   <button onclick="endFocusSession()"
-                    class="flex-1 py-3.5 rounded-xl border-2 border-red-900/60 bg-red-950/30 text-red-400 font-extrabold text-sm min-h-[48px] active:scale-95 transition-all">
+                    class="flex-1 py-4 rounded-2xl border-2 border-red-900/60 bg-red-950/30 text-red-400 font-extrabold text-sm min-h-[56px] active:scale-[0.93] haptic transition-all">
                     FINALIZAR
                   </button>
                   <button onclick="showImmersiveOverlay(); startFocusTicker();"
-                    class="flex-1 py-3.5 rounded-xl border-2 border-purple-700/40 bg-purple-950/30 text-purple-400 font-extrabold text-sm min-h-[48px] active:scale-95 transition-all">
+                    class="flex-1 py-4 rounded-2xl border-2 border-purple-700/40 bg-purple-950/30 text-purple-400 font-extrabold text-sm min-h-[56px] active:scale-[0.93] haptic transition-all">
                     IMERSIVO
                   </button>
                 </div>
@@ -3642,13 +3642,13 @@
             ${isActive && showStudyMentor ? renderStudyMentorPanel() : ''}
             ${isActive && !showStudyMentor ? `
               <button onclick="showStudyMentor=true;renderActiveTab();"
-                class="w-full py-3.5 rounded-xl border border-purple-800/30 bg-purple-950/20 text-purple-400 font-extrabold text-sm min-h-[48px] active:scale-[0.93] haptic transition-all flex items-center justify-center gap-2">
+                class="w-full py-4 rounded-2xl border border-purple-800/30 bg-purple-950/20 text-purple-400 font-extrabold text-sm min-h-[56px] active:scale-[0.93] haptic transition-all flex items-center justify-center gap-2">
                 <span>🧠</span> INVOCAR MENTOR (DÚVIDA)
               </button>
             ` : ''}
 
             <!-- META DIÁRIA -->
-            <div class="bg-[#111] border border-[#333] rounded-2xl p-5">
+            <div class="glass-panel rounded-2xl p-5">
               <div class="flex justify-between items-center mb-3">
                 <span class="text-xs font-extrabold tracking-widest text-gray-500">META: ${goalHours}H DE DEEP WORK</span>
                 <span class="focus-timer-text text-sm font-black" style="color:${goalColor}">${totalHours}h / ${goalHours}.0h</span>
@@ -3692,14 +3692,14 @@
 
             <!-- EXTREME FOCUS MODE -->
             <button onclick="toggleExtremeFocus()"
-              class="w-full py-3.5 rounded-xl ${extremeFocusMode ? 'bg-red-950/30 border-2 border-red-900/40 text-red-400' : 'bg-[#111] border border-[#333] text-gray-400'} font-extrabold text-sm tracking-wider min-h-[48px] active:scale-[0.93] haptic transition-all flex items-center justify-center gap-2">
+              class="w-full py-4 rounded-2xl ${extremeFocusMode ? 'bg-red-950/30 border-2 border-red-900/40 text-red-400' : 'glass-panel text-gray-400'} font-extrabold text-sm tracking-wider min-h-[56px] active:scale-[0.93] haptic transition-all flex items-center justify-center gap-2">
               <span>${extremeFocusMode ? '\u{1F441}\u{FE0F}' : '\u{1F512}'}</span>
               ${extremeFocusMode ? 'DESATIVAR MODO EXTREMO' : 'ATIVAR MODO EXTREMO (ESCONDER NAV)'}
             </button>
 
             <!-- SESSÕES DE HOJE -->
             ${sessions.length > 0 ? `
-              <div class="bg-[#111] border border-[#333] rounded-2xl p-5">
+              <div class="glass-panel rounded-2xl p-5">
                 <p class="text-xs font-extrabold tracking-widest text-gray-500 mb-3">REGISTRO DE OPERAÇÕES</p>
                 <div class="space-y-2.5">
                   ${sessions.slice(-5).reverse().map((s, i) => {
@@ -3721,7 +3721,7 @@
                 </div>
               </div>
             ` : `
-              <div class="bg-[#111] border border-[#333] rounded-2xl p-6 text-center">
+              <div class="glass-panel rounded-2xl p-6 text-center">
                 <p class="text-gray-700 text-sm font-bold">Nenhuma sessão registrada hoje.</p>
                 <p class="text-gray-800 text-xs font-semibold mt-1">Inicie sua primeira sessão de foco.</p>
               </div>
@@ -3924,20 +3924,20 @@
       const objetivo = userState.fuelGoal || 'manutenção';
 
       return `
-        <div class="tab-enter stagger-enter space-y-4 max-w-lg mx-auto">
+        <div class="tab-enter stagger-enter space-y-5 max-w-md mx-auto">
           <div class="pt-1">
-            <h2 class="text-2xl font-extrabold">The <span class="neon-text">Fuel</span></h2>
-            <p class="text-gray-500 text-sm font-semibold mt-1">O Combustível do Guerreiro.</p>
+            <h2 class="text-3xl font-black">The <span class="neon-text">Fuel</span></h2>
+            <p class="text-gray-400 text-base font-semibold mt-1">O Combustível do Guerreiro.</p>
           </div>
 
           <!-- SUB-TAB TOGGLE -->
           <div class="flex gap-2">
             <button onclick="fuelSubTab='scan';renderActiveTab();"
-              class="flex-1 py-3 rounded-xl text-sm font-extrabold transition-all active:scale-[0.93] haptic ${fuelSubTab === 'scan' ? 'text-[#00FF64] border-2 border-[#00FF64]/40 bg-[#00FF64]/5' : 'text-gray-600 border-2 border-[#1a1a1a] bg-black'}">
+              class="flex-1 py-3.5 rounded-2xl text-sm font-extrabold min-h-[56px] transition-all active:scale-[0.93] haptic ${fuelSubTab === 'scan' ? 'text-[#00FF64] border-2 border-[#00FF64]/40 bg-[#00FF64]/5' : 'text-gray-600 glass-panel'}">
               SCANNER
             </button>
             <button onclick="fuelSubTab='log';renderActiveTab();"
-              class="flex-1 py-3 rounded-xl text-sm font-extrabold transition-all active:scale-[0.93] haptic ${fuelSubTab === 'log' ? 'text-[#00FF64] border-2 border-[#00FF64]/40 bg-[#00FF64]/5' : 'text-gray-600 border-2 border-[#1a1a1a] bg-black'}">
+              class="flex-1 py-3.5 rounded-2xl text-sm font-extrabold min-h-[56px] transition-all active:scale-[0.93] haptic ${fuelSubTab === 'log' ? 'text-[#00FF64] border-2 border-[#00FF64]/40 bg-[#00FF64]/5' : 'text-gray-600 glass-panel'}">
               HISTÓRICO (${logs.length})
             </button>
           </div>
@@ -4118,10 +4118,10 @@
       const monthLabel = new Date().toLocaleDateString('pt-BR', { month: 'long' }).toUpperCase();
 
       return `
-        <div class="tab-enter stagger-enter space-y-4 max-w-lg mx-auto">
+        <div class="tab-enter stagger-enter space-y-5 max-w-md mx-auto">
           <div class="pt-1">
-            <h2 class="text-2xl font-extrabold">Relatório de <span class="text-royal">Guerra</span></h2>
-            <p class="text-gray-500 text-sm font-semibold mt-1">Seus números não mentem.</p>
+            <h2 class="text-3xl font-black">Relatório de <span class="text-royal">Guerra</span></h2>
+            <p class="text-gray-400 text-base font-semibold mt-1">Seus números não mentem.</p>
           </div>
 
           <!-- VEREDITO DA IA -->
@@ -4151,7 +4151,7 @@
           </div>
 
           <!-- GRÁFICO SEMANAL -->
-          <div class="bg-[#111] border border-[#222] rounded-xl p-4">
+          <div class="glass-panel rounded-xl p-4">
             <div class="flex justify-between items-center mb-3">
               <p class="text-[10px] font-extrabold tracking-widest text-gray-500">SCORE — ÚLTIMOS 7 DIAS</p>
               <p class="text-xs font-black text-royal">Média: ${avg}</p>
@@ -4173,7 +4173,7 @@
           </div>
 
           <!-- TAXA DE SUCESSO HÁBITOS -->
-          <div class="bg-[#111] border border-[#222] rounded-xl p-4">
+          <div class="glass-panel rounded-xl p-4">
             <div class="flex justify-between items-center mb-2">
               <div class="flex items-center gap-2">
                 <span class="text-lg">⚡</span>
@@ -4188,7 +4188,7 @@
           </div>
 
           <!-- FINANCEIRO DO MÊS -->
-          <div class="bg-[#111] border border-[#222] rounded-xl p-4">
+          <div class="glass-panel rounded-xl p-4">
             <div class="flex items-center gap-2 mb-3">
               <span class="text-lg">💸</span>
               <span class="text-[10px] font-extrabold tracking-widest text-gray-500">FINANCEIRO — ${monthLabel}</span>
@@ -4217,7 +4217,7 @@
           </div>
 
           <!-- FOCO SEMANAL DETALHADO -->
-          <div class="bg-[#111] border border-[#222] rounded-xl p-4">
+          <div class="glass-panel rounded-xl p-4">
             <div class="flex items-center gap-2 mb-3">
               <span class="text-lg">🎯</span>
               <span class="text-[10px] font-extrabold tracking-widest text-gray-500">HORAS DE FOCO — 7 DIAS</span>
@@ -4271,7 +4271,7 @@
 
           <!-- ACESSO AO MENTOR -->
           <button onclick="switchTab('mentor')"
-            class="w-full py-3.5 rounded-xl bg-[#111] border border-[#222] text-gray-400 font-extrabold text-sm tracking-wider hover:border-royal hover:text-royal transition-all active:scale-[0.93] haptic flex items-center justify-center gap-2">
+            class="w-full py-4 rounded-2xl glass-panel text-gray-400 font-extrabold text-sm tracking-wider hover:border-royal hover:text-royal transition-all min-h-[56px] active:scale-[0.93] haptic flex items-center justify-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
             ABRIR AI MENTOR
           </button>
@@ -4284,10 +4284,10 @@
     // =============================================
     function renderMentor() {
       return `
-        <div class="tab-enter stagger-enter space-y-4 max-w-lg mx-auto">
+        <div class="tab-enter stagger-enter space-y-5 max-w-md mx-auto">
           <div class="pt-1">
-            <h2 class="text-2xl font-extrabold">Mentor <span class="text-royal">Estoico</span></h2>
-            <p class="text-gray-500 text-sm font-semibold mt-1">Gemini AI — Coach implacável de alta performance.</p>
+            <h2 class="text-3xl font-black">Mentor <span class="text-royal">Estoico</span></h2>
+            <p class="text-gray-400 text-base font-semibold mt-1">Gemini AI — Coach implacável de alta performance.</p>
           </div>
 
           <!-- Gemini Status -->
@@ -4506,7 +4506,7 @@
       };
 
       return `
-        <div class="tab-enter stagger-enter space-y-5 max-w-lg mx-auto">
+        <div class="tab-enter stagger-enter space-y-5 max-w-md mx-auto">
 
           <!-- ===== HERO PROFILE SECTION ===== -->
           <div class="card-neu p-6 text-center">
@@ -4545,7 +4545,7 @@
               <div class="flex flex-wrap justify-center gap-2.5">
                 ${AVATAR_OPTIONS.map(e => `
                   <button onclick="selectAvatar('${e}')"
-                    class="avatar-option w-12 h-12 rounded-xl border-2 flex items-center justify-center text-2xl min-h-[48px] ${avatar === e ? 'selected border-royal bg-royal/10' : 'border-[#222] bg-[#0a0a0a]'}">
+                    class="avatar-option w-14 h-14 rounded-xl border-2 flex items-center justify-center text-2xl min-h-[56px] haptic ${avatar === e ? 'selected border-royal bg-royal/10' : 'border-[#222] bg-[#0a0a0a]'}">
                     ${e}
                   </button>
                 `).join('')}
@@ -5270,10 +5270,10 @@ Formato terminal militar. Sem emojis. Direto e brutal.`;
           <p class="text-sm font-bold text-gray-400 mb-6 leading-relaxed">${impactMsg}</p>
           ${days >= 7 ? '<p class="text-xs font-extrabold neon-red mb-4">VOCÊ VAI PERDER ' + days + ' DIAS DE PROGRESSO</p>' : ''}
           <div class="flex gap-3">
-            <button onclick="closeRecaidaOverlay()" class="flex-1 py-3 rounded-xl bg-[#111] border border-[#333] text-gray-400 font-extrabold text-sm tracking-wider active:scale-95 transition-all">
+            <button onclick="closeRecaidaOverlay()" class="flex-1 py-3 rounded-xl bg-[#111] border border-[#333] text-gray-400 font-extrabold text-sm tracking-wider active:scale-[0.93] haptic transition-all">
               CANCELAR
             </button>
-            <button onclick="confirmRecaida('${vicioId}')" class="flex-1 py-3 rounded-xl bg-red-950/50 border-2 border-red-900/60 text-red-400 font-extrabold text-sm tracking-wider active:scale-95 transition-all">
+            <button onclick="confirmRecaida('${vicioId}')" class="flex-1 py-3 rounded-xl bg-red-950/50 border-2 border-red-900/60 text-red-400 font-extrabold text-sm tracking-wider active:scale-[0.93] haptic transition-all">
               CONFIRMAR
             </button>
           </div>
