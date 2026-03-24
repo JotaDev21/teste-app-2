@@ -2817,7 +2817,7 @@
       try {
         const tema = deepWorkTopic || 'estudo geral';
         const contextPrompt = `O aluno está estudando "${tema}" e tem a seguinte dúvida:\n\n${question}`;
-        const resp = await callGemini(contextPrompt, 500, tema);
+        const resp = await callGemini(contextPrompt, null, tema);
         studyMentorChat.push({ role: 'ai', text: resp });
       } catch (e) {
         studyMentorChat.push({ role: 'ai', text: 'Conexão falhou. Continue estudando, guerreiro.' });
@@ -2929,7 +2929,7 @@
             </button>
           </div>
 
-          <div id="studyMentorMessages" class="space-y-3 max-h-64 overflow-y-auto" style="scrollbar-width: thin; scrollbar-color: #222 #000;">
+          <div id="studyMentorMessages" class="space-y-3 max-h-96 overflow-y-auto" style="scrollbar-width: thin; scrollbar-color: #222 #000;">
             ${studyMentorChat.length === 0 ? `
               <div class="text-center py-4">
                 <p class="text-sm font-bold text-gray-600">Pergunte qualquer coisa sobre ${deepWorkTopic || 'seu estudo'}.</p>
@@ -2938,7 +2938,7 @@
               <div class="${msg.role === 'user' ? 'ml-8' : 'mr-4'}">
                 <div class="${msg.role === 'user' ? 'bg-purple-950/40 border border-purple-800/30' : 'mentor-bubble'} rounded-2xl p-4">
                   <p class="text-xs font-extrabold ${msg.role === 'user' ? 'text-purple-400' : 'text-gray-500'} mb-1">${msg.role === 'user' ? 'VOCÊ' : 'MESTRE'}</p>
-                  <p class="text-sm font-semibold ${msg.role === 'user' ? 'text-gray-300' : 'text-gray-400'} leading-relaxed">${msg.text}</p>
+                  <p class="text-sm font-semibold ${msg.role === 'user' ? 'text-gray-300' : 'text-gray-400'} leading-relaxed whitespace-pre-wrap break-words">${msg.text}</p>
                 </div>
               </div>
             `).join('')}

@@ -17,7 +17,7 @@ export default async function handler(req, res) {
     `Você é um Professor de Elite, rigoroso e especialista mundial em ${topico}. Seu objetivo é explicar a dúvida do usuário de forma cirúrgica, extremamente didática e com exemplos práticos. Mantenha uma postura exigente de um mentor de alta performance, não aceite preguiça intelectual, mas ENTREGUE a explicação real e detalhada sobre o tema. Responda sempre em português do Brasil.`;
 
   try {
-    const { prompt, maxTokens = 300, topicoEstudo } = req.body;
+    const { prompt, maxTokens, topicoEstudo } = req.body;
 
     if (!prompt) {
       return res.status(400).json({ error: 'Missing prompt' });
@@ -27,6 +27,9 @@ export default async function handler(req, res) {
     const systemInstruction = topicoEstudo
       ? PROFESSOR_ELITE(topicoEstudo)
       : SARGENTO_GIGACHAD;
+
+    // Professor de Elite precisa de mais espaço para explicações detalhadas
+    const tokenLimit = maxTokens || (topicoEstudo ? 1500 : 300);
 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${API_KEY}`;
 
@@ -38,7 +41,7 @@ export default async function handler(req, res) {
           parts: [{ text: systemInstruction }]
         },
         contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { maxOutputTokens: maxTokens, temperature: 0.85 }
+        generationConfig: { maxOutputTokens: tokenLimit, temperature: 0.85 }
       })
     });
 
