@@ -4,8 +4,11 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // API key: use Vercel env var, fallback to hardcoded
-  const API_KEY = process.env.GEMINI_API_KEY || 'AIzaSyASBbydBEUM9XEUsg0O70uyPWN30UMG5RI';
+  // API key: from Vercel environment variable (Settings → Environment Variables → GEMINI_API_KEY)
+  const API_KEY = process.env.GEMINI_API_KEY;
+  if (!API_KEY) {
+    return res.status(500).json({ error: 'GEMINI_API_KEY not configured on server' });
+  }
   const MODEL = 'gemini-2.5-flash';
 
   try {

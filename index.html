@@ -716,7 +716,7 @@
     ];
 
     let userState = {
-      apiKey: 'AIzaSyASBbydBEUM9XEUsg0O70uyPWN30UMG5RI',
+      apiKey: '',  // Gemini key is now server-side only (Vercel env var)
       profile: { name: 'Guerreiro', budget: 0, focusGoalHours: 4 },
       dailyHabits: {},
       monthlyExpenses: [],
@@ -802,7 +802,7 @@
       // Initialize v3.0 fields
       if (!userState.performanceLog || typeof userState.performanceLog !== 'object') userState.performanceLog = {};
       if (!userState.aiCache || typeof userState.aiCache !== 'object') userState.aiCache = {};
-      if (!userState.apiKey) userState.apiKey = 'AIzaSyASBbydBEUM9XEUsg0O70uyPWN30UMG5RI';
+      if (!userState.apiKey) userState.apiKey = '';
       if (!userState.profile) userState.profile = { name: 'Guerreiro', budget: 0, focusGoalHours: 4 };
       // Clean stale AI cache (keep only today's)
       const todayPrefix = 'verdict_' + today;
