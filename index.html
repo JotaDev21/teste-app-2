@@ -2482,7 +2482,8 @@
       const today = getTodayKey();
       const hourBlock = Math.floor(new Date().getHours() / 2);
       const cacheKey = 'verdict_' + today + '_' + hourBlock;
-      if (userState.aiCache[cacheKey]) { displayVerdict(userState.aiCache[cacheKey]); return; }
+      const cached = userState.aiCache[cacheKey];
+      if (cached && !cached.includes('falhou') && !cached.includes('offline')) { displayVerdict(cached); return; }
 
       const habits = userState.dailyHabits[today] || {};
       const done = DEFAULT_HABITS.filter(h => habits[h.id]).length;
