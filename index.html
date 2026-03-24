@@ -2112,6 +2112,14 @@
             </div>
           </div>
 
+          <!-- GESTOR DE CAPITAL IA -->
+          <button onclick="showWarChestAdvisor=true;renderActiveTab();"
+            class="w-full py-4 rounded-xl font-extrabold text-sm text-white active:scale-[0.97] transition-transform ${showWarChestAdvisor ? 'hidden' : ''}"
+            style="background: linear-gradient(135deg, #1e3a5f 0%, #0a1a2e 50%, #000 100%); border: 1px solid rgba(37,99,235,0.3);">
+            <span class="text-lg mr-2">🏦</span> CONSULTAR GESTOR DE CAPITAL — IA
+          </button>
+          ${renderWarChestAdvisor()}
+
           <!-- Últimos 5 Registros -->
           ${last5.length > 0 ? `
             <div class="bg-[#111] border border-[#333] rounded-xl p-4">
@@ -2198,6 +2206,91 @@
         saveData();
         renderActiveTab();
       }
+    }
+
+    async function askWarChestMentor() {
+      const input = document.getElementById('warChestMentorInput');
+      const question = input ? input.value.trim() : '';
+      if (!question) return;
+      warChestChat.push({ role: 'user', text: question });
+      input.value = '';
+      renderActiveTab();
+      const scrollWC = () => setTimeout(() => {
+        const el = document.getElementById('warChestMentorMessages');
+        if (el) el.scrollTop = el.scrollHeight;
+      }, 100);
+      scrollWC();
+      try {
+        // Build financial context snapshot
+        const expenses = getMonthExpenses();
+        const totalGasto = expenses.reduce((s, e) => s + e.amount, 0);
+        const totalDopamina = expenses.filter(e => e.category === 'dopamina').reduce((s, e) => s + e.amount, 0);
+        const budget = userState.budget || 0;
+        const saldo = budget - totalGasto;
+        const ctx = budget > 0
+          ? `[Contexto financeiro do mês: Budget R$${budget}, Gasto total R$${totalGasto}, Saldo R$${saldo}, Dopamina R$${totalDopamina} (${budget > 0 ? ((totalDopamina/budget)*100).toFixed(1) : 0}% do budget)]\n\n`
+          : '';
+        // Multi-turn history
+        const historico = warChestChat.map(m => ({
+          role: m.role === 'user' ? 'user' : 'model',
+          text: m.text
+        }));
+        const resp = await callGemini(ctx + question, null, null, historico, 'war_chest');
+        warChestChat.push({ role: 'ai', text: resp });
+      } catch (e) {
+        warChestChat.push({ role: 'ai', text: 'Conexão falhou. Proteja seu capital.' });
+      }
+      renderActiveTab();
+      scrollWC();
+    }
+
+    function renderWarChestAdvisor() {
+      if (!showWarChestAdvisor) return '';
+      return `
+        <div class="card-neu rounded-xl p-4 space-y-3" style="border: 1px solid rgba(37,99,235,0.2);">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-lg flex items-center justify-center text-sm" style="background: linear-gradient(135deg, #1e3a5f, #0a0a0a); border: 1px solid rgba(37,99,235,0.3);">🏦</div>
+              <div>
+                <p class="text-xs font-extrabold text-blue-400">GESTOR DE CAPITAL</p>
+                <p class="text-[9px] font-bold text-gray-600">Gemini AI — Modo Banqueiro</p>
+              </div>
+            </div>
+            <button onclick="showWarChestAdvisor=false;renderActiveTab();" class="min-w-[44px] min-h-[44px] flex items-center justify-center text-gray-600 hover:text-red-400 rounded-xl active:bg-white/5">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+
+          <div id="warChestMentorMessages" class="space-y-3 max-h-96 overflow-y-auto" style="scrollbar-width: thin; scrollbar-color: #1e3a5f #000;">
+            ${warChestChat.length === 0 ? `
+              <div class="text-center py-4">
+                <p class="text-sm font-bold text-gray-600">Pergunte sobre investimentos, alocação, juros compostos...</p>
+              </div>
+            ` : warChestChat.map(msg => `
+              <div class="${msg.role === 'user' ? 'ml-8' : 'mr-4'}">
+                <div class="${msg.role === 'user' ? 'bg-blue-950/30 border border-blue-800/20' : 'bg-gradient-to-br from-[#0a1a2e] to-[#0a0a0a] border border-blue-900/20'} rounded-2xl p-4">
+                  <p class="text-xs font-extrabold ${msg.role === 'user' ? 'text-blue-400' : 'text-gray-500'} mb-1">${msg.role === 'user' ? 'VOCÊ' : 'GESTOR'}</p>
+                  ${msg.role === 'user'
+                    ? `<p class="text-sm font-semibold text-gray-300 leading-relaxed whitespace-pre-wrap break-words">${msg.text}</p>`
+                    : `<div class="ai-prose text-sm font-medium text-gray-400 leading-relaxed break-words">${typeof marked !== 'undefined' ? marked.parse(msg.text) : msg.text}</div>`
+                  }
+                </div>
+              </div>
+            `).join('')}
+          </div>
+
+          <div class="flex gap-2">
+            <input id="warChestMentorInput" type="text" placeholder="Sua dúvida financeira..."
+              class="forja-input flex-1 px-4 py-3.5 rounded-xl text-sm font-bold min-h-[48px]"
+              onkeydown="if(event.key==='Enter')askWarChestMentor();">
+            <button onclick="askWarChestMentor()"
+              class="px-5 py-3.5 rounded-xl font-extrabold text-sm text-white min-h-[48px] active:scale-[0.97]"
+              style="background: linear-gradient(135deg, #2563EB, #1e40af);">
+              ENVIAR
+            </button>
+          </div>
+        </div>
+      `;
     }
 
     // =============================================
@@ -2684,6 +2777,8 @@
     let deepWorkSubTab = 'timer'; // 'timer' or 'arquivo'
     let studyMentorChat = [];
     let showStudyMentor = false;
+    let warChestChat = [];
+    let showWarChestAdvisor = false;
 
     function getTodayFocus() {
       const today = getTodayKey();
@@ -3857,11 +3952,12 @@
     const GEMINI_MODEL = 'gemini-2.5-flash';
     // Personas agora vivem no backend (api/gemini.js) via system_instruction dinâmico
 
-    async function callGemini(prompt, maxTokens = 300, topicoEstudo = null, historico = null) {
+    async function callGemini(prompt, maxTokens = 300, topicoEstudo = null, historico = null, moduloAtivo = null) {
       try {
         const payload = { prompt, maxTokens };
         if (topicoEstudo) payload.topicoEstudo = topicoEstudo;
         if (historico && historico.length > 0) payload.historico = historico;
+        if (moduloAtivo) payload.moduloAtivo = moduloAtivo;
 
         const res = await fetch('/api/gemini', {
           method: 'POST',

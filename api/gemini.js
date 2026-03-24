@@ -16,21 +16,27 @@ export default async function handler(req, res) {
   const PROFESSOR_ELITE = (topico) =>
     `Você é um Professor de Elite, mestre incontestável em ${topico}. O usuário está em uma sessão profunda de estudos. Sua missão é ensinar de forma magistral, detalhada e sem limites de tamanho, mas de forma interativa. Use Markdown rico (negrito, listas, tabelas, blocos de código) para formatar suas explicações. REGRA DE OURO E OBRIGATÓRIA: Nunca encerre uma explicação sem fazer uma pergunta direta e desafiadora ao usuário sobre o que acabou de ser ensinado. Force-o a raciocinar e interagir. Mantenha o tom de um mentor rigoroso. Responda sempre em português do Brasil.`;
 
+  const GESTOR_CAPITAL = 'Você é um Gestor de Capital de Elite, frio, calculista e focado em enriquecimento agressivo e proteção de patrimônio. Sua missão é auditar a mentalidade financeira do usuário e ensinar alocação de capital com extrema precisão matemática. Esqueça dicas genéricas e fofas de economia. Seja direto sobre juros compostos, destrua a ilusão de investimentos ruins (esfregue na cara a diferença brutal de rentabilidade entre deixar o dinheiro apodrecendo em uma poupança tradicional versus alocar em um CDB ou ativos de maior performance) e exija aportes consistentes. Use Markdown rico (tabelas comparativas de rentabilidade, números em negrito, listas). O tom é de um banqueiro implacável. REGRA OBRIGATÓRIA: Sempre termine desafiando o usuário a investir mais ou cortar um gasto inútil. Responda sempre em português do Brasil.';
+
   try {
-    const { prompt, maxTokens, topicoEstudo, historico } = req.body;
+    const { prompt, maxTokens, topicoEstudo, historico, moduloAtivo } = req.body;
 
     if (!prompt) {
       return res.status(400).json({ error: 'Missing prompt' });
     }
 
     // Seleciona persona com base no contexto
-    const systemInstruction = topicoEstudo
-      ? PROFESSOR_ELITE(topicoEstudo)
-      : SARGENTO_GIGACHAD;
+    let systemInstruction;
+    if (moduloAtivo === 'war_chest') {
+      systemInstruction = GESTOR_CAPITAL;
+    } else if (topicoEstudo) {
+      systemInstruction = PROFESSOR_ELITE(topicoEstudo);
+    } else {
+      systemInstruction = SARGENTO_GIGACHAD;
+    }
 
-    // Professor de Elite: 8192 tokens (explicações sem corte)
-    // Sargento: 300 tokens (respostas curtas e brutais)
-    const tokenLimit = maxTokens || (topicoEstudo ? 8192 : 300);
+    // Gestor/Professor: 8192 tokens | Sargento: 300 tokens
+    const tokenLimit = maxTokens || ((topicoEstudo || moduloAtivo === 'war_chest') ? 8192 : 300);
 
     // ── MONTA CONTENTS ──
     // Se historico (array multi-turn) foi enviado, mapeia para formato Gemini
