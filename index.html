@@ -454,50 +454,50 @@
   <div id="syncIndicator" class="sync-indicator synced" title="Cloud Sync"></div>
 
   <!-- ========== HEADER ========== -->
-  <header class="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-md border-b border-border px-4 py-3 flex items-center justify-between">
-    <h1 class="text-lg font-extrabold tracking-tight">BE <span class="text-royal">UNSTOPPABLE</span></h1>
-    <div class="flex items-center gap-3">
-      <time id="headerDate" class="text-xs text-gray-500 font-semibold tabular-nums"></time>
-      <button onclick="switchTab('perfil')" title="Perfil" class="text-gray-500 hover:text-royal transition-colors">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+  <header class="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-md border-b border-border px-4 py-3.5 flex items-center justify-between" style="padding-top: env(safe-area-inset-top, 12px);">
+    <h1 class="text-xl font-extrabold tracking-tight">BE <span class="text-royal">UNSTOPPABLE</span></h1>
+    <div class="flex items-center gap-2">
+      <time id="headerDate" class="text-sm text-gray-500 font-semibold tabular-nums"></time>
+      <button onclick="switchTab('perfil')" title="Perfil" class="min-w-[44px] min-h-[44px] flex items-center justify-center text-gray-500 hover:text-royal transition-colors rounded-xl active:bg-white/5">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
       </button>
-      <button onclick="handleLogout()" title="Sair" class="text-gray-600 hover:text-red-400 transition-colors">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+      <button onclick="handleLogout()" title="Sair" class="min-w-[44px] min-h-[44px] flex items-center justify-center text-gray-600 hover:text-red-400 transition-colors rounded-xl active:bg-white/5">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
       </button>
     </div>
   </header>
 
   <!-- ========== MAIN CONTENT ========== -->
-  <main id="mainContent" class="flex-1 mt-14 mb-20 px-4 py-4 overflow-y-auto">
+  <main id="mainContent" class="flex-1 mt-16 mb-24 px-4 py-4 overflow-y-auto">
     <!-- Dynamic content rendered here -->
   </main>
 
   <!-- ========== BOTTOM NAV ========== -->
-  <nav class="fixed bottom-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-md border-t border-border">
-    <div class="flex justify-around items-center py-2 max-w-lg mx-auto">
-      <button class="nav-btn flex flex-col items-center gap-0.5 px-1.5 py-1" onclick="switchTab('dashboard')">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
-        <span class="text-[9px] font-bold">Home</span>
+  <nav class="fixed bottom-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-md border-t border-border" style="padding-bottom: env(safe-area-inset-bottom, 4px);">
+    <div class="flex justify-around items-center py-1.5 max-w-lg mx-auto">
+      <button class="nav-btn flex flex-col items-center justify-center gap-0.5 min-w-[48px] min-h-[48px] px-2 py-1.5 rounded-xl active:bg-white/5" onclick="switchTab('dashboard')">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+        <span class="text-[10px] font-bold">Home</span>
       </button>
-      <button class="nav-btn flex flex-col items-center gap-0.5 px-1.5 py-1" onclick="switchTab('grind')">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-        <span class="text-[9px] font-bold">Grind</span>
+      <button class="nav-btn flex flex-col items-center justify-center gap-0.5 min-w-[48px] min-h-[48px] px-2 py-1.5 rounded-xl active:bg-white/5" onclick="switchTab('grind')">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        <span class="text-[10px] font-bold">Grind</span>
       </button>
-      <button class="nav-btn flex flex-col items-center gap-0.5 px-1.5 py-1" onclick="switchTab('treino')">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12h4l1-9h8l1 9h4M7 12v4a2 2 0 002 2h6a2 2 0 002-2v-4"/></svg>
-        <span class="text-[9px] font-bold">Treino</span>
+      <button class="nav-btn flex flex-col items-center justify-center gap-0.5 min-w-[48px] min-h-[48px] px-2 py-1.5 rounded-xl active:bg-white/5" onclick="switchTab('treino')">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12h4l1-9h8l1 9h4M7 12v4a2 2 0 002 2h6a2 2 0 002-2v-4"/></svg>
+        <span class="text-[10px] font-bold">Treino</span>
       </button>
-      <button class="nav-btn flex flex-col items-center gap-0.5 px-1.5 py-1" onclick="switchTab('warchest')">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        <span class="text-[9px] font-bold">Capital</span>
+      <button class="nav-btn flex flex-col items-center justify-center gap-0.5 min-w-[48px] min-h-[48px] px-2 py-1.5 rounded-xl active:bg-white/5" onclick="switchTab('warchest')">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <span class="text-[10px] font-bold">Capital</span>
       </button>
-      <button class="nav-btn flex flex-col items-center gap-0.5 px-1.5 py-1" onclick="switchTab('focus')">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        <span class="text-[9px] font-bold">Focus</span>
+      <button class="nav-btn flex flex-col items-center justify-center gap-0.5 min-w-[48px] min-h-[48px] px-2 py-1.5 rounded-xl active:bg-white/5" onclick="switchTab('focus')">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <span class="text-[10px] font-bold">Focus</span>
       </button>
-      <button class="nav-btn flex flex-col items-center gap-0.5 px-1.5 py-1" onclick="switchTab('status')">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-        <span class="text-[9px] font-bold">Status</span>
+      <button class="nav-btn flex flex-col items-center justify-center gap-0.5 min-w-[48px] min-h-[48px] px-2 py-1.5 rounded-xl active:bg-white/5" onclick="switchTab('status')">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        <span class="text-[10px] font-bold">Status</span>
       </button>
     </div>
   </nav>
@@ -1450,93 +1450,93 @@
         <div class="tab-enter space-y-4 max-w-lg mx-auto">
 
           <!-- O VEREDITO DO MENTOR -->
-          <div class="ai-verdict-card rounded-xl p-4 border border-red-900/20">
-            <div class="flex items-center gap-2 mb-2">
-              <span class="text-lg">⚖️</span>
-              <span class="text-[10px] font-extrabold tracking-[0.2em] text-red-400">O VEREDITO DO MENTOR</span>
+          <div class="ai-verdict-card rounded-2xl p-5 border border-red-900/20">
+            <div class="flex items-center gap-2.5 mb-3">
+              <span class="text-xl">⚖️</span>
+              <span class="text-xs font-extrabold tracking-[0.2em] text-red-400">O VEREDITO DO MENTOR</span>
             </div>
-            <p id="aiVerdict" class="text-sm font-bold text-gray-400 leading-relaxed ai-loading">Conectando ao Mentor Estoico...</p>
+            <p id="aiVerdict" class="text-base font-bold text-gray-400 leading-relaxed ai-loading">Conectando ao Mentor Estoico...</p>
           </div>
 
           <!-- ARMADURA DO DIA -->
-          <div class="verse-glow bg-[#111] border border-[#333] rounded-xl p-4">
-            <div class="flex items-center gap-2 mb-2">
-              <span class="text-lg">🛡️</span>
-              <span class="text-[10px] font-extrabold tracking-[0.2em] text-royal">ARMADURA DO DIA</span>
+          <div class="verse-glow bg-[#111] border border-[#333] rounded-2xl p-5">
+            <div class="flex items-center gap-2.5 mb-3">
+              <span class="text-xl">🛡️</span>
+              <span class="text-xs font-extrabold tracking-[0.2em] text-royal">ARMADURA DO DIA</span>
             </div>
-            <p class="text-sm font-bold text-gray-300 italic leading-relaxed">"${verse.text}"</p>
-            <p class="text-[10px] font-extrabold text-gray-600 mt-2 text-right">— ${verse.ref}</p>
+            <p class="text-base font-bold text-gray-300 italic leading-relaxed">"${verse.text}"</p>
+            <p class="text-xs font-extrabold text-gray-600 mt-2 text-right">— ${verse.ref}</p>
           </div>
 
           <!-- SCORE HERO -->
           <div class="card-neu rounded-2xl p-6 flex flex-col items-center">
-            <p class="text-[10px] font-extrabold tracking-[0.25em] text-gray-500 mb-4">UNSTOPPABLE SCORE</p>
-            <div class="score-ring w-36 h-36 flex items-center justify-center p-1.5" style="--score:${score}; --ring-color:${ringColor}">
+            <p class="text-xs font-extrabold tracking-[0.25em] text-gray-500 mb-4">UNSTOPPABLE SCORE</p>
+            <div class="score-ring w-40 h-40 flex items-center justify-center p-1.5" style="--score:${score}; --ring-color:${ringColor}">
               <div class="bg-[#111] w-full h-full rounded-full flex flex-col items-center justify-center">
-                <span class="text-5xl font-black tabular-nums ${status.cls}" style="letter-spacing:-3px;">${score}</span>
-                <span class="text-[10px] font-extrabold text-gray-500 mt-0.5">/100</span>
+                <span class="text-6xl font-black tabular-nums ${status.cls}" style="letter-spacing:-3px;">${score}</span>
+                <span class="text-sm font-extrabold text-gray-500 mt-0.5">/100</span>
               </div>
             </div>
             <div class="flex items-center gap-3 mt-4">
-              ${streak > 0 ? `<span class="streak-fire text-lg">🔥</span><span class="text-sm font-black neon-text">${streak} dia${streak !== 1 ? 's' : ''}</span>` : '<span class="text-sm font-bold text-gray-700">Sem streak ativo</span>'}
+              ${streak > 0 ? `<span class="streak-fire text-xl">🔥</span><span class="text-base font-black neon-text">${streak} dia${streak !== 1 ? 's' : ''}</span>` : '<span class="text-base font-bold text-gray-700">Sem streak ativo</span>'}
             </div>
             <!-- LEVEL BADGE -->
             ${(() => {
               const lvl = calcularNivel(userState.xpTotal || 0);
               return `
-                <button onclick="switchTab('perfil')" class="mt-3 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black border border-[#222] hover:border-royal transition-all">
-                  <span class="text-sm">${userState.profile?.avatar || '⚔️'}</span>
-                  <span class="text-[10px] font-black ${lvl.isMax ? 'text-yellow-400' : 'text-royal'}">LVL ${lvl.nivel}</span>
-                  <span class="text-[9px] font-bold text-gray-600">${(userState.xpTotal || 0).toLocaleString('pt-BR')} XP</span>
+                <button onclick="switchTab('perfil')" class="mt-4 flex items-center gap-3 px-4 py-3 rounded-xl bg-black border border-[#222] hover:border-royal transition-all min-h-[48px] active:bg-white/5">
+                  <span class="text-xl">${userState.profile?.avatar || '⚔️'}</span>
+                  <span class="text-sm font-black ${lvl.isMax ? 'text-yellow-400' : 'text-royal'}">LVL ${lvl.nivel}</span>
+                  <span class="text-xs font-bold text-gray-600">${(userState.xpTotal || 0).toLocaleString('pt-BR')} XP</span>
                 </button>
               `;
             })()}
           </div>
 
           <!-- SOBERANIA -->
-          <div class="card-neu p-4">
-            <div class="flex items-center gap-2 mb-3">
-              <span class="text-lg">⛓️</span>
-              <span class="text-[10px] font-extrabold tracking-[0.2em] text-gray-400">SOBERANIA</span>
+          <div class="card-neu p-5">
+            <div class="flex items-center gap-2.5 mb-4">
+              <span class="text-xl">⛓️</span>
+              <span class="text-xs font-extrabold tracking-[0.2em] text-gray-400">SOBERANIA</span>
             </div>
-            <div class="grid grid-cols-2 gap-2">
+            <div class="grid grid-cols-2 gap-3">
               ${renderSoberaniaSection()}
             </div>
           </div>
 
           <!-- BARRA DE PROGRESSO DO DIA -->
-          <div class="bg-[#111] border border-[#333] rounded-xl p-4">
-            <div class="flex justify-between items-center mb-2">
-              <span class="text-[10px] font-extrabold tracking-widest text-gray-500">PROGRESSO DIÁRIO</span>
-              <span class="text-xs font-black ${status.cls}">${score}%</span>
+          <div class="bg-[#111] border border-[#333] rounded-2xl p-5">
+            <div class="flex justify-between items-center mb-3">
+              <span class="text-xs font-extrabold tracking-widest text-gray-500">PROGRESSO DIÁRIO</span>
+              <span class="text-sm font-black ${status.cls}">${score}%</span>
             </div>
-            <div class="w-full h-3 bg-black rounded-full overflow-hidden neon-bar-track">
+            <div class="w-full h-4 bg-black rounded-full overflow-hidden neon-bar-track">
               <div class="h-full rounded-full transition-all duration-700 ease-out" style="width:${score}%; background:${ringColor}; box-shadow: 0 0 10px ${ringColor}40;"></div>
             </div>
-            <div class="flex justify-between items-center mt-2">
-              <div class="flex gap-0.5">
+            <div class="flex justify-between items-center mt-3">
+              <div class="flex gap-1">
                 ${(() => {
                   const ms = getMissoesDoDia();
-                  return ms.map(m => `<span class="text-[10px] ${m.concluida ? '' : 'opacity-20 grayscale'}" title="${m.titulo}">${m.icone}</span>`).join('');
+                  return ms.map(m => `<span class="text-sm ${m.concluida ? '' : 'opacity-20 grayscale'}" title="${m.titulo}">${m.icone}</span>`).join('');
                 })()}
               </div>
-              <span class="text-[10px] font-bold text-gray-600">${getMissoesDone()}/${MISSOES_POR_DIA} missões</span>
+              <span class="text-xs font-bold text-gray-600">${getMissoesDone()}/${MISSOES_POR_DIA} missões</span>
             </div>
           </div>
 
           <!-- GRÁFICO SEMANAL -->
-          <div class="bg-[#111] border border-[#333] rounded-xl p-4">
-            <p class="text-[10px] font-extrabold tracking-widest text-gray-500 mb-3">ÚLTIMOS 7 DIAS</p>
-            <div class="flex items-end justify-between gap-1.5" style="height:120px;">
+          <div class="bg-[#111] border border-[#333] rounded-2xl p-5">
+            <p class="text-xs font-extrabold tracking-widest text-gray-500 mb-4">ÚLTIMOS 7 DIAS</p>
+            <div class="flex items-end justify-between gap-2" style="height:130px;">
               ${week.map(d => {
                 const h = Math.max(8, (d.score / 100) * 100);
                 const barColor = d.allDone ? (d.isToday ? ringColor : '#2563EB') : '#2a2a2a';
                 const glowStyle = d.allDone ? `box-shadow: 0 0 8px ${barColor}50;` : '';
                 return `
-                  <div class="flex-1 flex flex-col items-center gap-1 h-full justify-end">
-                    <span class="text-[10px] font-black tabular-nums ${d.isToday ? status.cls : d.allDone ? 'text-white' : 'text-gray-700'}">${d.score}</span>
-                    <div class="w-full rounded-md bar-grow" style="height:${h}%; background:${barColor}; ${glowStyle} animation-delay:${week.indexOf(d) * 0.07}s;"></div>
-                    <span class="text-[8px] font-bold ${d.isToday ? 'text-white' : 'text-gray-600'}">${d.dayLabel}</span>
+                  <div class="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+                    <span class="text-xs font-black tabular-nums ${d.isToday ? status.cls : d.allDone ? 'text-white' : 'text-gray-700'}">${d.score}</span>
+                    <div class="w-full rounded-lg bar-grow" style="height:${h}%; background:${barColor}; ${glowStyle} animation-delay:${week.indexOf(d) * 0.07}s;"></div>
+                    <span class="text-[10px] font-bold ${d.isToday ? 'text-white' : 'text-gray-600'}">${d.dayLabel}</span>
                   </div>
                 `;
               }).join('')}
@@ -1544,10 +1544,10 @@
           </div>
 
           <!-- STATUS DE BATALHA -->
-          <div class="bg-[#111] border ${status.bg} rounded-xl p-5 text-center" style="background:${status.bgInner};">
-            <span class="text-3xl">${status.icon}</span>
-            <p class="text-xl font-black ${status.cls} mt-2 tracking-wide">${status.text}</p>
-            <p class="text-[10px] font-bold text-gray-600 mt-1">${score <= 30 ? 'Acorde. O dia não espera.' : score <= 70 ? 'Bom, mas bom não é o bastante.' : 'Você está no controle total.'}</p>
+          <div class="bg-[#111] border ${status.bg} rounded-2xl p-6 text-center" style="background:${status.bgInner};">
+            <span class="text-4xl">${status.icon}</span>
+            <p class="text-2xl font-black ${status.cls} mt-3 tracking-wide">${status.text}</p>
+            <p class="text-sm font-bold text-gray-600 mt-2">${score <= 30 ? 'Acorde. O dia não espera.' : score <= 70 ? 'Bom, mas bom não é o bastante.' : 'Você está no controle total.'}</p>
           </div>
 
         </div>
@@ -1606,68 +1606,68 @@
         <div class="tab-enter space-y-4 max-w-lg mx-auto">
           <div class="pt-1">
             <h2 class="text-2xl font-extrabold">The <span class="text-royal">Grind</span></h2>
-            <p class="text-gray-500 text-sm font-semibold mt-1">10 missões de guerra. Sorteio diário. Sem moleza.</p>
+            <p class="text-gray-500 text-base font-semibold mt-1">10 missões de guerra. Sorteio diário. Sem moleza.</p>
           </div>
 
           <!-- STREAK + XP HEADER -->
-          <div class="card-neu p-4">
+          <div class="card-neu p-5">
             <div class="flex items-center justify-between mb-4">
               <div>
-                <p class="text-[10px] font-extrabold text-gray-500 tracking-widest">STREAK ATUAL</p>
+                <p class="text-xs font-extrabold text-gray-500 tracking-widest">STREAK ATUAL</p>
                 <div class="flex items-center gap-2 mt-1">
-                  ${streak > 0 ? '<span class="streak-fire text-2xl">🔥</span>' : '<span class="text-2xl opacity-30">🔥</span>'}
-                  <span class="text-4xl font-black ${streak > 0 ? 'neon-text' : 'text-gray-600'}">${streak}</span>
-                  <span class="text-sm font-extrabold text-gray-500 self-end mb-1">${streak === 1 ? 'DIA' : 'DIAS'}</span>
+                  ${streak > 0 ? '<span class="streak-fire text-3xl">🔥</span>' : '<span class="text-3xl opacity-30">🔥</span>'}
+                  <span class="text-5xl font-black ${streak > 0 ? 'neon-text' : 'text-gray-600'}">${streak}</span>
+                  <span class="text-base font-extrabold text-gray-500 self-end mb-1">${streak === 1 ? 'DIA' : 'DIAS'}</span>
                 </div>
               </div>
               <div class="text-right">
-                <p class="text-[10px] font-extrabold text-gray-500 tracking-widest">XP HOJE</p>
-                <p class="text-3xl font-black ${xpGanho > 0 ? 'neon-text' : 'text-gray-600'} mt-1">${xpGanho}</p>
-                <p class="text-[9px] font-bold text-gray-600">/ ${xpTotal} XP</p>
+                <p class="text-xs font-extrabold text-gray-500 tracking-widest">XP HOJE</p>
+                <p class="text-4xl font-black ${xpGanho > 0 ? 'neon-text' : 'text-gray-600'} mt-1">${xpGanho}</p>
+                <p class="text-xs font-bold text-gray-600">/ ${xpTotal} XP</p>
               </div>
             </div>
 
             <!-- BARRA DE PROGRESSO -->
             <div class="mb-2">
-              <div class="flex justify-between items-center mb-1.5">
-                <span class="text-[10px] font-extrabold tracking-widest ${pct === 100 ? 'neon-text' : 'text-gray-400'}">${done}/${total} CONCLUÍDAS HOJE</span>
-                <span class="text-[10px] font-black ${pct === 100 ? 'neon-text' : 'text-royal'}">${pct}%</span>
+              <div class="flex justify-between items-center mb-2">
+                <span class="text-xs font-extrabold tracking-widest ${pct === 100 ? 'neon-text' : 'text-gray-400'}">${done}/${total} CONCLUÍDAS HOJE</span>
+                <span class="text-sm font-black ${pct === 100 ? 'neon-text' : 'text-royal'}">${pct}%</span>
               </div>
-              <div class="w-full h-3.5 bg-black rounded-full overflow-hidden" style="box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);">
+              <div class="w-full h-4 bg-black rounded-full overflow-hidden" style="box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);">
                 <div class="h-full rounded-full transition-all duration-500 ease-out" style="width:${pct}%; background:${pct === 100 ? '#00FF64' : '#2563EB'}; box-shadow: 0 0 10px ${pct === 100 ? 'rgba(0,255,100,0.8)' : 'rgba(37,99,235,0.8)'};"></div>
               </div>
             </div>
           </div>
 
           ${pct === 100 ? `
-            <div class="rounded-xl p-5 text-center border border-[#00FF64]/30" style="background: rgba(0,255,100,0.05); box-shadow: 0 0 30px rgba(0,255,100,0.1);">
-              <p class="text-3xl mb-2 streak-fire">⚔️</p>
-              <p class="neon-text font-black text-xl tracking-wide">TODAS AS MISSÕES COMPLETAS</p>
-              <p class="text-gray-400 text-xs font-bold mt-2">+${xpTotal} XP conquistados. Amanhã, novas missões.</p>
+            <div class="rounded-2xl p-6 text-center border border-[#00FF64]/30" style="background: rgba(0,255,100,0.05); box-shadow: 0 0 30px rgba(0,255,100,0.1);">
+              <p class="text-4xl mb-3 streak-fire">⚔️</p>
+              <p class="neon-text font-black text-2xl tracking-wide">TODAS AS MISSÕES COMPLETAS</p>
+              <p class="text-gray-400 text-sm font-bold mt-2">+${xpTotal} XP conquistados. Amanhã, novas missões.</p>
             </div>
           ` : ''}
 
           <!-- 10 MISSION CARDS -->
-          <div class="space-y-2.5 overflow-y-auto max-h-[32rem] pr-1" style="scrollbar-width: thin; scrollbar-color: #222 #000;">
+          <div class="space-y-3 overflow-y-auto max-h-[36rem] pr-1" style="scrollbar-width: thin; scrollbar-color: #222 #000;">
             ${missoes.map((m, i) => {
               const isDone = m.concluida;
               return `
                 <button onclick="toggleMissao('${m.id}')"
-                  class="w-full flex items-center gap-3 p-3.5 rounded-xl border-2 transition-all active:scale-[0.97] ${isDone
+                  class="w-full flex items-center gap-3.5 p-4 rounded-2xl border-2 transition-all active:scale-[0.97] min-h-[72px] ${isDone
                     ? 'bg-[#0a0a0a] border-green-500/50 opacity-70'
                     : 'bg-[#0d0d0d] border-[#1a1a1a] hover:border-[#333]'}"
                   style="${isDone ? 'box-shadow: 0 0 15px rgba(34,197,94,0.15);' : 'box-shadow: 6px 6px 14px rgba(0,0,0,0.7), -3px -3px 10px rgba(255,255,255,0.02);'}">
-                  <div class="w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0 ${isDone ? 'bg-green-500/10' : 'bg-black border border-[#222]'}">
+                  <div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0 ${isDone ? 'bg-green-500/10' : 'bg-black border border-[#222]'}">
                     ${m.icone}
                   </div>
                   <div class="text-left flex-1 min-w-0">
-                    <p class="text-sm font-extrabold ${isDone ? 'text-green-400/60 line-through' : 'text-gray-200'}">${m.titulo}</p>
-                    <p class="text-[10px] font-semibold mt-0.5 ${isDone ? 'text-green-500/40' : 'text-gray-600'} truncate">${isDone ? 'MISSÃO CONCLUÍDA' : m.descricao}</p>
+                    <p class="text-base font-extrabold ${isDone ? 'text-green-400/60 line-through' : 'text-gray-200'}">${m.titulo}</p>
+                    <p class="text-xs font-semibold mt-0.5 ${isDone ? 'text-green-500/40' : 'text-gray-500'} truncate">${isDone ? 'MISSÃO CONCLUÍDA' : m.descricao}</p>
                   </div>
-                  <div class="flex items-center gap-2 flex-shrink-0">
-                    <span class="text-[10px] font-black ${isDone ? 'text-green-400/50' : 'text-[#00FF64]'}">+${m.xp} XP</span>
-                    <div class="w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${isDone ? 'bg-green-500 border-green-500' : 'border-[#333]'}">
-                      ${isDone ? '<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="black" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>' : ''}
+                  <div class="flex items-center gap-2.5 flex-shrink-0">
+                    <span class="text-xs font-black ${isDone ? 'text-green-400/50' : 'text-[#00FF64]'}">+${m.xp} XP</span>
+                    <div class="w-7 h-7 rounded-lg border-2 flex items-center justify-center transition-all ${isDone ? 'bg-green-500 border-green-500' : 'border-[#333]'}">
+                      ${isDone ? '<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="black" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>' : ''}
                     </div>
                   </div>
                 </button>
@@ -1676,10 +1676,10 @@
           </div>
 
           ${done > 0 && pct < 100 ? `
-            <div class="bg-[#111] border border-[#222] rounded-xl p-4 text-center">
-              <p class="text-gray-500 text-xs font-bold mb-1">FALTAM</p>
-              <p class="text-3xl font-black text-white">${total - done}</p>
-              <p class="text-gray-600 text-xs font-bold mt-1">MISSÕES PARA COMPLETAR O DIA</p>
+            <div class="bg-[#111] border border-[#222] rounded-2xl p-5 text-center">
+              <p class="text-gray-500 text-sm font-bold mb-1">FALTAM</p>
+              <p class="text-4xl font-black text-white">${total - done}</p>
+              <p class="text-gray-600 text-sm font-bold mt-1">MISSÕES PARA COMPLETAR O DIA</p>
             </div>
           ` : ''}
         </div>
@@ -2795,15 +2795,15 @@
 
       return `
         <div class="card-colecao ${cfg.css}">
-          <div class="card-colecao-inner ${unlocked ? 'unlocked' : 'card-locked'} rounded-xl p-4 bg-black relative ${unlocked ? cfg.shadow : 'border border-[#1a1a1a]'}" style="min-height: 180px;">
-            ${!unlocked ? '<div class="absolute inset-0 flex items-center justify-center z-10"><span class="text-3xl opacity-40">🔒</span></div>' : ''}
-            <div class="flex items-center justify-between mb-2">
-              <span class="rarity-badge ${cfg.badgeBg} ${cfg.badgeText} ${cfg.border} border">${cfg.label}</span>
-              <span class="text-[9px] font-black ${isSecreta && !unlocked ? 'text-red-900 secreta-text' : 'text-gray-600'}">${reqDisplay}</span>
+          <div class="card-colecao-inner ${unlocked ? 'unlocked' : 'card-locked'} rounded-2xl p-5 bg-black relative ${unlocked ? cfg.shadow : 'border border-[#1a1a1a]'}" style="min-height: 200px;">
+            ${!unlocked ? '<div class="absolute inset-0 flex items-center justify-center z-10"><span class="text-4xl opacity-40">🔒</span></div>' : ''}
+            <div class="flex items-center justify-between mb-3">
+              <span class="rarity-badge ${cfg.badgeBg} ${cfg.badgeText} ${cfg.border} border" style="font-size:9px; padding:3px 10px;">${cfg.label}</span>
+              <span class="text-xs font-black ${isSecreta && !unlocked ? 'text-red-900 secreta-text' : 'text-gray-600'}">${reqDisplay}</span>
             </div>
-            <p class="text-sm font-black ${unlocked ? cfg.text : (isSecreta ? 'text-red-900 secreta-text' : 'text-gray-700')} mt-3 leading-tight">${nomeDisplay}</p>
-            <p class="text-[10px] font-semibold ${unlocked ? 'text-gray-500' : (isSecreta ? 'text-red-950 secreta-text' : 'text-gray-800')} mt-1.5 leading-relaxed">${descDisplay}</p>
-            ${loreDisplay ? `<p class="text-[9px] italic ${cfg.text} opacity-60 mt-2 leading-relaxed">${loreDisplay}</p>` : ''}
+            <p class="text-base font-black ${unlocked ? cfg.text : (isSecreta ? 'text-red-900 secreta-text' : 'text-gray-700')} mt-3 leading-tight">${nomeDisplay}</p>
+            <p class="text-sm font-semibold ${unlocked ? 'text-gray-500' : (isSecreta ? 'text-red-950 secreta-text' : 'text-gray-800')} mt-2 leading-relaxed">${descDisplay}</p>
+            ${loreDisplay ? `<p class="text-xs italic ${cfg.text} opacity-60 mt-2.5 leading-relaxed">${loreDisplay}</p>` : ''}
           </div>
         </div>
       `;
@@ -2847,49 +2847,46 @@
       };
 
       return `
-        <div class="tab-enter space-y-4 max-w-lg mx-auto">
-          <div class="pt-1">
-            <h2 class="text-2xl font-extrabold">Perfil do <span class="text-royal">Guerreiro</span></h2>
-            <p class="text-gray-500 text-sm font-semibold mt-1">Seu nível, identidade e arsenal de conquistas.</p>
-          </div>
+        <div class="tab-enter space-y-5 max-w-lg mx-auto">
 
-          <!-- PROFILE CARD -->
-          <div class="card-neu p-5">
-            <div class="flex items-center gap-4 mb-5">
-              <div class="level-badge w-20 h-20 rounded-2xl flex items-center justify-center text-4xl flex-shrink-0">
-                ${avatar}
-              </div>
-              <div class="flex-1 min-w-0">
-                <input type="text" value="${name}" onchange="updateProfileName()" id="profileNameInput"
-                  class="w-full bg-transparent text-xl font-black text-white border-b border-[#222] pb-1 outline-none focus:border-royal transition-colors"
-                  maxlength="20">
-                <div class="flex items-center gap-2 mt-2">
-                  <span class="text-[10px] font-extrabold tracking-widest ${lvl.isMax ? 'text-yellow-400' : 'text-royal'}">LVL</span>
-                  <span class="text-3xl font-black ${lvl.isMax ? 'text-yellow-400' : 'neon-text'}">${lvl.nivel}</span>
-                  ${lvl.isMax ? '<span class="text-[9px] font-black text-yellow-400/60">MAX</span>' : ''}
-                </div>
-              </div>
+          <!-- ===== HERO PROFILE SECTION ===== -->
+          <div class="card-neu p-6 text-center">
+            <!-- Avatar grande central -->
+            <div class="level-badge w-24 h-24 rounded-full mx-auto flex items-center justify-center text-5xl mb-4">
+              ${avatar}
             </div>
 
-            <!-- XP PROGRESS BAR -->
-            <div class="mb-4">
-              <div class="flex justify-between items-center mb-1.5">
-                <span class="text-[10px] font-extrabold tracking-widest text-gray-500">EXPERIÊNCIA</span>
-                <span class="text-[10px] font-black text-royal">${lvl.isMax ? 'MAX' : lvl.xpNoNivelAtual + ' / ' + lvl.xpProximoNivel + ' XP'}</span>
+            <!-- Nome editável -->
+            <input type="text" value="${name}" onchange="updateProfileName()" id="profileNameInput"
+              class="w-full bg-transparent text-2xl font-black text-white text-center border-b-2 border-[#222] pb-2 outline-none focus:border-royal transition-colors mb-3"
+              maxlength="20">
+
+            <!-- Nível gigante -->
+            <div class="flex items-center justify-center gap-3 mb-5">
+              <span class="text-sm font-extrabold tracking-[0.2em] ${lvl.isMax ? 'text-yellow-400' : 'text-royal'}">NÍVEL</span>
+              <span class="text-5xl font-black ${lvl.isMax ? 'text-yellow-400' : 'neon-text'}">${lvl.nivel}</span>
+              ${lvl.isMax ? '<span class="text-sm font-black text-yellow-400/60">MAX</span>' : ''}
+            </div>
+
+            <!-- Barra de XP gigante -->
+            <div class="mb-5">
+              <div class="flex justify-between items-center mb-2">
+                <span class="text-xs font-extrabold tracking-widest text-gray-500">EXPERIÊNCIA</span>
+                <span class="text-xs font-black text-royal">${lvl.isMax ? 'MAX' : lvl.xpNoNivelAtual + ' / ' + lvl.xpProximoNivel + ' XP'}</span>
               </div>
-              <div class="w-full h-3 bg-black rounded-full overflow-hidden" style="box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);">
+              <div class="w-full h-5 bg-black rounded-full overflow-hidden" style="box-shadow: inset 0 2px 6px rgba(0,0,0,0.6);">
                 <div class="xp-level-bar h-full rounded-full transition-all duration-700 ease-out" style="width:${lvl.pctNivel}%"></div>
               </div>
-              <p class="text-[9px] font-bold text-gray-600 mt-1.5 text-center">XP Total: ${userState.xpTotal.toLocaleString('pt-BR')}</p>
+              <p class="text-sm font-bold text-gray-600 mt-2 text-center">XP Total: ${userState.xpTotal.toLocaleString('pt-BR')}</p>
             </div>
 
-            <!-- AVATAR SELECTOR -->
+            <!-- Avatar selector -->
             <div>
-              <p class="text-[10px] font-extrabold tracking-widest text-gray-500 mb-2">AVATAR</p>
-              <div class="flex flex-wrap gap-2">
+              <p class="text-xs font-extrabold tracking-widest text-gray-500 mb-3">AVATAR</p>
+              <div class="flex flex-wrap justify-center gap-2.5">
                 ${AVATAR_OPTIONS.map(e => `
                   <button onclick="selectAvatar('${e}')"
-                    class="avatar-option w-10 h-10 rounded-xl border-2 flex items-center justify-center text-xl ${avatar === e ? 'selected border-royal bg-royal/10' : 'border-[#222] bg-[#0a0a0a]'}">
+                    class="avatar-option w-12 h-12 rounded-xl border-2 flex items-center justify-center text-2xl min-h-[48px] ${avatar === e ? 'selected border-royal bg-royal/10' : 'border-[#222] bg-[#0a0a0a]'}">
                     ${e}
                   </button>
                 `).join('')}
@@ -2897,15 +2894,15 @@
             </div>
           </div>
 
-          <!-- ARSENAL HEADER -->
-          <div class="flex items-center justify-between">
+          <!-- ===== ARSENAL HEADER ===== -->
+          <div class="flex items-center justify-between px-1">
             <div>
-              <h3 class="text-lg font-black text-white">O Arsenal</h3>
-              <p class="text-[10px] font-bold text-gray-600">${cartasDesbloqueadas.length}/${COLECAO_CARTAS.length} cartas desbloqueadas</p>
+              <h3 class="text-xl font-black text-white">O Arsenal</h3>
+              <p class="text-sm font-bold text-gray-600">${cartasDesbloqueadas.length}/${COLECAO_CARTAS.length} cartas desbloqueadas</p>
             </div>
             <div class="text-right">
-              <p class="text-[10px] font-extrabold text-gray-500 tracking-widest">PRÓXIMA</p>
-              <p class="text-xs font-black text-gray-400">${proxima ? 'Lvl ' + proxima.requisito + ' — ' + proxima.nome : 'Todas de nível desbloqueadas!'}</p>
+              <p class="text-xs font-extrabold text-gray-500 tracking-widest">PRÓXIMA</p>
+              <p class="text-sm font-black text-gray-400">${proxima ? 'Lvl ' + proxima.requisito + ' — ' + proxima.nome : 'Todas de nível desbloqueadas!'}</p>
             </div>
           </div>
 
@@ -2913,25 +2910,25 @@
           <div class="flex flex-wrap gap-2">
             ${Object.entries(contagem).map(([r, c]) => {
               const cfg = RARITY_CONFIG[r];
-              return `<span class="text-[9px] font-black ${cfg.badgeText} ${cfg.badgeBg} px-2 py-1 rounded-md border ${cfg.border}">${cfg.label}: ${c.desbloqueadas}/${c.total}</span>`;
+              return `<span class="text-xs font-black ${cfg.badgeText} ${cfg.badgeBg} px-3 py-1.5 rounded-lg border ${cfg.border}">${cfg.label}: ${c.desbloqueadas}/${c.total}</span>`;
             }).join('')}
           </div>
 
-          <!-- FILTER BUTTONS -->
-          <div class="flex flex-wrap gap-2">
+          <!-- FILTER BUTTONS (scrollable) -->
+          <div class="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1" style="scrollbar-width: none; -ms-overflow-style: none;">
             ${filtros.map(f => {
               const activeClass = filtroClasses[f] || '';
               const count = f === 'Todas' ? COLECAO_CARTAS.length : COLECAO_CARTAS.filter(c => c.raridade === f).length;
-              return `<button onclick="setArsenalFiltro('${f}')" class="filter-btn ${activeClass} px-3 py-1.5 rounded-lg text-[10px] font-extrabold tracking-wider text-gray-500">${f === 'Todas' ? 'TODAS' : RARITY_CONFIG[f]?.label.toUpperCase() || f.toUpperCase()} <span class="text-gray-700 ml-0.5">${count}</span></button>`;
+              return `<button onclick="setArsenalFiltro('${f}')" class="filter-btn ${activeClass} px-4 py-2.5 rounded-xl text-xs font-extrabold tracking-wider text-gray-500 whitespace-nowrap min-h-[44px]">${f === 'Todas' ? 'TODAS' : RARITY_CONFIG[f]?.label.toUpperCase() || f.toUpperCase()} <span class="text-gray-700 ml-1">${count}</span></button>`;
             }).join('')}
           </div>
 
-          <!-- CARD GALLERY -->
-          <div class="grid grid-cols-2 gap-3">
+          <!-- CARD GALLERY (mobile grid) -->
+          <div class="grid grid-cols-2 gap-3.5">
             ${cartasFiltradas.map(carta => renderCartaHTML(carta, lvl)).join('')}
           </div>
 
-          ${cartasFiltradas.length === 0 ? '<p class="text-center text-gray-600 text-sm font-bold py-8">Nenhuma carta nesta categoria.</p>' : ''}
+          ${cartasFiltradas.length === 0 ? '<p class="text-center text-gray-600 text-base font-bold py-10">Nenhuma carta nesta categoria.</p>' : ''}
         </div>
       `;
     }
