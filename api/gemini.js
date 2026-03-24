@@ -4,19 +4,29 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // API key: from Vercel environment variable (Settings → Environment Variables → GEMINI_API_KEY)
   const API_KEY = process.env.GEMINI_API_KEY;
   if (!API_KEY) {
     return res.status(500).json({ error: 'GEMINI_API_KEY not configured on server' });
   }
   const MODEL = 'gemini-2.5-flash';
 
+  // ── PERSONAS DINÂMICAS ──
+  const SARGENTO_GIGACHAD = 'Você é um mentor GigaChad, sargento, estoico. Audite implacavelmente as falhas e sucessos do usuário. Zero piedade. Cobre disciplina física e mental. Respostas DIRETAS, CURTAS, BRUTALMENTE HONESTAS em português do Brasil. Referências a guerra, batalha e disciplina espartana. Sem emojis.';
+
+  const PROFESSOR_ELITE = (topico) =>
+    `Você é um Professor de Elite, rigoroso e especialista mundial em ${topico}. Seu objetivo é explicar a dúvida do usuário de forma cirúrgica, extremamente didática e com exemplos práticos. Mantenha uma postura exigente de um mentor de alta performance, não aceite preguiça intelectual, mas ENTREGUE a explicação real e detalhada sobre o tema. Responda sempre em português do Brasil.`;
+
   try {
-    const { prompt, maxTokens = 300 } = req.body;
+    const { prompt, maxTokens = 300, topicoEstudo } = req.body;
 
     if (!prompt) {
       return res.status(400).json({ error: 'Missing prompt' });
     }
+
+    // Seleciona persona com base no contexto
+    const systemInstruction = topicoEstudo
+      ? PROFESSOR_ELITE(topicoEstudo)
+      : SARGENTO_GIGACHAD;
 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${API_KEY}`;
 
@@ -24,6 +34,9 @@ export default async function handler(req, res) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
+        system_instruction: {
+          parts: [{ text: systemInstruction }]
+        },
         contents: [{ parts: [{ text: prompt }] }],
         generationConfig: { maxOutputTokens: maxTokens, temperature: 0.85 }
       })

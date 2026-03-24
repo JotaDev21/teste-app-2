@@ -2816,8 +2816,8 @@
       }, 100);
       try {
         const tema = deepWorkTopic || 'estudo geral';
-        const contextPrompt = `Você é um mestre estoico de alta performance. O usuário está estudando o tema "${tema}". Responda à dúvida dele de forma cirúrgica, brutalmente clara e sem rodeios. Exija excelência intelectual.\n\nDúvida: ${question}`;
-        const resp = await callGemini(contextPrompt, 500);
+        const contextPrompt = `O aluno está estudando "${tema}" e tem a seguinte dúvida:\n\n${question}`;
+        const resp = await callGemini(contextPrompt, 500, tema);
         studyMentorChat.push({ role: 'ai', text: resp });
       } catch (e) {
         studyMentorChat.push({ role: 'ai', text: 'Conexão falhou. Continue estudando, guerreiro.' });
@@ -3510,7 +3510,7 @@
           `${m.role === 'user' ? 'SOLDADO' : 'MENTOR'}: ${m.content}`
         ).join('\n');
 
-        const prompt = `${MENTOR_PERSONA}\n\nHistórico recente:\n${recentChat}\n\nResponda a última mensagem do SOLDADO de forma direta, concisa (máx 3 frases). Seja implacável e motivador.`;
+        const prompt = `Histórico recente:\n${recentChat}\n\nResponda a última mensagem do SOLDADO de forma direta, concisa (máx 3 frases). Seja implacável e motivador.`;
 
         const reply = await callGemini(prompt, 200);
         userState.chatHistory.push({ role: 'assistant', content: reply });
@@ -3832,16 +3832,17 @@
     // GEMINI AI ENGINE (v3.0)
     // =============================================
     const GEMINI_MODEL = 'gemini-2.5-flash';
-    const MENTOR_PERSONA = 'Você é o MENTOR ESTOICO — coach de alta performance implacável, estilo GigaChad. Respostas DIRETAS, CURTAS, BRUTALMENTE HONESTAS em português do Brasil. Não aceita desculpas. Cobra resultados. Referências a guerra, batalha e disciplina espartana. Sem emojis.';
+    // Personas agora vivem no backend (api/gemini.js) via system_instruction dinâmico
 
-    async function callGemini(prompt, maxTokens = 300) {
+    async function callGemini(prompt, maxTokens = 300, topicoEstudo = null) {
       try {
-        const fullPrompt = MENTOR_PERSONA + '\n\n' + prompt;
+        const payload = { prompt, maxTokens };
+        if (topicoEstudo) payload.topicoEstudo = topicoEstudo;
 
         const res = await fetch('/api/gemini', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompt: fullPrompt, maxTokens })
+          body: JSON.stringify(payload)
         });
 
         const data = await res.json();
