@@ -17,6 +17,7 @@
   <title>BE UNSTOPPABLE</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <script>
@@ -215,6 +216,23 @@
       border: 1px solid rgba(124,58,237,0.2);
       border-radius: 16px;
     }
+    /* Markdown prose inside AI chat bubbles */
+    .ai-prose p { margin: 0.4em 0; line-height: 1.7; }
+    .ai-prose strong { color: #c4b5fd; font-weight: 800; }
+    .ai-prose em { color: #a78bfa; }
+    .ai-prose h1,.ai-prose h2,.ai-prose h3,.ai-prose h4 { color: #e9d5ff; font-weight: 800; margin: 0.6em 0 0.3em; }
+    .ai-prose h3 { font-size: 0.95rem; }
+    .ai-prose ul,.ai-prose ol { padding-left: 1.2em; margin: 0.4em 0; }
+    .ai-prose li { margin: 0.2em 0; }
+    .ai-prose li::marker { color: #7c3aed; }
+    .ai-prose code { background: rgba(124,58,237,0.15); color: #c4b5fd; padding: 0.15em 0.4em; border-radius: 4px; font-size: 0.85em; }
+    .ai-prose pre { background: #0a0a0a; border: 1px solid #1a1a2e; border-radius: 8px; padding: 0.8em; overflow-x: auto; margin: 0.5em 0; }
+    .ai-prose pre code { background: none; padding: 0; }
+    .ai-prose table { width: 100%; border-collapse: collapse; margin: 0.5em 0; font-size: 0.85em; }
+    .ai-prose th { background: rgba(124,58,237,0.2); color: #c4b5fd; padding: 0.4em 0.6em; text-align: left; border: 1px solid #2a1a4e; }
+    .ai-prose td { padding: 0.4em 0.6em; border: 1px solid #1a1a2e; }
+    .ai-prose blockquote { border-left: 3px solid #7c3aed; padding-left: 0.8em; margin: 0.5em 0; color: #a78bfa; font-style: italic; }
+    .ai-prose a { color: #a78bfa; text-decoration: underline; }
 
     /* ===== TREINO MODULE ===== */
     .workout-load { font-family: 'Courier New', 'Consolas', monospace; font-variant-numeric: tabular-nums; }
@@ -2810,23 +2828,25 @@
       input.value = '';
       renderActiveTab();
       // Scroll to bottom
-      setTimeout(() => {
+      const scrollMentor = () => setTimeout(() => {
         const chatEl = document.getElementById('studyMentorMessages');
         if (chatEl) chatEl.scrollTop = chatEl.scrollHeight;
       }, 100);
+      scrollMentor();
       try {
         const tema = deepWorkTopic || 'estudo geral';
-        const contextPrompt = `O aluno está estudando "${tema}" e tem a seguinte dúvida:\n\n${question}`;
-        const resp = await callGemini(contextPrompt, null, tema);
+        // Build history array for multi-turn context
+        const historico = studyMentorChat.map(m => ({
+          role: m.role === 'user' ? 'user' : 'model',
+          text: m.text
+        }));
+        const resp = await callGemini(question, null, tema, historico);
         studyMentorChat.push({ role: 'ai', text: resp });
       } catch (e) {
         studyMentorChat.push({ role: 'ai', text: 'Conexão falhou. Continue estudando, guerreiro.' });
       }
       renderActiveTab();
-      setTimeout(() => {
-        const chatEl = document.getElementById('studyMentorMessages');
-        if (chatEl) chatEl.scrollTop = chatEl.scrollHeight;
-      }, 100);
+      scrollMentor();
     }
 
     function showImmersiveOverlay() {
@@ -2937,8 +2957,11 @@
             ` : studyMentorChat.map(msg => `
               <div class="${msg.role === 'user' ? 'ml-8' : 'mr-4'}">
                 <div class="${msg.role === 'user' ? 'bg-purple-950/40 border border-purple-800/30' : 'mentor-bubble'} rounded-2xl p-4">
-                  <p class="text-xs font-extrabold ${msg.role === 'user' ? 'text-purple-400' : 'text-gray-500'} mb-1">${msg.role === 'user' ? 'VOCÊ' : 'MESTRE'}</p>
-                  <p class="text-sm font-semibold ${msg.role === 'user' ? 'text-gray-300' : 'text-gray-400'} leading-relaxed whitespace-pre-wrap break-words">${msg.text}</p>
+                  <p class="text-xs font-extrabold ${msg.role === 'user' ? 'text-purple-400' : 'text-gray-500'} mb-1">${msg.role === 'user' ? 'VOCÊ' : 'PROFESSOR'}</p>
+                  ${msg.role === 'user'
+                    ? `<p class="text-sm font-semibold text-gray-300 leading-relaxed whitespace-pre-wrap break-words">${msg.text}</p>`
+                    : `<div class="ai-prose text-sm font-medium text-gray-400 leading-relaxed break-words">${typeof marked !== 'undefined' ? marked.parse(msg.text) : msg.text}</div>`
+                  }
                 </div>
               </div>
             `).join('')}
@@ -3834,10 +3857,11 @@
     const GEMINI_MODEL = 'gemini-2.5-flash';
     // Personas agora vivem no backend (api/gemini.js) via system_instruction dinâmico
 
-    async function callGemini(prompt, maxTokens = 300, topicoEstudo = null) {
+    async function callGemini(prompt, maxTokens = 300, topicoEstudo = null, historico = null) {
       try {
         const payload = { prompt, maxTokens };
         if (topicoEstudo) payload.topicoEstudo = topicoEstudo;
+        if (historico && historico.length > 0) payload.historico = historico;
 
         const res = await fetch('/api/gemini', {
           method: 'POST',

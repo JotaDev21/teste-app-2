@@ -14,10 +14,10 @@ export default async function handler(req, res) {
   const SARGENTO_GIGACHAD = 'Você é um mentor GigaChad, sargento, estoico. Audite implacavelmente as falhas e sucessos do usuário. Zero piedade. Cobre disciplina física e mental. Respostas DIRETAS, CURTAS, BRUTALMENTE HONESTAS em português do Brasil. Referências a guerra, batalha e disciplina espartana. Sem emojis.';
 
   const PROFESSOR_ELITE = (topico) =>
-    `Você é um Professor de Elite, rigoroso e especialista mundial em ${topico}. Seu objetivo é explicar a dúvida do usuário de forma cirúrgica, extremamente didática e com exemplos práticos. Mantenha uma postura exigente de um mentor de alta performance, não aceite preguiça intelectual, mas ENTREGUE a explicação real e detalhada sobre o tema. Responda sempre em português do Brasil.`;
+    `Você é um Professor de Elite, mestre incontestável em ${topico}. O usuário está em uma sessão profunda de estudos. Sua missão é ensinar de forma magistral, detalhada e sem limites de tamanho, mas de forma interativa. Use Markdown rico (negrito, listas, tabelas, blocos de código) para formatar suas explicações. REGRA DE OURO E OBRIGATÓRIA: Nunca encerre uma explicação sem fazer uma pergunta direta e desafiadora ao usuário sobre o que acabou de ser ensinado. Force-o a raciocinar e interagir. Mantenha o tom de um mentor rigoroso. Responda sempre em português do Brasil.`;
 
   try {
-    const { prompt, maxTokens, topicoEstudo } = req.body;
+    const { prompt, maxTokens, topicoEstudo, historico } = req.body;
 
     if (!prompt) {
       return res.status(400).json({ error: 'Missing prompt' });
@@ -28,8 +28,37 @@ export default async function handler(req, res) {
       ? PROFESSOR_ELITE(topicoEstudo)
       : SARGENTO_GIGACHAD;
 
-    // Professor de Elite precisa de mais espaço para explicações detalhadas
-    const tokenLimit = maxTokens || (topicoEstudo ? 1500 : 300);
+    // Professor de Elite: 8192 tokens (explicações sem corte)
+    // Sargento: 300 tokens (respostas curtas e brutais)
+    const tokenLimit = maxTokens || (topicoEstudo ? 8192 : 300);
+
+    // ── MONTA CONTENTS ──
+    // Se historico (array multi-turn) foi enviado, mapeia para formato Gemini
+    // Senão, usa prompt simples (chat geral, verdicts, etc.)
+    let contents;
+
+    if (historico && Array.isArray(historico) && historico.length > 0) {
+      // Mapeia histórico para formato Gemini: role "user" ou "model"
+      contents = historico.map(msg => ({
+        role: msg.role === 'model' ? 'model' : 'user',
+        parts: [{ text: msg.text }]
+      }));
+
+      // Garante que o último item é do user (a pergunta atual)
+      // Se o histórico já inclui a pergunta atual, não duplica
+      const lastMsg = contents[contents.length - 1];
+      if (lastMsg.role !== 'user' || lastMsg.parts[0].text !== prompt) {
+        contents.push({ role: 'user', parts: [{ text: prompt }] });
+      }
+
+      // Gemini exige que contents comece com role: "user"
+      // Remove mensagens model do início se houver
+      while (contents.length > 0 && contents[0].role === 'model') {
+        contents.shift();
+      }
+    } else {
+      contents = [{ role: 'user', parts: [{ text: prompt }] }];
+    }
 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${API_KEY}`;
 
@@ -40,7 +69,7 @@ export default async function handler(req, res) {
         system_instruction: {
           parts: [{ text: systemInstruction }]
         },
-        contents: [{ parts: [{ text: prompt }] }],
+        contents,
         generationConfig: { maxOutputTokens: tokenLimit, temperature: 0.85 }
       })
     });
