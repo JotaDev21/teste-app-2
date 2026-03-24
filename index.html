@@ -307,39 +307,79 @@
     .sync-indicator.syncing { background: #F59E0B; animation: aiPulse 1s infinite; }
     .sync-indicator.error { background: #EF4444; }
 
-    /* ===== CARD COLLECTION SYSTEM ===== */
+    /* ===== CARD COLLECTION SYSTEM v2.0 ===== */
     .card-colecao {
-      perspective: 600px;
+      perspective: 800px;
       cursor: pointer;
     }
     .card-colecao-inner {
-      transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+      transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
       transform-style: preserve-3d;
       will-change: transform;
+      position: relative;
+      overflow: hidden;
     }
     .card-colecao:hover .card-colecao-inner {
-      transform: rotateY(3deg) rotateX(-2deg) scale(1.03);
+      transform: rotateY(3deg) rotateX(-2deg) scale(1.05);
     }
     .card-locked {
-      opacity: 0.2;
-      filter: grayscale(1);
+      opacity: 0.35;
+      filter: brightness(0) grayscale(1);
       pointer-events: none;
     }
-    .rarity-comum   { --neon-card: rgba(150,150,150,0.4); }
-    .rarity-rara     { --neon-card: rgba(37,99,235,0.6); }
-    .rarity-epica    { --neon-card: rgba(168,85,247,0.6); }
+    .rarity-comum    { --neon-card: rgba(160,160,160,0.35); }
+    .rarity-rara     { --neon-card: rgba(0,230,255,0.55); }
+    .rarity-epica    { --neon-card: rgba(180,60,255,0.6); }
     .rarity-lendaria { --neon-card: rgba(255,200,0,0.7); }
+    .rarity-secreta  { --neon-card: rgba(180,0,0,0.7); }
     .card-colecao-inner.unlocked {
       border: 1px solid var(--neon-card);
       box-shadow: 0 0 15px var(--neon-card), inset 0 0 20px rgba(0,0,0,0.6);
     }
     .card-colecao:hover .card-colecao-inner.unlocked {
-      box-shadow: 0 0 25px var(--neon-card), 0 8px 20px rgba(0,0,0,0.5), inset 0 0 20px rgba(0,0,0,0.4);
+      box-shadow: 0 0 30px var(--neon-card), 0 8px 25px rgba(0,0,0,0.5), inset 0 0 20px rgba(0,0,0,0.3);
+    }
+    /* Lendária pulse glow */
+    .rarity-lendaria .card-colecao-inner.unlocked {
+      animation: legendaryPulse 3s ease-in-out infinite;
+    }
+    @keyframes legendaryPulse {
+      0%, 100% { box-shadow: 0 0 15px rgba(255,200,0,0.5), inset 0 0 20px rgba(0,0,0,0.6); }
+      50% { box-shadow: 0 0 30px rgba(255,200,0,0.8), 0 0 60px rgba(255,200,0,0.2), inset 0 0 20px rgba(0,0,0,0.4); }
+    }
+    /* Secreta glitch effect */
+    .rarity-secreta .card-colecao-inner.unlocked {
+      animation: secretaGlitch 4s ease-in-out infinite;
+      border-color: rgba(180,0,0,0.6);
+    }
+    @keyframes secretaGlitch {
+      0%, 100% { box-shadow: 0 0 20px rgba(180,0,0,0.5), inset 0 0 25px rgba(0,0,0,0.7); transform: none; }
+      25% { box-shadow: 0 0 35px rgba(180,0,0,0.8), -2px 0 0 rgba(0,255,0,0.15), 2px 0 0 rgba(0,0,255,0.15), inset 0 0 25px rgba(0,0,0,0.5); }
+      50% { box-shadow: 0 0 20px rgba(180,0,0,0.4), inset 0 0 25px rgba(0,0,0,0.7); }
+      75% { box-shadow: 0 0 40px rgba(180,0,0,0.9), 3px 0 0 rgba(255,0,0,0.2), -3px 0 0 rgba(0,255,255,0.1), inset 0 0 25px rgba(0,0,0,0.4); transform: skewX(-0.5deg); }
+    }
+    .secreta-text {
+      font-family: 'Courier New', monospace;
+      letter-spacing: 0.2em;
+      text-shadow: 0 0 8px rgba(180,0,0,0.6);
     }
     .rarity-badge {
       font-size: 8px; font-weight: 900; letter-spacing: 0.15em; padding: 2px 8px;
       border-radius: 6px; text-transform: uppercase;
     }
+    /* Filter buttons */
+    .filter-btn {
+      transition: all 0.2s;
+      border: 1px solid #222;
+      background: #0a0a0a;
+    }
+    .filter-btn:hover { border-color: #444; }
+    .filter-btn.active { border-color: var(--neon); background: rgba(37,99,235,0.1); color: #2563EB; }
+    .filter-btn.active-comum   { border-color: #6b7280; color: #9ca3af; background: rgba(107,114,128,0.1); }
+    .filter-btn.active-rara    { border-color: #06b6d4; color: #22d3ee; background: rgba(6,182,212,0.1); }
+    .filter-btn.active-epica   { border-color: #a855f7; color: #c084fc; background: rgba(168,85,247,0.1); }
+    .filter-btn.active-lendaria { border-color: #eab308; color: #facc15; background: rgba(234,179,8,0.1); }
+    .filter-btn.active-secreta { border-color: #991b1b; color: #dc2626; background: rgba(153,27,27,0.15); }
     .xp-level-bar {
       background: linear-gradient(90deg, #2563EB 0%, #7C3AED 50%, #00FF64 100%);
       box-shadow: 0 0 8px rgba(37,99,235,0.5);
@@ -760,20 +800,95 @@
     const MAX_LEVEL = 150;
     const AVATAR_OPTIONS = ['⚔️', '🛡️', '👑', '🦅', '🐺', '🦁', '🔥', '💀', '🗡️', '🏛️', '⚡', '🧠'];
 
+    // =============================================
+    // CONFIGURAÇÃO DE RARIDADES
+    // =============================================
+    const RARITY_CONFIG = {
+      'Comum': {
+        label: 'Aço', css: 'rarity-comum',
+        text: 'text-gray-300', bg: 'bg-gray-800/60', border: 'border-gray-600/50',
+        badgeBg: 'bg-gray-800', badgeText: 'text-gray-400',
+        shadow: 'shadow-[0_0_5px_rgba(160,160,160,0.3)]',
+      },
+      'Rara': {
+        label: 'Neon', css: 'rarity-rara',
+        text: 'text-cyan-400', bg: 'bg-cyan-950/20', border: 'border-cyan-500/40',
+        badgeBg: 'bg-cyan-950/50', badgeText: 'text-cyan-400',
+        shadow: 'shadow-[0_0_15px_rgba(0,230,255,0.3)]',
+      },
+      'Épica': {
+        label: 'Roxa', css: 'rarity-epica',
+        text: 'text-purple-400', bg: 'bg-purple-950/20', border: 'border-purple-500/40',
+        badgeBg: 'bg-purple-950/50', badgeText: 'text-purple-400',
+        shadow: 'shadow-[0_0_20px_rgba(180,60,255,0.3)]',
+      },
+      'Lendária': {
+        label: 'Ouro', css: 'rarity-lendaria',
+        text: 'text-yellow-400', bg: 'bg-yellow-950/20', border: 'border-yellow-500/40',
+        badgeBg: 'bg-yellow-950/50', badgeText: 'text-yellow-400',
+        shadow: 'shadow-[0_0_25px_rgba(255,200,0,0.3)]',
+      },
+      'Secreta': {
+        label: 'Anomalia', css: 'rarity-secreta',
+        text: 'text-red-600', bg: 'bg-red-950/20', border: 'border-red-900/50',
+        badgeBg: 'bg-red-950/60', badgeText: 'text-red-500',
+        shadow: 'shadow-[0_0_30px_rgba(120,0,0,0.4)]',
+      },
+    };
+
+    // =============================================
+    // BANCO DE CARTAS — 40 CARTAS (v2.0)
+    // =============================================
     const COLECAO_CARTAS = [
-      { id: 'c_iniciado',       nome: 'O Iniciado',              raridade: 'Comum',    nivelDesbloqueio: 3,   descricao: 'Todo guerreiro começa em algum lugar. Você deu o primeiro passo.',   corNeon: 'text-gray-400',   bgGlow: 'rarity-comum' },
-      { id: 'c_disciplinado',   nome: 'O Disciplinado',          raridade: 'Comum',    nivelDesbloqueio: 7,   descricao: 'A disciplina é a ponte entre metas e conquistas.',                  corNeon: 'text-gray-400',   bgGlow: 'rarity-comum' },
-      { id: 'c_asceta',         nome: 'O Asceta',                raridade: 'Comum',    nivelDesbloqueio: 12,  descricao: 'Você aprendeu que menos é mais. Domínio sobre os desejos.',         corNeon: 'text-gray-400',   bgGlow: 'rarity-comum' },
-      { id: 'c_espartano',      nome: 'O Espartano',             raridade: 'Rara',     nivelDesbloqueio: 20,  descricao: 'Forjado no desconforto. Seu corpo é sua arma.',                     corNeon: 'text-blue-400',   bgGlow: 'rarity-rara' },
-      { id: 'c_estrategista',   nome: 'O Estrategista',          raridade: 'Rara',     nivelDesbloqueio: 28,  descricao: 'Cada movimento é calculado. Nada é por acaso.',                     corNeon: 'text-blue-400',   bgGlow: 'rarity-rara' },
-      { id: 'c_centuriao',      nome: 'O Centurião',             raridade: 'Rara',     nivelDesbloqueio: 35,  descricao: 'Líder de homens. Sua presença comanda respeito.',                   corNeon: 'text-blue-400',   bgGlow: 'rarity-rara' },
-      { id: 'c_filosofo',       nome: 'O Filósofo da Guerra',    raridade: 'Épica',    nivelDesbloqueio: 45,  descricao: 'Mente afiada como lâmina. Sabedoria forjada em batalha.',           corNeon: 'text-purple-400', bgGlow: 'rarity-epica' },
-      { id: 'c_imperador',      nome: 'O Imperador Estoico',     raridade: 'Épica',    nivelDesbloqueio: 55,  descricao: 'Como Marco Aurélio: governa a si mesmo antes de governar o mundo.', corNeon: 'text-purple-400', bgGlow: 'rarity-epica' },
-      { id: 'c_titan',          nome: 'O Titã',                  raridade: 'Épica',    nivelDesbloqueio: 70,  descricao: 'Força que move montanhas. Vontade que dobra a realidade.',           corNeon: 'text-purple-400', bgGlow: 'rarity-epica' },
-      { id: 'c_lenda',          nome: 'Lenda Viva',              raridade: 'Lendária', nivelDesbloqueio: 85,  descricao: 'Seu nome ecoa nos corredores da história.',                         corNeon: 'text-yellow-400', bgGlow: 'rarity-lendaria' },
-      { id: 'c_gigachad',       nome: 'GigaChad Absoluto',       raridade: 'Lendária', nivelDesbloqueio: 100, descricao: 'O arquétipo final. Disciplina encarnada. Imparável.',                corNeon: 'text-yellow-400', bgGlow: 'rarity-lendaria' },
-      { id: 'c_transcendente',  nome: 'O Transcendente',         raridade: 'Lendária', nivelDesbloqueio: 125, descricao: 'Além do humano. Você redefiniu o que é possível.',                   corNeon: 'text-yellow-400', bgGlow: 'rarity-lendaria' },
-      { id: 'c_unstoppable',    nome: 'UNSTOPPABLE',             raridade: 'Lendária', nivelDesbloqueio: 150, descricao: 'Nível máximo. Você é a prova de que limites não existem.',            corNeon: 'text-yellow-400', bgGlow: 'rarity-lendaria' },
+      // ——— COMUNS (Aço) — Níveis 1-25 ———
+      { id: 'c01', nome: 'O Iniciado',              raridade: 'Comum',    tipoDesbloqueio: 'nivel', requisito: 2,   descricao: 'Todo guerreiro começa em algum lugar.',                        lore: '"A jornada de mil milhas começa com um único passo."' },
+      { id: 'c02', nome: 'Primeiro Sangue',          raridade: 'Comum',    tipoDesbloqueio: 'nivel', requisito: 4,   descricao: 'Você sentiu dor e não recuou. Isso te separa.',                lore: '"A dor é fraqueza abandonando o corpo."' },
+      { id: 'c03', nome: 'O Asceta',                 raridade: 'Comum',    tipoDesbloqueio: 'nivel', requisito: 6,   descricao: 'Menos é mais. Domínio absoluto sobre os desejos.',             lore: '"Aquele que conquista a si mesmo é mais poderoso que quem toma uma cidade."' },
+      { id: 'c04', nome: 'Mente de Aço',             raridade: 'Comum',    tipoDesbloqueio: 'nivel', requisito: 9,   descricao: 'Pensamentos fracos não passam pela sua blindagem mental.',     lore: '"A mente é tudo. O que você pensa, você se torna."' },
+      { id: 'c05', nome: 'O Disciplinado',           raridade: 'Comum',    tipoDesbloqueio: 'nivel', requisito: 12,  descricao: 'A disciplina é a ponte entre metas e conquistas.',             lore: '"Disciplina é liberdade."' },
+      { id: 'c06', nome: 'Rotina de Ferro',          raridade: 'Comum',    tipoDesbloqueio: 'nivel', requisito: 15,  descricao: 'Seu dia é uma máquina. Cada minuto tem propósito.',            lore: '"Nós somos aquilo que fazemos repetidamente."' },
+      { id: 'c07', nome: 'O Silencioso',             raridade: 'Comum',    tipoDesbloqueio: 'nivel', requisito: 18,  descricao: 'Trabalha em silêncio. Os resultados fazem o barulho.',         lore: '"Leão não precisa rugir para ser temido."' },
+      { id: 'c08', nome: 'Jejum Mental',             raridade: 'Comum',    tipoDesbloqueio: 'nivel', requisito: 21,  descricao: 'Desintoxicou a mente do lixo que o mundo oferece.',            lore: '"O vazio é o espaço onde a força nasce."' },
+      { id: 'c09', nome: 'O Monge Guerreiro',        raridade: 'Comum',    tipoDesbloqueio: 'nivel', requisito: 25,  descricao: 'Paz interior com fúria exterior controlada.',                  lore: '"Sereno como a água parada, letal como a correnteza."' },
+
+      // ——— RARAS (Neon) — Níveis 20-50 ———
+      { id: 'c10', nome: 'O Espartano',              raridade: 'Rara',     tipoDesbloqueio: 'nivel', requisito: 22,  descricao: 'Forjado no desconforto. Seu corpo é sua arma.',                lore: '"Volta com teu escudo ou sobre ele."' },
+      { id: 'c11', nome: 'O Estrategista',           raridade: 'Rara',     tipoDesbloqueio: 'nivel', requisito: 27,  descricao: 'Cada movimento é calculado. Nada é por acaso.',                lore: '"A guerra é ganha antes de começar."' },
+      { id: 'c12', nome: 'Sangue Frio',              raridade: 'Rara',     tipoDesbloqueio: 'nivel', requisito: 30,  descricao: 'Pressão não te afeta. O caos é seu habitat natural.',          lore: '"Quanto maior a tempestade, mais calmo o capitão."' },
+      { id: 'c13', nome: 'O Centurião',              raridade: 'Rara',     tipoDesbloqueio: 'nivel', requisito: 34,  descricao: 'Líder de homens. Sua presença comanda respeito.',              lore: '"Não siga o caminho. Abra a trilha."' },
+      { id: 'c14', nome: 'Acordar do Titã',          raridade: 'Rara',     tipoDesbloqueio: 'nivel', requisito: 38,  descricao: 'Algo dentro de você despertou e nunca mais vai dormir.',       lore: '"Eu não nasci para ser medíocre."' },
+      { id: 'c15', nome: 'Jejum Absoluto',           raridade: 'Rara',     tipoDesbloqueio: 'nivel', requisito: 42,  descricao: 'Dominou a fome, a vontade, o impulso. Controle total.',        lore: '"A fome do corpo alimenta a força do espírito."' },
+      { id: 'c16', nome: 'Muralha Estoica',          raridade: 'Rara',     tipoDesbloqueio: 'nivel', requisito: 46,  descricao: 'Nenhuma provocação te derruba. Você é a muralha.',             lore: '"Seja como a rocha contra a qual as ondas quebram."' },
+      { id: 'c17', nome: 'O Predador',               raridade: 'Rara',     tipoDesbloqueio: 'nivel', requisito: 50,  descricao: 'Caçador silencioso. Seus alvos não te veem chegar.',            lore: '"O lobo não perde sono pela opinião das ovelhas."' },
+
+      // ——— ÉPICAS (Roxa) — Níveis 45-100 ———
+      { id: 'c18', nome: 'O Filósofo da Guerra',     raridade: 'Épica',    tipoDesbloqueio: 'nivel', requisito: 48,  descricao: 'Mente afiada como lâmina. Sabedoria forjada em batalha.',      lore: '"Conhece-te a ti mesmo e vencerás mil batalhas."' },
+      { id: 'c19', nome: 'Protocolo Spartan',        raridade: 'Épica',    tipoDesbloqueio: 'nivel', requisito: 53,  descricao: 'Treino extremo ativado. Limite é conceito de fraco.',          lore: '"O suor de hoje é a vitória de amanhã."' },
+      { id: 'c20', nome: 'O Imperador Estoico',      raridade: 'Épica',    tipoDesbloqueio: 'nivel', requisito: 58,  descricao: 'Como Marco Aurélio: governa a si mesmo antes do mundo.',       lore: '"A alma torna-se tingida com a cor dos seus pensamentos."' },
+      { id: 'c21', nome: 'Legião de Um',             raridade: 'Épica',    tipoDesbloqueio: 'nivel', requisito: 63,  descricao: 'Você sozinho vale por um exército inteiro.',                   lore: '"Um guerreiro disciplinado vale mais que dez motivados."' },
+      { id: 'c22', nome: 'Olho do Furacão',          raridade: 'Épica',    tipoDesbloqueio: 'nivel', requisito: 68,  descricao: 'No centro do caos, você encontra paz absoluta.',               lore: '"A calma não é a ausência de tempestade, mas paz no meio dela."' },
+      { id: 'c23', nome: 'O Titã',                   raridade: 'Épica',    tipoDesbloqueio: 'nivel', requisito: 73,  descricao: 'Força que move montanhas. Vontade que dobra a realidade.',     lore: '"Titãs não pedem permissão para existir."' },
+      { id: 'c24', nome: 'Código Bushido',           raridade: 'Épica',    tipoDesbloqueio: 'nivel', requisito: 78,  descricao: 'Honra acima de tudo. O caminho do samurai é a morte do ego.',  lore: '"O guerreiro não é aquele que luta, mas aquele que nunca desiste."' },
+      { id: 'c25', nome: 'Nexus Cerebral',           raridade: 'Épica',    tipoDesbloqueio: 'nivel', requisito: 83,  descricao: 'Cognição expandida. Cada sinapse opera no máximo.',            lore: '"A mente é uma arma. Afiada diariamente."' },
+      { id: 'c26', nome: 'Máquina de Guerra',        raridade: 'Épica',    tipoDesbloqueio: 'nivel', requisito: 88,  descricao: 'Corpo e mente unificados numa arma letal de produtividade.',   lore: '"Eficiência é violência inteligente contra a mediocridade."' },
+      { id: 'c27', nome: 'Vontade Inquebrável',      raridade: 'Épica',    tipoDesbloqueio: 'nivel', requisito: 93,  descricao: 'Tentaram te quebrar. Você dobrou e voltou mais forte.',        lore: '"O que não te mata, forja a lâmina da tua alma."' },
+
+      // ——— LENDÁRIAS (Ouro) — Níveis 85-150 ———
+      { id: 'c28', nome: 'Lenda Viva',               raridade: 'Lendária', tipoDesbloqueio: 'nivel', requisito: 85,  descricao: 'Seu nome ecoa nos corredores da história.',                    lore: '"Lendas não morrem. Transcendem."' },
+      { id: 'c29', nome: 'O Fantasma de Esparta',    raridade: 'Lendária', tipoDesbloqueio: 'nivel', requisito: 95,  descricao: 'Vingança contra a própria fraqueza. Destruição total do ego.', lore: '"Eu sou o monstro que os monstros temem."' },
+      { id: 'c30', nome: 'GigaChad Absoluto',        raridade: 'Lendária', tipoDesbloqueio: 'nivel', requisito: 105, descricao: 'O arquétipo final. Disciplina encarnada. Imparável.',           lore: '"Eu não sigo regras. Eu sou a regra."' },
+      { id: 'c31', nome: 'Imperador do Tempo',       raridade: 'Lendária', tipoDesbloqueio: 'nivel', requisito: 115, descricao: 'Cada segundo é seu servo. O tempo obedece sua vontade.',        lore: '"Enquanto outros desperdiçam horas, eu construo impérios."' },
+      { id: 'c32', nome: 'O Transcendente',          raridade: 'Lendária', tipoDesbloqueio: 'nivel', requisito: 125, descricao: 'Além do humano. Você redefiniu o que é possível.',              lore: '"O impossível é o playground dos determinados."' },
+      { id: 'c33', nome: 'Deus da Disciplina',       raridade: 'Lendária', tipoDesbloqueio: 'nivel', requisito: 135, descricao: 'A disciplina se personificou em você.',                        lore: '"Mortais pedem motivação. Deuses criam disciplina."' },
+      { id: 'c34', nome: 'UNSTOPPABLE',              raridade: 'Lendária', tipoDesbloqueio: 'nivel', requisito: 150, descricao: 'Nível máximo. Você é a prova de que limites não existem.',      lore: '"EU. NÃO. PARO."' },
+
+      // ——— SECRETAS (Anomalia/Glitch) — Condições Ocultas ———
+      { id: 'c35', nome: '??E̷R̸R̶O̷??',              raridade: 'Secreta',  tipoDesbloqueio: 'secreto', requisito: '?????', descricao: '[DADOS CORROMPIDOS]',                               lore: '"Ṿ̸̈o̵̱̓c̷̣̾ê̶͕ ̴̨̛n̶̖̂ã̷̡o̶̤̔ ̵̬̌d̷̰̐e̵̮͊v̴̱͝e̸͓̊r̵̢̈́i̴̞͌a̸̭̍ ̵̣̈́e̸̗͂s̷̡̄t̵̨̋á̸̩r̶̙̈ ̵̠̇a̸̰͂q̷̥̀ụ̵̂i̵̦͋.̶̘̈"' },
+      { id: 'c36', nome: 'Protocolo Icarus',         raridade: 'Secreta',  tipoDesbloqueio: 'secreto', requisito: '?????', descricao: '[CLASSIFICADO — NÍVEL OMEGA]',                        lore: '"Quem voa perto do sol não teme a queda."' },
+      { id: 'c37', nome: 'O Observador',             raridade: 'Secreta',  tipoDesbloqueio: 'secreto', requisito: '?????', descricao: '[ACESSO NEGADO]',                                     lore: '"Eu vi tudo. E continuei de pé."' },
+      { id: 'c38', nome: 'Código Zero',              raridade: 'Secreta',  tipoDesbloqueio: 'secreto', requisito: '?????', descricao: '[ARQUIVO SELADO]',                                    lore: '"Antes do um, existe o zero. Antes da força, existe o vazio."' },
+      { id: 'c39', nome: 'O Paradoxo',               raridade: 'Secreta',  tipoDesbloqueio: 'secreto', requisito: '?????', descricao: '[DADOS FRAGMENTADOS]',                                lore: '"Eu sou a pergunta e a resposta. O início e o fim."' },
+      { id: 'c40', nome: 'BLACKOUT',                 raridade: 'Secreta',  tipoDesbloqueio: 'secreto', requisito: '?????', descricao: '[S̷I̸S̷T̶E̸M̵A̴ ̸C̶O̸R̶R̸O̶M̵P̵I̸D̷O̵]',             lore: '"Q̵̫̐u̵̮̾a̵̢̋n̷̬̐d̷͓̂o̸͙̊ ̸̘̈́a̵̙̿s̷̙̾ ̷̨̈l̸̰̄ṵ̷̂z̸̖̈́e̴͙̿s̷̫̆ ̵̣̈a̶̝̔p̸̰̊á̷̡g̵̱̈́a̶̱̍m̵̗̓,̷̨̊ ̸̼̈e̷͓̎u̵̢̍ ̵̩̀c̷̡̈o̷̲̾m̵̨̾e̸̬̽ç̶̂o̷̬͝.̸̻̀"' },
     ];
 
     function xpParaNivel(nivel) {
@@ -802,14 +917,38 @@
       };
     }
 
+    function isCartaDesbloqueada(carta, nivel) {
+      if (carta.tipoDesbloqueio === 'secreto') {
+        // Secretas: checam o array userState.cartasSecretas
+        return (userState.cartasSecretas || []).includes(carta.id);
+      }
+      return nivel >= carta.requisito;
+    }
+
     function getCartasDesbloqueadas(nivel) {
-      return COLECAO_CARTAS.filter(c => c.nivelDesbloqueio <= nivel);
+      return COLECAO_CARTAS.filter(c => isCartaDesbloqueada(c, nivel));
+    }
+
+    function desbloquearCartaSecreta(cartaId) {
+      if (!userState.cartasSecretas) userState.cartasSecretas = [];
+      if (userState.cartasSecretas.includes(cartaId)) return;
+      const carta = COLECAO_CARTAS.find(c => c.id === cartaId);
+      if (!carta || carta.tipoDesbloqueio !== 'secreto') return;
+      userState.cartasSecretas.push(cartaId);
+      showToast(`💀 ANOMALIA DETECTADA: ${carta.nome}`, 5000);
+      haptic(100);
+      saveData();
     }
 
     function verificarDesbloqueioCartas(nivelAnterior, nivelAtual) {
-      const novas = COLECAO_CARTAS.filter(c => c.nivelDesbloqueio > nivelAnterior && c.nivelDesbloqueio <= nivelAtual);
+      const novas = COLECAO_CARTAS.filter(c =>
+        c.tipoDesbloqueio === 'nivel' &&
+        c.requisito > nivelAnterior &&
+        c.requisito <= nivelAtual
+      );
       novas.forEach(c => {
-        showToast(`🃏 Carta desbloqueada: ${c.nome} (${c.raridade})`, 4000);
+        const rc = RARITY_CONFIG[c.raridade];
+        showToast(`🃏 Carta desbloqueada: ${c.nome} (${rc?.label || c.raridade})`, 4000);
         haptic(60);
       });
       return novas;
@@ -828,14 +967,13 @@
     }
 
     function getRarityColor(raridade) {
-      switch (raridade) {
-        case 'Comum':    return { text: 'text-gray-400', bg: 'bg-gray-800', border: 'border-gray-600' };
-        case 'Rara':     return { text: 'text-blue-400', bg: 'bg-blue-950/30', border: 'border-blue-500/40' };
-        case 'Épica':    return { text: 'text-purple-400', bg: 'bg-purple-950/30', border: 'border-purple-500/40' };
-        case 'Lendária': return { text: 'text-yellow-400', bg: 'bg-yellow-950/30', border: 'border-yellow-500/40' };
-        default:         return { text: 'text-gray-500', bg: 'bg-gray-900', border: 'border-gray-700' };
-      }
+      const cfg = RARITY_CONFIG[raridade];
+      if (!cfg) return { text: 'text-gray-500', bg: 'bg-gray-900', border: 'border-gray-700' };
+      return { text: cfg.text, bg: cfg.bg, border: cfg.border };
     }
+
+    // Galeria: variável global de filtro ativo
+    let arsenalFiltroAtivo = 'Todas';
 
     const DEFAULT_VICIOS = [
       { id: 'acucar',    label: 'Açúcar / Doces',     icon: '🍬' },
@@ -1022,6 +1160,7 @@
       if (!userState.profile) userState.profile = { name: 'Guerreiro', budget: 0, focusGoalHours: 4 };
       if (!userState.profile.avatar) userState.profile.avatar = '⚔️';
       if (typeof userState.xpTotal !== 'number') userState.xpTotal = 0;
+      if (!Array.isArray(userState.cartasSecretas)) userState.cartasSecretas = [];
       if (!userState.missoesDiarias) userState.missoesDiarias = null;
       // Clean stale AI cache (keep only today's)
       const todayPrefix = 'verdict_' + today;
@@ -2629,12 +2768,83 @@
       renderActiveTab();
     }
 
+    function setArsenalFiltro(filtro) {
+      arsenalFiltroAtivo = filtro;
+      renderActiveTab();
+    }
+
+    function renderCartaHTML(carta, lvl) {
+      const unlocked = isCartaDesbloqueada(carta, lvl.nivel);
+      const cfg = RARITY_CONFIG[carta.raridade] || RARITY_CONFIG['Comum'];
+      const isSecreta = carta.tipoDesbloqueio === 'secreto';
+
+      // Requisito display
+      let reqDisplay;
+      if (isSecreta && !unlocked) {
+        reqDisplay = '?̷?̸?̶?̷?̸';
+      } else if (carta.tipoDesbloqueio === 'nivel') {
+        reqDisplay = 'LVL ' + carta.requisito;
+      } else {
+        reqDisplay = '???';
+      }
+
+      // Nome display for locked secretas
+      const nomeDisplay = (isSecreta && !unlocked) ? '?̷?̸ ̶D̵A̸D̷O̶S̵ ̸C̶O̷R̶R̵O̶M̷P̸I̵D̶O̵S̸ ̶?̷?' : carta.nome;
+      const descDisplay = unlocked ? carta.descricao : (isSecreta ? '[̵̧̛A̷̢̎C̸̨̈́E̶̡̔S̵̨̈S̶̤̈O̵̙̊ ̸̘̈́N̵̙̿E̷̙̾G̷̨̈Ā̸̰D̷̂O̶̱̐]̵' : '???');
+      const loreDisplay = unlocked ? carta.lore : '';
+
+      return `
+        <div class="card-colecao ${cfg.css}">
+          <div class="card-colecao-inner ${unlocked ? 'unlocked' : 'card-locked'} rounded-xl p-4 bg-black relative ${unlocked ? cfg.shadow : 'border border-[#1a1a1a]'}" style="min-height: 180px;">
+            ${!unlocked ? '<div class="absolute inset-0 flex items-center justify-center z-10"><span class="text-3xl opacity-40">🔒</span></div>' : ''}
+            <div class="flex items-center justify-between mb-2">
+              <span class="rarity-badge ${cfg.badgeBg} ${cfg.badgeText} ${cfg.border} border">${cfg.label}</span>
+              <span class="text-[9px] font-black ${isSecreta && !unlocked ? 'text-red-900 secreta-text' : 'text-gray-600'}">${reqDisplay}</span>
+            </div>
+            <p class="text-sm font-black ${unlocked ? cfg.text : (isSecreta ? 'text-red-900 secreta-text' : 'text-gray-700')} mt-3 leading-tight">${nomeDisplay}</p>
+            <p class="text-[10px] font-semibold ${unlocked ? 'text-gray-500' : (isSecreta ? 'text-red-950 secreta-text' : 'text-gray-800')} mt-1.5 leading-relaxed">${descDisplay}</p>
+            ${loreDisplay ? `<p class="text-[9px] italic ${cfg.text} opacity-60 mt-2 leading-relaxed">${loreDisplay}</p>` : ''}
+          </div>
+        </div>
+      `;
+    }
+
     function renderPerfil() {
       if (!userState.xpTotal) userState.xpTotal = 0;
+      if (!userState.cartasSecretas) userState.cartasSecretas = [];
       const lvl = calcularNivel(userState.xpTotal);
       const name = userState.profile?.name || 'Guerreiro';
       const avatar = userState.profile?.avatar || '⚔️';
       const cartasDesbloqueadas = getCartasDesbloqueadas(lvl.nivel);
+
+      // Filtro
+      const filtro = arsenalFiltroAtivo;
+      const cartasFiltradas = filtro === 'Todas'
+        ? COLECAO_CARTAS
+        : COLECAO_CARTAS.filter(c => c.raridade === filtro);
+
+      // Próxima carta por nível
+      const proxima = COLECAO_CARTAS
+        .filter(c => c.tipoDesbloqueio === 'nivel' && c.requisito > lvl.nivel)
+        .sort((a, b) => a.requisito - b.requisito)[0];
+
+      // Contagem por raridade
+      const contagem = {};
+      for (const r of Object.keys(RARITY_CONFIG)) {
+        const total = COLECAO_CARTAS.filter(c => c.raridade === r).length;
+        const desbloqueadas = COLECAO_CARTAS.filter(c => c.raridade === r && isCartaDesbloqueada(c, lvl.nivel)).length;
+        contagem[r] = { total, desbloqueadas };
+      }
+
+      const filtros = ['Todas', 'Comum', 'Rara', 'Épica', 'Lendária', 'Secreta'];
+      const filtroClasses = {
+        'Todas':    filtro === 'Todas'    ? 'active' : '',
+        'Comum':    filtro === 'Comum'    ? 'active-comum' : '',
+        'Rara':     filtro === 'Rara'     ? 'active-rara' : '',
+        'Épica':    filtro === 'Épica'    ? 'active-epica' : '',
+        'Lendária': filtro === 'Lendária' ? 'active-lendaria' : '',
+        'Secreta':  filtro === 'Secreta'  ? 'active-secreta' : '',
+      };
 
       return `
         <div class="tab-enter space-y-4 max-w-lg mx-auto">
@@ -2646,7 +2856,6 @@
           <!-- PROFILE CARD -->
           <div class="card-neu p-5">
             <div class="flex items-center gap-4 mb-5">
-              <!-- Avatar -->
               <div class="level-badge w-20 h-20 rounded-2xl flex items-center justify-center text-4xl flex-shrink-0">
                 ${avatar}
               </div>
@@ -2696,33 +2905,33 @@
             </div>
             <div class="text-right">
               <p class="text-[10px] font-extrabold text-gray-500 tracking-widest">PRÓXIMA</p>
-              <p class="text-xs font-black text-gray-400">${(() => {
-                const proxima = COLECAO_CARTAS.find(c => c.nivelDesbloqueio > lvl.nivel);
-                return proxima ? 'Lvl ' + proxima.nivelDesbloqueio + ' — ' + proxima.nome : 'Todas desbloqueadas!';
-              })()}</p>
+              <p class="text-xs font-black text-gray-400">${proxima ? 'Lvl ' + proxima.requisito + ' — ' + proxima.nome : 'Todas de nível desbloqueadas!'}</p>
             </div>
+          </div>
+
+          <!-- RARITY BREAKDOWN -->
+          <div class="flex flex-wrap gap-2">
+            ${Object.entries(contagem).map(([r, c]) => {
+              const cfg = RARITY_CONFIG[r];
+              return `<span class="text-[9px] font-black ${cfg.badgeText} ${cfg.badgeBg} px-2 py-1 rounded-md border ${cfg.border}">${cfg.label}: ${c.desbloqueadas}/${c.total}</span>`;
+            }).join('')}
+          </div>
+
+          <!-- FILTER BUTTONS -->
+          <div class="flex flex-wrap gap-2">
+            ${filtros.map(f => {
+              const activeClass = filtroClasses[f] || '';
+              const count = f === 'Todas' ? COLECAO_CARTAS.length : COLECAO_CARTAS.filter(c => c.raridade === f).length;
+              return `<button onclick="setArsenalFiltro('${f}')" class="filter-btn ${activeClass} px-3 py-1.5 rounded-lg text-[10px] font-extrabold tracking-wider text-gray-500">${f === 'Todas' ? 'TODAS' : RARITY_CONFIG[f]?.label.toUpperCase() || f.toUpperCase()} <span class="text-gray-700 ml-0.5">${count}</span></button>`;
+            }).join('')}
           </div>
 
           <!-- CARD GALLERY -->
           <div class="grid grid-cols-2 gap-3">
-            ${COLECAO_CARTAS.map(carta => {
-              const unlocked = carta.nivelDesbloqueio <= lvl.nivel;
-              const rc = getRarityColor(carta.raridade);
-              return `
-                <div class="card-colecao ${carta.bgGlow}">
-                  <div class="card-colecao-inner ${unlocked ? 'unlocked' : 'card-locked'} rounded-xl p-4 bg-black ${unlocked ? '' : 'border border-[#1a1a1a]'}" style="min-height: 160px;">
-                    ${!unlocked ? '<div class="absolute inset-0 flex items-center justify-center"><span class="text-3xl opacity-30">🔒</span></div>' : ''}
-                    <div class="flex items-center justify-between mb-2">
-                      <span class="rarity-badge ${rc.bg} ${rc.text} ${rc.border} border">${carta.raridade}</span>
-                      <span class="text-[9px] font-black text-gray-600">LVL ${carta.nivelDesbloqueio}</span>
-                    </div>
-                    <p class="text-sm font-black ${unlocked ? rc.text : 'text-gray-700'} mt-3">${carta.nome}</p>
-                    <p class="text-[10px] font-semibold ${unlocked ? 'text-gray-500' : 'text-gray-800'} mt-1 leading-relaxed">${unlocked ? carta.descricao : '???'}</p>
-                  </div>
-                </div>
-              `;
-            }).join('')}
+            ${cartasFiltradas.map(carta => renderCartaHTML(carta, lvl)).join('')}
           </div>
+
+          ${cartasFiltradas.length === 0 ? '<p class="text-center text-gray-600 text-sm font-bold py-8">Nenhuma carta nesta categoria.</p>' : ''}
         </div>
       `;
     }
