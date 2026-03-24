@@ -627,6 +627,84 @@
       { id: 'read',    label: 'Leitura (10 págs)',     icon: '📖', desc: 'Conhecimento é a arma definitiva.' },
     ];
 
+    // =============================================
+    // POOL DE MISSÕES — THE GRIND v2.0
+    // =============================================
+    const POOL_MISSOES = [
+      { id: 'm_banho_gelado',    titulo: 'Banho Gelado 3min',       descricao: 'Água no mínimo fria. Sem aquecedor. Sem choro.', icone: '🧊', xp: 30 },
+      { id: 'm_100_flexoes',     titulo: '100 Flexões',             descricao: 'Divida como quiser. Mas complete.', icone: '💪', xp: 40 },
+      { id: 'm_jejum_dopamina',  titulo: 'Jejum de Dopamina',       descricao: 'Zero redes sociais, jogos e streaming hoje.', icone: '🧠', xp: 50 },
+      { id: 'm_acordar_05',      titulo: 'Acordar 05:00',           descricao: 'Despertador toca, você levanta. Ponto.', icone: '⏰', xp: 35 },
+      { id: 'm_leitura_20',      titulo: 'Leitura Técnica 20 págs', descricao: 'Livro real. Nada de scroll em feed.', icone: '📖', xp: 25 },
+      { id: 'm_zero_acucar',     titulo: 'Zero Açúcar',             descricao: 'Nenhum doce, refrigerante ou suco industrializado.', icone: '🚫', xp: 30 },
+      { id: 'm_treino_forca',    titulo: 'Treino de Força Pesado',  descricao: 'Academia ou calistenia. Intensidade máxima.', icone: '🏋️', xp: 45 },
+      { id: 'm_correr_5k',       titulo: 'Correr 5km',              descricao: 'Calce o tênis e vá. Sem pensar demais.', icone: '🏃', xp: 40 },
+      { id: 'm_meditacao_15',    titulo: 'Meditação 15min',         descricao: 'Silêncio. Respiração. Controle mental.', icone: '🧘', xp: 20 },
+      { id: 'm_sem_celular_1h',  titulo: 'Sem Celular 1h',          descricao: 'Uma hora inteira. Modo avião ou desligado.', icone: '📵', xp: 25 },
+      { id: 'm_dieta_limpa',     titulo: 'Dieta 100% Limpa',        descricao: 'Zero fast food, zero ultra-processado.', icone: '🥗', xp: 35 },
+      { id: 'm_agua_3l',         titulo: 'Beber 3L de Água',        descricao: 'Hidratação é performance. Sem desculpa.', icone: '💧', xp: 15 },
+      { id: 'm_journaling',      titulo: 'Journaling Noturno',      descricao: 'Escreva 3 vitórias do dia e 1 melhoria.', icone: '📝', xp: 20 },
+      { id: 'm_deep_work_2h',    titulo: 'Deep Work 2h',            descricao: 'Duas horas ininterruptas no que importa.', icone: '🎯', xp: 45 },
+      { id: 'm_sem_reclamacao',   titulo: 'Sem Reclamar o Dia Todo', descricao: 'Zero queixa. Guerreiro resolve, não reclama.', icone: '🤐', xp: 30 },
+      { id: 'm_alongamento',     titulo: 'Alongamento 15min',       descricao: 'Mobilidade é a base. Não negligencie.', icone: '🤸', xp: 15 },
+      { id: 'm_abs_200',         titulo: '200 Abdominais',          descricao: 'Divida em sets. Core de aço.', icone: '🔥', xp: 35 },
+      { id: 'm_cama_arrumada',   titulo: 'Arrumar a Cama ao Levantar', descricao: 'Primeira vitória do dia. Disciplina nos detalhes.', icone: '🛏️', xp: 10 },
+      { id: 'm_frio_10min',      titulo: 'Exposição ao Frio 10min', descricao: 'Banho gelado extendido ou crioterapia.', icone: '❄️', xp: 40 },
+      { id: 'm_sem_cafeina',     titulo: 'Sem Cafeína',             descricao: 'Prove que sua energia não depende de substâncias.', icone: '☕', xp: 25 },
+      { id: 'm_organizar_mesa',  titulo: 'Organizar Espaço de Trabalho', descricao: 'Ambiente limpo = mente limpa.', icone: '🧹', xp: 10 },
+      { id: 'm_gratidao_5',      titulo: '5 Gratidões em Voz Alta', descricao: 'Fale em voz alta 5 coisas que agradece.', icone: '🙏', xp: 15 },
+      { id: 'm_caminhada_30',    titulo: 'Caminhada 30min',         descricao: 'Ao ar livre. Sem fone. Presente no momento.', icone: '🚶', xp: 20 },
+      { id: 'm_estudar_1h',      titulo: 'Estudar 1h (Skill Novo)', descricao: 'Aprenda algo que te assusta.', icone: '💻', xp: 35 },
+      { id: 'm_postura_check',   titulo: 'Checar Postura 5x ao Dia', descricao: 'Coluna reta. Ombros para trás. Presença.', icone: '🦴', xp: 10 },
+      { id: 'm_sem_desculpa',    titulo: 'Sem Dar Desculpas',       descricao: 'Assuma 100% de responsabilidade hoje.', icone: '⚡', xp: 20 },
+      { id: 'm_dormir_22',       titulo: 'Dormir até 22:00',        descricao: 'Sono é arma. Luzes apagadas às 22h.', icone: '🌙', xp: 30 },
+      { id: 'm_networking',      titulo: 'Fazer 1 Contato Profissional', descricao: 'Mande uma mensagem de valor a alguém da área.', icone: '🤝', xp: 25 },
+      { id: 'm_sem_musica',      titulo: 'Treinar Sem Música',      descricao: 'Conexão com o desconforto puro. Sem distração.', icone: '🔇', xp: 20 },
+      { id: 'm_plank_5min',      titulo: 'Prancha 5 Minutos Total', descricao: 'Divida como quiser. Core e mente.', icone: '🪨', xp: 30 },
+      { id: 'm_cold_face',       titulo: 'Lavar Rosto com Água Gelada', descricao: 'Ao acordar. Choque térmico para despertar.', icone: '💦', xp: 10 },
+      { id: 'm_orar_15',         titulo: 'Oração/Reflexão 15min',   descricao: 'Conexão espiritual. Silêncio interior.', icone: '✝️', xp: 20 },
+      { id: 'm_cozinhar',        titulo: 'Cozinhar Própria Refeição', descricao: 'Sem delivery. Você controla o que entra no corpo.', icone: '👨‍🍳', xp: 25 },
+      { id: 'm_burpees_50',      titulo: '50 Burpees',              descricao: 'O exercício mais brutal. Faça sem parar.', icone: '🫠', xp: 45 },
+      { id: 'm_visualizacao',    titulo: 'Visualização 10min',      descricao: 'Feche os olhos e veja sua melhor versão.', icone: '👁️', xp: 15 },
+    ];
+
+    const MISSOES_POR_DIA = 10;
+
+    function gerarMissoesDoDia() {
+      const today = getTodayKey();
+      // Check if missions already generated for today
+      if (userState.missoesDiarias && userState.missoesDiarias.date === today) {
+        return userState.missoesDiarias.missoes;
+      }
+      // Shuffle and pick 10
+      const shuffled = [...POOL_MISSOES].sort(() => Math.random() - 0.5);
+      const selected = shuffled.slice(0, MISSOES_POR_DIA).map(m => ({
+        ...m,
+        concluida: false
+      }));
+      userState.missoesDiarias = { date: today, missoes: selected };
+      saveData();
+      return selected;
+    }
+
+    function getMissoesDoDia() {
+      const today = getTodayKey();
+      if (!userState.missoesDiarias || userState.missoesDiarias.date !== today) {
+        return gerarMissoesDoDia();
+      }
+      return userState.missoesDiarias.missoes;
+    }
+
+    function getMissoesDone() {
+      const missoes = getMissoesDoDia();
+      return missoes.filter(m => m.concluida).length;
+    }
+
+    function getMissoesXpTotal() {
+      const missoes = getMissoesDoDia();
+      return missoes.filter(m => m.concluida).reduce((sum, m) => sum + m.xp, 0);
+    }
+
     const DEFAULT_VICIOS = [
       { id: 'acucar',    label: 'Açúcar / Doces',     icon: '🍬' },
       { id: 'redes',     label: 'Redes Sociais',      icon: '📱' },
@@ -777,7 +855,12 @@
         // Before resetting, compute streak from yesterday
         computeStreakOnNewDay(today);
         userState.dailyHabits[today] = {};
-        DEFAULT_HABITS.forEach(h => userState.dailyHabits[today][h.id] = false);
+        // Generate today's missions and sync to dailyHabits
+        const todayMissoes = gerarMissoesDoDia();
+        todayMissoes.forEach(m => userState.dailyHabits[today][m.id] = false);
+      } else {
+        // Ensure missions exist for today (in case loaded from cloud without them)
+        getMissoesDoDia();
       }
       // Initialize vicios if needed
       if (!userState.vicios || typeof userState.vicios !== 'object') {
@@ -804,6 +887,7 @@
       if (!userState.aiCache || typeof userState.aiCache !== 'object') userState.aiCache = {};
       if (!userState.apiKey) userState.apiKey = '';
       if (!userState.profile) userState.profile = { name: 'Guerreiro', budget: 0, focusGoalHours: 4 };
+      if (!userState.missoesDiarias) userState.missoesDiarias = null;
       // Clean stale AI cache (keep only today's)
       const todayPrefix = 'verdict_' + today;
       Object.keys(userState.aiCache).forEach(k => {
@@ -846,7 +930,8 @@
     }
 
     function allHabitsComplete(habitsObj) {
-      const ids = DEFAULT_HABITS.map(h => h.id);
+      const ids = Object.keys(habitsObj);
+      if (ids.length === 0) return false;
       return ids.every(id => habitsObj[id] === true);
     }
 
@@ -1019,10 +1104,11 @@
       const habits = userState.dailyHabits[dateKey];
       if (!habits) return 0;
 
-      // 70% — habit completion
-      const ids = DEFAULT_HABITS.map(h => h.id);
+      // 70% — mission/habit completion (works with both old 4-habit and new 10-mission system)
+      const ids = Object.keys(habits);
+      const total = ids.length || 1;
       const done = ids.filter(id => habits[id] === true).length;
-      const habitScore = (done / ids.length) * 70;
+      const habitScore = (done / total) * 70;
 
       // 30% — budget health (daily portion)
       let budgetScore = 30; // default full if no budget set
@@ -1047,9 +1133,9 @@
         const dk = getDateOffset(today, -i);
         const habits = userState.dailyHabits[dk];
         const score = calcDayScore(dk);
-        const ids = DEFAULT_HABITS.map(h => h.id);
+        const ids = habits ? Object.keys(habits) : [];
         const done = habits ? ids.filter(id => habits[id] === true).length : 0;
-        const allDone = done === ids.length && habits;
+        const allDone = ids.length > 0 && done === ids.length;
         const dayLabel = new Date(dk + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'short' }).slice(0, 3).toUpperCase();
         days.push({ date: dk, score, done, allDone, dayLabel, isToday: dk === today });
       }
@@ -1142,14 +1228,13 @@
               <div class="h-full rounded-full transition-all duration-700 ease-out" style="width:${score}%; background:${ringColor}; box-shadow: 0 0 10px ${ringColor}40;"></div>
             </div>
             <div class="flex justify-between items-center mt-2">
-              <div class="flex gap-1">
-                ${DEFAULT_HABITS.map(h => {
-                  const habits = userState.dailyHabits[today] || {};
-                  const isDone = habits[h.id];
-                  return `<span class="text-sm ${isDone ? '' : 'opacity-25 grayscale'}" title="${h.label}">${h.icon}</span>`;
-                }).join('')}
+              <div class="flex gap-0.5">
+                ${(() => {
+                  const ms = getMissoesDoDia();
+                  return ms.map(m => `<span class="text-[10px] ${m.concluida ? '' : 'opacity-20 grayscale'}" title="${m.titulo}">${m.icone}</span>`).join('');
+                })()}
               </div>
-              <span class="text-[10px] font-bold text-gray-600">${(() => { const h = userState.dailyHabits[today] || {}; return DEFAULT_HABITS.filter(hb => h[hb.id]).length; })()}/${DEFAULT_HABITS.length} hábitos</span>
+              <span class="text-[10px] font-bold text-gray-600">${getMissoesDone()}/${MISSOES_POR_DIA} missões</span>
             </div>
           </div>
 
@@ -1192,26 +1277,45 @@
       renderActiveTab();
     }
 
+    function toggleMissao(missionId) {
+      const missoes = getMissoesDoDia();
+      const m = missoes.find(x => x.id === missionId);
+      if (!m) return;
+      m.concluida = !m.concluida;
+      haptic(m.concluida ? 40 : 15);
+
+      // Sync missions to dailyHabits for score compatibility
+      const today = getTodayKey();
+      if (!userState.dailyHabits[today]) userState.dailyHabits[today] = {};
+      missoes.forEach(mi => {
+        userState.dailyHabits[today][mi.id] = mi.concluida;
+      });
+
+      saveData();
+      renderActiveTab();
+    }
+
     // =============================================
-    // GRIND TAB
+    // GRIND TAB — 10 MISSÕES DIÁRIAS
     // =============================================
     function renderGrind() {
-      const today = getTodayKey();
-      const habits = userState.dailyHabits[today] || {};
-      const done = Object.values(habits).filter(Boolean).length;
-      const total = DEFAULT_HABITS.length;
-      const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+      const missoes = getMissoesDoDia();
+      const done = missoes.filter(m => m.concluida).length;
+      const total = MISSOES_POR_DIA;
+      const pct = Math.round((done / total) * 100);
+      const xpGanho = missoes.filter(m => m.concluida).reduce((s, m) => s + m.xp, 0);
+      const xpTotal = missoes.reduce((s, m) => s + m.xp, 0);
       const streak = userState.streakCount || 0;
 
       return `
         <div class="tab-enter space-y-4 max-w-lg mx-auto">
           <div class="pt-1">
             <h2 class="text-2xl font-extrabold">The <span class="text-royal">Grind</span></h2>
-            <p class="text-gray-500 text-sm font-semibold mt-1">4 hábitos não-negociáveis. Todos os dias.</p>
+            <p class="text-gray-500 text-sm font-semibold mt-1">10 missões de guerra. Sorteio diário. Sem moleza.</p>
           </div>
 
-          <!-- Streak + Progress Header -->
-          <div class="bg-[#111] border border-[#333] rounded-xl p-4">
+          <!-- STREAK + XP HEADER -->
+          <div class="card-neu p-4">
             <div class="flex items-center justify-between mb-4">
               <div>
                 <p class="text-[10px] font-extrabold text-gray-500 tracking-widest">STREAK ATUAL</p>
@@ -1221,55 +1325,68 @@
                   <span class="text-sm font-extrabold text-gray-500 self-end mb-1">${streak === 1 ? 'DIA' : 'DIAS'}</span>
                 </div>
               </div>
-              <div class="w-20 h-20 rounded-full border-4 ${pct === 100 ? 'border-[#00FF64]' : 'border-[#333]'} flex items-center justify-center relative" style="${pct === 100 ? 'box-shadow: 0 0 20px rgba(0,255,100,0.3)' : ''}">
-                <span class="text-xl font-black ${pct === 100 ? 'neon-text' : 'text-white'}">${pct}%</span>
+              <div class="text-right">
+                <p class="text-[10px] font-extrabold text-gray-500 tracking-widest">XP HOJE</p>
+                <p class="text-3xl font-black ${xpGanho > 0 ? 'neon-text' : 'text-gray-600'} mt-1">${xpGanho}</p>
+                <p class="text-[9px] font-bold text-gray-600">/ ${xpTotal} XP</p>
               </div>
             </div>
 
-            <!-- Progress Bar -->
-            <div class="w-full h-3 bg-black rounded-full overflow-hidden neon-bar-track">
-              <div class="h-full rounded-full transition-all duration-700 ease-out ${pct === 100 ? 'neon-bar' : 'bg-royal'}" style="width:${pct}%"></div>
+            <!-- BARRA DE PROGRESSO -->
+            <div class="mb-2">
+              <div class="flex justify-between items-center mb-1.5">
+                <span class="text-[10px] font-extrabold tracking-widest ${pct === 100 ? 'neon-text' : 'text-gray-400'}">${done}/${total} CONCLUÍDAS HOJE</span>
+                <span class="text-[10px] font-black ${pct === 100 ? 'neon-text' : 'text-royal'}">${pct}%</span>
+              </div>
+              <div class="w-full h-3.5 bg-black rounded-full overflow-hidden" style="box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);">
+                <div class="h-full rounded-full transition-all duration-500 ease-out" style="width:${pct}%; background:${pct === 100 ? '#00FF64' : '#2563EB'}; box-shadow: 0 0 10px ${pct === 100 ? 'rgba(0,255,100,0.8)' : 'rgba(37,99,235,0.8)'};"></div>
+              </div>
             </div>
-            <p class="text-[10px] font-bold text-gray-600 mt-2 text-center">${done}/${total} CONCLUÍDOS HOJE</p>
           </div>
 
-          <!-- 4 Habit Cards -->
-          <div class="space-y-3">
-            ${DEFAULT_HABITS.map((h, i) => {
-              const checked = habits[h.id];
+          ${pct === 100 ? `
+            <div class="rounded-xl p-5 text-center border border-[#00FF64]/30" style="background: rgba(0,255,100,0.05); box-shadow: 0 0 30px rgba(0,255,100,0.1);">
+              <p class="text-3xl mb-2 streak-fire">⚔️</p>
+              <p class="neon-text font-black text-xl tracking-wide">TODAS AS MISSÕES COMPLETAS</p>
+              <p class="text-gray-400 text-xs font-bold mt-2">+${xpTotal} XP conquistados. Amanhã, novas missões.</p>
+            </div>
+          ` : ''}
+
+          <!-- 10 MISSION CARDS -->
+          <div class="space-y-2.5 overflow-y-auto max-h-[32rem] pr-1" style="scrollbar-width: thin; scrollbar-color: #222 #000;">
+            ${missoes.map((m, i) => {
+              const isDone = m.concluida;
               return `
-                <button onclick="toggleHabit('${h.id}')"
-                  class="habit-check w-full flex items-center gap-4 p-4 rounded-xl border transition-all ${checked ? 'done' : 'bg-[#111] border-[#333] hover:border-gray-500'}">
-                  <div class="habit-icon-ring w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0 ${checked ? 'done bg-[#00FF64]/10' : 'bg-black border border-[#333]'}">
-                    ${h.icon}
+                <button onclick="toggleMissao('${m.id}')"
+                  class="w-full flex items-center gap-3 p-3.5 rounded-xl border-2 transition-all active:scale-[0.97] ${isDone
+                    ? 'bg-[#0a0a0a] border-green-500/50 opacity-70'
+                    : 'bg-[#0d0d0d] border-[#1a1a1a] hover:border-[#333]'}"
+                  style="${isDone ? 'box-shadow: 0 0 15px rgba(34,197,94,0.15);' : 'box-shadow: 6px 6px 14px rgba(0,0,0,0.7), -3px -3px 10px rgba(255,255,255,0.02);'}">
+                  <div class="w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0 ${isDone ? 'bg-green-500/10' : 'bg-black border border-[#222]'}">
+                    ${m.icone}
                   </div>
                   <div class="text-left flex-1 min-w-0">
-                    <p class="text-base font-extrabold ${checked ? 'neon-text' : 'text-gray-200'}">${h.label}</p>
-                    <p class="text-xs font-semibold mt-0.5 ${checked ? 'text-[#00FF64]/60' : 'text-gray-600'}">${checked ? 'CONCLUÍDO' : h.desc}</p>
+                    <p class="text-sm font-extrabold ${isDone ? 'text-green-400/60 line-through' : 'text-gray-200'}">${m.titulo}</p>
+                    <p class="text-[10px] font-semibold mt-0.5 ${isDone ? 'text-green-500/40' : 'text-gray-600'} truncate">${isDone ? 'MISSÃO CONCLUÍDA' : m.descricao}</p>
                   </div>
-                  <div class="w-7 h-7 rounded-lg border-2 flex items-center justify-center flex-shrink-0 transition-all ${checked ? 'bg-[#00FF64] border-[#00FF64]' : 'border-[#444]'}">
-                    ${checked
-                      ? '<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="black" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>'
-                      : ''}
+                  <div class="flex items-center gap-2 flex-shrink-0">
+                    <span class="text-[10px] font-black ${isDone ? 'text-green-400/50' : 'text-[#00FF64]'}">+${m.xp} XP</span>
+                    <div class="w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${isDone ? 'bg-green-500 border-green-500' : 'border-[#333]'}">
+                      ${isDone ? '<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="black" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>' : ''}
+                    </div>
                   </div>
                 </button>
               `;
             }).join('')}
           </div>
 
-          ${pct === 100 ? `
-            <div class="rounded-xl p-5 text-center border border-[#00FF64]/30" style="background: rgba(0,255,100,0.05); box-shadow: 0 0 30px rgba(0,255,100,0.1);">
-              <p class="text-3xl mb-2 streak-fire">🔥</p>
-              <p class="neon-text font-black text-xl tracking-wide">MODO BESTA ATIVADO</p>
-              <p class="text-gray-400 text-xs font-bold mt-2">Todos os hábitos concluídos. Amanhã, de novo.</p>
-            </div>
-          ` : `
-            <div class="bg-[#111] border border-[#333] rounded-xl p-4 text-center">
+          ${done > 0 && pct < 100 ? `
+            <div class="bg-[#111] border border-[#222] rounded-xl p-4 text-center">
               <p class="text-gray-500 text-xs font-bold mb-1">FALTAM</p>
               <p class="text-3xl font-black text-white">${total - done}</p>
-              <p class="text-gray-600 text-xs font-bold mt-1">HÁBITOS PARA COMPLETAR O DIA</p>
+              <p class="text-gray-600 text-xs font-bold mt-1">MISSÕES PARA COMPLETAR O DIA</p>
             </div>
-          `}
+          ` : ''}
         </div>
       `;
     }
@@ -2003,13 +2120,13 @@
       const today = getTodayKey();
       let totalPossible = 0;
       let totalDone = 0;
-      const ids = DEFAULT_HABITS.map(h => h.id);
       for (let i = 6; i >= 0; i--) {
         const dk = getDateOffset(today, -i);
         const habits = userState.dailyHabits[dk];
         if (habits) {
-          totalPossible += ids.length;
-          totalDone += ids.filter(id => habits[id] === true).length;
+          const dayIds = Object.keys(habits);
+          totalPossible += dayIds.length;
+          totalDone += dayIds.filter(id => habits[id] === true).length;
         }
       }
       return totalPossible > 0 ? Math.round((totalDone / totalPossible) * 100) : 0;
@@ -2113,7 +2230,7 @@
             <div class="w-full h-3 bg-black rounded-full overflow-hidden">
               <div class="h-full rounded-full transition-all duration-700 ease-out" style="width:${habitRate}%; background:${habitRate >= 80 ? '#00FF64' : habitRate >= 50 ? '#2563EB' : '#FF3333'};"></div>
             </div>
-            <p class="text-[10px] font-bold text-gray-700 mt-2">Últimos 7 dias — ${DEFAULT_HABITS.length} hábitos/dia</p>
+            <p class="text-[10px] font-bold text-gray-700 mt-2">Últimos 7 dias — ${MISSOES_POR_DIA} missões/dia</p>
           </div>
 
           <!-- FINANCEIRO DO MÊS -->
@@ -2485,9 +2602,8 @@
       const cached = userState.aiCache[cacheKey];
       if (cached && !cached.includes('falhou') && !cached.includes('offline')) { displayVerdict(cached); return; }
 
-      const habits = userState.dailyHabits[today] || {};
-      const done = DEFAULT_HABITS.filter(h => habits[h.id]).length;
-      const total = DEFAULT_HABITS.length;
+      const done = getMissoesDone();
+      const total = MISSOES_POR_DIA;
       const score = calcDayScore(today);
       const hour = new Date().getHours();
       const mk = getMonthKey();
