@@ -44,24 +44,31 @@ export default async function handler(req, res) {
     let contents;
 
     if (historico && Array.isArray(historico) && historico.length > 0) {
-      // Mapeia histórico para formato Gemini: role "user" ou "model"
+      // Mapeia histórico (mensagens ANTERIORES) para formato Gemini
       contents = historico.map(msg => ({
         role: msg.role === 'model' ? 'model' : 'user',
         parts: [{ text: msg.text }]
       }));
 
-      // Garante que o último item é do user (a pergunta atual)
-      // Se o histórico já inclui a pergunta atual, não duplica
-      const lastMsg = contents[contents.length - 1];
-      if (lastMsg.role !== 'user' || lastMsg.parts[0].text !== prompt) {
-        contents.push({ role: 'user', parts: [{ text: prompt }] });
-      }
+      // Adiciona a pergunta atual (prompt) como última mensagem do user
+      contents.push({ role: 'user', parts: [{ text: prompt }] });
 
       // Gemini exige que contents comece com role: "user"
-      // Remove mensagens model do início se houver
       while (contents.length > 0 && contents[0].role === 'model') {
         contents.shift();
       }
+
+      // Gemini exige roles alternados — merge mensagens consecutivas do mesmo role
+      const merged = [contents[0]];
+      for (let i = 1; i < contents.length; i++) {
+        const prev = merged[merged.length - 1];
+        if (contents[i].role === prev.role) {
+          prev.parts[0].text += '\n' + contents[i].parts[0].text;
+        } else {
+          merged.push(contents[i]);
+        }
+      }
+      contents = merged;
     } else {
       contents = [{ role: 'user', parts: [{ text: prompt }] }];
     }

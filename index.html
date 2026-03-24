@@ -2230,14 +2230,19 @@
         const ctx = budget > 0
           ? `[Contexto financeiro do mês: Budget R$${budget}, Gasto total R$${totalGasto}, Saldo R$${saldo}, Dopamina R$${totalDopamina} (${budget > 0 ? ((totalDopamina/budget)*100).toFixed(1) : 0}% do budget)]\n\n`
           : '';
-        // Multi-turn history
-        const historico = warChestChat.map(m => ({
-          role: m.role === 'user' ? 'user' : 'model',
-          text: m.text
-        }));
+        // Multi-turn history: send PREVIOUS messages only (exclude current question)
+        // The backend will add ctx+question as the final user message via prompt
+        const previousMessages = warChestChat.slice(0, -1);
+        const historico = previousMessages.length > 0
+          ? previousMessages.map(m => ({
+              role: m.role === 'user' ? 'user' : 'model',
+              text: m.text
+            }))
+          : null;
         const resp = await callGemini(ctx + question, null, null, historico, 'war_chest');
         warChestChat.push({ role: 'ai', text: resp });
       } catch (e) {
+        console.error('ERRO GESTOR IA:', e);
         warChestChat.push({ role: 'ai', text: 'Conexão falhou. Proteja seu capital.' });
       }
       renderActiveTab();
@@ -2930,14 +2935,18 @@
       scrollMentor();
       try {
         const tema = deepWorkTopic || 'estudo geral';
-        // Build history array for multi-turn context
-        const historico = studyMentorChat.map(m => ({
-          role: m.role === 'user' ? 'user' : 'model',
-          text: m.text
-        }));
+        // Multi-turn history: send PREVIOUS messages only (exclude current question)
+        const previousMessages = studyMentorChat.slice(0, -1);
+        const historico = previousMessages.length > 0
+          ? previousMessages.map(m => ({
+              role: m.role === 'user' ? 'user' : 'model',
+              text: m.text
+            }))
+          : null;
         const resp = await callGemini(question, null, tema, historico);
         studyMentorChat.push({ role: 'ai', text: resp });
       } catch (e) {
+        console.error('ERRO PROFESSOR IA:', e);
         studyMentorChat.push({ role: 'ai', text: 'Conexão falhou. Continue estudando, guerreiro.' });
       }
       renderActiveTab();
