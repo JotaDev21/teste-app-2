@@ -16,6 +16,7 @@
   <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='36' fill='%23000'/><text x='90' y='122' font-size='100' text-anchor='middle' fill='%232563EB' font-family='Arial' font-weight='900'>U</text></svg>">
   <title>BE UNSTOPPABLE</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <script>
@@ -264,6 +265,48 @@
     @keyframes aiPulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.8; } }
     .stagnation-tag { background: rgba(255,50,50,0.1); border: 1px solid rgba(255,50,50,0.3); color: #FF3333; }
 
+    /* ===== AUTH SCREEN ===== */
+    .auth-screen {
+      position: fixed; inset: 0; z-index: 100;
+      background: #000;
+      display: flex; align-items: center; justify-content: center;
+      animation: fadeIn 0.3s ease-out;
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .auth-card {
+      background: #0a0a0a;
+      border: 1px solid #1a1a1a;
+      border-radius: 20px;
+      box-shadow: 12px 12px 30px rgba(0,0,0,0.8), -6px -6px 20px rgba(255,255,255,0.02), 0 0 60px rgba(37,99,235,0.05);
+    }
+    .auth-input {
+      width: 100%; padding: 12px 16px; border-radius: 12px;
+      background: #050505 !important; border: 1px solid #222 !important;
+      color: #fff; font-size: 16px !important; font-weight: 600;
+      outline: none; transition: border-color 0.2s;
+    }
+    .auth-input:focus { border-color: #2563EB !important; box-shadow: 0 0 0 2px rgba(37,99,235,0.15); }
+    .auth-input::placeholder { color: #444; }
+    .auth-btn {
+      width: 100%; padding: 14px; border-radius: 12px;
+      background: #2563EB; color: #fff; font-weight: 800; font-size: 14px;
+      letter-spacing: 0.1em; border: none; cursor: pointer;
+      transition: all 0.2s; text-transform: uppercase;
+    }
+    .auth-btn:hover { background: #1d4ed8; }
+    .auth-btn:active { transform: scale(0.97); }
+    .auth-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .auth-divider { display: flex; align-items: center; gap: 12px; }
+    .auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: #222; }
+    .sync-indicator {
+      position: fixed; top: 12px; right: 12px; z-index: 90;
+      width: 8px; height: 8px; border-radius: 50%;
+      transition: background 0.3s;
+    }
+    .sync-indicator.synced { background: #10B981; box-shadow: 0 0 6px rgba(16,185,129,0.5); }
+    .sync-indicator.syncing { background: #F59E0B; animation: aiPulse 1s infinite; }
+    .sync-indicator.error { background: #EF4444; }
+
     /* ===== PWA INSTALL BANNER ===== */
     .install-banner {
       position: fixed; bottom: 72px; left: 16px; right: 16px; z-index: 55;
@@ -278,10 +321,61 @@
 </head>
 <body class="bg-dark text-white min-h-screen flex flex-col select-none">
 
+  <!-- ========== AUTH SCREEN ========== -->
+  <div id="authScreen" class="auth-screen">
+    <div class="auth-card w-full max-w-sm mx-4 p-8">
+      <!-- Logo -->
+      <div class="text-center mb-8">
+        <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-black border border-[#222] flex items-center justify-center">
+          <span class="text-3xl font-black text-royal">U</span>
+        </div>
+        <h1 class="text-2xl font-black tracking-tight">BE <span class="text-royal">UNSTOPPABLE</span></h1>
+        <p class="text-xs font-bold text-gray-600 mt-1 tracking-widest">v3.0 — SISTEMA DE GUERRA</p>
+      </div>
+
+      <!-- Auth Error -->
+      <div id="authError" class="hidden mb-4 p-3 rounded-xl bg-red-950/30 border border-red-900/30">
+        <p id="authErrorText" class="text-xs font-bold text-red-400 text-center"></p>
+      </div>
+
+      <!-- Auth Form -->
+      <div class="space-y-3">
+        <input type="email" id="authEmail" class="auth-input" placeholder="Email de guerra" autocomplete="email">
+        <input type="password" id="authPassword" class="auth-input" placeholder="Senha (mín. 6 caracteres)" autocomplete="current-password">
+      </div>
+
+      <div class="space-y-3 mt-5">
+        <button id="btnLogin" onclick="handleLogin()" type="button" class="auth-btn">ENTRAR NA BATALHA</button>
+        <div class="auth-divider">
+          <span class="text-[10px] font-bold text-gray-600 tracking-widest">OU</span>
+        </div>
+        <button id="btnSignup" onclick="handleSignup()" type="button"
+          class="w-full py-3.5 rounded-xl bg-[#111] border border-[#333] text-gray-300 font-extrabold text-sm tracking-wider hover:border-royal hover:text-royal transition-all active:scale-[0.97] cursor-pointer">
+          CRIAR CONTA DE GUERREIRO
+        </button>
+      </div>
+
+      <!-- Loading state -->
+      <div id="authLoading" class="hidden mt-4 text-center">
+        <p class="text-xs font-bold text-royal ai-loading">Conectando ao servidor...</p>
+      </div>
+
+      <p class="text-[9px] text-gray-700 text-center mt-6">Seus dados são sincronizados na nuvem via Supabase.</p>
+    </div>
+  </div>
+
+  <!-- ========== SYNC INDICATOR ========== -->
+  <div id="syncIndicator" class="sync-indicator synced" title="Cloud Sync"></div>
+
   <!-- ========== HEADER ========== -->
   <header class="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-md border-b border-border px-4 py-3 flex items-center justify-between">
     <h1 class="text-lg font-extrabold tracking-tight">BE <span class="text-royal">UNSTOPPABLE</span></h1>
-    <time id="headerDate" class="text-xs text-gray-500 font-semibold tabular-nums"></time>
+    <div class="flex items-center gap-3">
+      <time id="headerDate" class="text-xs text-gray-500 font-semibold tabular-nums"></time>
+      <button onclick="handleLogout()" title="Sair" class="text-gray-600 hover:text-red-400 transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+      </button>
+    </div>
   </header>
 
   <!-- ========== MAIN CONTENT ========== -->
@@ -320,6 +414,207 @@
   </nav>
 
   <script>
+    // =============================================
+    // SUPABASE CONFIGURATION
+    // =============================================
+    const SUPABASE_URL = 'https://xqtalmsmlnatnokdzcph.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhxdGFsbXNtbG5hdG5va2R6Y3BoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMTI0ODYsImV4cCI6MjA4OTg4ODQ4Nn0.2_zS8jk_On0lncvaCfT2cSbIXPYV6KFptN8DIVrQdaE';
+    let supabase = null;
+    if (window.supabase && window.supabase.createClient) {
+      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      console.log('Supabase initialized OK');
+    } else {
+      console.error('Supabase CDN did not load. window.supabase =', window.supabase);
+    }
+    let currentUser = null;
+    let syncTimeout = null;
+    let isSyncing = false;
+
+    // =============================================
+    // AUTH FUNCTIONS
+    // =============================================
+    function showAuthError(msg) {
+      const el = document.getElementById('authError');
+      const txt = document.getElementById('authErrorText');
+      el.classList.remove('hidden');
+      txt.textContent = msg;
+    }
+
+    function hideAuthError() {
+      document.getElementById('authError').classList.add('hidden');
+    }
+
+    function setAuthLoading(loading) {
+      document.getElementById('authLoading').classList.toggle('hidden', !loading);
+      document.getElementById('btnLogin').disabled = loading;
+      document.getElementById('btnSignup').disabled = loading;
+    }
+
+    async function handleLogin() {
+      hideAuthError();
+      if (!supabase) { showAuthError('Supabase não carregou. Recarregue a página.'); return; }
+      const email = document.getElementById('authEmail').value.trim();
+      const password = document.getElementById('authPassword').value;
+      if (!email || !password) { showAuthError('Preencha email e senha.'); return; }
+      setAuthLoading(true);
+      try {
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        currentUser = data.user;
+        await onAuthSuccess();
+      } catch (err) {
+        console.error('Login error:', err);
+        showAuthError(err.message === 'Invalid login credentials'
+          ? 'Email ou senha incorretos.'
+          : err.message || 'Erro ao fazer login.');
+      }
+      setAuthLoading(false);
+    }
+
+    async function handleSignup() {
+      hideAuthError();
+      if (!supabase) { showAuthError('Supabase não carregou. Recarregue a página.'); return; }
+      const email = document.getElementById('authEmail').value.trim();
+      const password = document.getElementById('authPassword').value;
+      if (!email || !password) { showAuthError('Preencha email e senha.'); return; }
+      if (password.length < 6) { showAuthError('Senha deve ter pelo menos 6 caracteres.'); return; }
+      setAuthLoading(true);
+      try {
+        console.log('Attempting signup with:', email);
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { emailRedirectTo: window.location.origin }
+        });
+        console.log('Signup response data:', JSON.stringify(data, null, 2));
+        console.log('Signup response error:', error);
+        if (error) throw error;
+        if (data.user && !data.user.confirmed_at && data.user.identities?.length === 0) {
+          showAuthError('Este email já está cadastrado.');
+          setAuthLoading(false);
+          return;
+        }
+        if (data.session) {
+          // Email confirmation disabled — user is logged in immediately
+          currentUser = data.user;
+          await onAuthSuccess();
+        } else if (data.user) {
+          // Email confirmation required — auto-login anyway for local/dev use
+          // Try signing in directly (works if "Confirm email" is OFF in Supabase Auth settings)
+          const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({ email, password });
+          if (loginData?.session) {
+            currentUser = loginData.user;
+            await onAuthSuccess();
+          } else {
+            showAuthError('Conta criada! Verifique seu email para confirmar, ou desative "Confirm email" no Supabase → Auth → Settings.');
+          }
+        }
+      } catch (err) {
+        console.error('Signup error:', err);
+        console.error('Signup error details:', JSON.stringify(err, Object.getOwnPropertyNames(err)));
+        showAuthError(err.message || 'Erro ao criar conta.');
+      }
+      setAuthLoading(false);
+    }
+
+    async function handleLogout() {
+      await supabase.auth.signOut();
+      currentUser = null;
+      document.getElementById('authScreen').style.display = 'flex';
+      document.getElementById('authEmail').value = '';
+      document.getElementById('authPassword').value = '';
+      hideAuthError();
+    }
+
+    async function onAuthSuccess() {
+      document.getElementById('authScreen').style.display = 'none';
+      await cloudLoad();
+      loadData();
+      updateHeaderDate();
+      switchTab('dashboard');
+      checkScarcity();
+    }
+
+    // =============================================
+    // CLOUD SYNC (Supabase user_data table)
+    // =============================================
+    // Table schema:
+    //   user_data (
+    //     id UUID REFERENCES auth.users(id) PRIMARY KEY,
+    //     app_state JSONB NOT NULL DEFAULT '{}',
+    //     updated_at TIMESTAMPTZ DEFAULT now()
+    //   )
+
+    function setSyncStatus(status) {
+      const el = document.getElementById('syncIndicator');
+      el.className = 'sync-indicator ' + status;
+    }
+
+    async function cloudSave() {
+      if (!currentUser || isSyncing) return;
+      isSyncing = true;
+      setSyncStatus('syncing');
+      try {
+        const { error } = await supabase
+          .from('user_data')
+          .upsert({
+            id: currentUser.id,
+            app_state: userState,
+            updated_at: new Date().toISOString()
+          }, { onConflict: 'id' });
+        if (error) throw error;
+        setSyncStatus('synced');
+      } catch (err) {
+        console.error('Cloud save error:', err);
+        setSyncStatus('error');
+      }
+      isSyncing = false;
+    }
+
+    async function cloudLoad() {
+      if (!currentUser) return;
+      setSyncStatus('syncing');
+      try {
+        const { data, error } = await supabase
+          .from('user_data')
+          .select('app_state')
+          .eq('id', currentUser.id)
+          .single();
+
+        if (error && error.code === 'PGRST116') {
+          // No row found — new user, INSERT default state
+          console.log('New user — creating cloud record');
+          const { error: insertError } = await supabase
+            .from('user_data')
+            .insert({ id: currentUser.id, app_state: userState });
+          if (insertError) throw insertError;
+          // Also save to localStorage
+          localStorage.setItem('unstoppable_state', JSON.stringify(userState));
+          setSyncStatus('synced');
+          return;
+        }
+        if (error) throw error;
+
+        if (data && data.app_state) {
+          // Cloud data found — merge into userState
+          const cloudState = data.app_state;
+          userState = { ...userState, ...cloudState };
+          localStorage.setItem('unstoppable_state', JSON.stringify(userState));
+        }
+        setSyncStatus('synced');
+      } catch (err) {
+        console.error('Cloud load error:', err);
+        setSyncStatus('error');
+        // Fall back to localStorage silently
+      }
+    }
+
+    // Debounced cloud sync — fires 2s after last saveData() call
+    function scheduleCloudSync() {
+      if (syncTimeout) clearTimeout(syncTimeout);
+      syncTimeout = setTimeout(cloudSave, 2000);
+    }
+
     // =============================================
     // STATE MANAGEMENT
     // =============================================
@@ -449,6 +744,8 @@
 
     function saveData() {
       localStorage.setItem('unstoppable_state', JSON.stringify(userState));
+      // Trigger debounced cloud sync if logged in
+      if (currentUser) scheduleCloudSync();
     }
 
     function loadData() {
@@ -2157,24 +2454,26 @@
 
     async function callGemini(prompt, maxTokens = 300) {
       try {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${userState.apiKey}`;
-        const res = await fetch(url, {
+        const fullPrompt = MENTOR_PERSONA + '\n\n' + prompt;
+
+        const res = await fetch('/api/gemini', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: MENTOR_PERSONA + '\n\n' + prompt }] }],
-            generationConfig: { maxOutputTokens: maxTokens, temperature: 0.85 }
-          })
+          body: JSON.stringify({ prompt: fullPrompt, maxTokens })
         });
+
         const data = await res.json();
+
         if (!res.ok) {
-          console.error('Gemini API error response:', JSON.stringify(data));
-          throw new Error(`HTTP ${res.status}: ${data?.error?.message || 'Unknown error'}`);
+          console.error('Erro Real da API — Status:', res.status, res.statusText);
+          console.error('Erro Real da API — Body:', JSON.stringify(data, null, 2));
+          throw new Error(`HTTP ${res.status}: ${data?.error || 'Unknown error'}`);
         }
-        return data.candidates?.[0]?.content?.parts?.[0]?.text || 'Sistema offline. Continue na disciplina.';
+
+        return data.text || 'Sistema offline. Continue na disciplina.';
       } catch (err) {
-        console.error('Gemini callGemini error:', err);
-        console.log('API Key used:', userState.apiKey ? userState.apiKey.substring(0, 10) + '...' : 'MISSING');
+        console.error('Erro Real da API — Exception:', err.message || err);
+        console.error('Erro Real da API — Stack:', err.stack);
         return 'Conexão com IA falhou. O guerreiro não depende de tecnologia.';
       }
     }
@@ -2436,15 +2735,43 @@ Formato terminal militar. Sem emojis. Direto e brutal.`;
     // =============================================
     // INIT
     // =============================================
-    (function init() {
-      loadData();
-      updateHeaderDate();
+    (async function init() {
       registerServiceWorker();
       setupInstallPrompt();
-      switchTab('dashboard');
-      checkScarcity();
-      // Update date every minute
       setInterval(updateHeaderDate, 60000);
+
+      // Check for existing Supabase session
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session && session.user) {
+          currentUser = session.user;
+          document.getElementById('authScreen').style.display = 'none';
+          await cloudLoad();
+          loadData();
+          updateHeaderDate();
+          switchTab('dashboard');
+          checkScarcity();
+          return;
+        }
+      } catch (err) {
+        console.error('Session restore error:', err);
+      }
+
+      // No session — show login screen, but load localStorage as fallback display
+      loadData();
+      updateHeaderDate();
+
+      // Listen for auth state changes (e.g., email confirmation redirect)
+      supabase.auth.onAuthStateChange(async (event, session) => {
+        if (event === 'SIGNED_IN' && session?.user) {
+          currentUser = session.user;
+          await onAuthSuccess();
+        }
+        if (event === 'SIGNED_OUT') {
+          currentUser = null;
+          document.getElementById('authScreen').style.display = 'flex';
+        }
+      });
     })();
   </script>
 </body>
