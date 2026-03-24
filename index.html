@@ -923,6 +923,126 @@
       border: 1px solid rgba(255,255,255,0.06);
       border-radius: 20px;
     }
+    /* ===== SIDEBAR MENU ===== */
+    .sidebar-overlay {
+      position: fixed; inset: 0; z-index: 80;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      animation: fadeIn 0.2s ease-out;
+    }
+    .sidebar-panel {
+      position: fixed; top: 0; right: 0; bottom: 0; z-index: 81;
+      width: 280px; max-width: 80vw;
+      background: #050505;
+      border-left: 1px solid rgba(255,255,255,0.06);
+      transform: translateX(100%);
+      animation: slideInRight 0.3s cubic-bezier(.4,0,.2,1) forwards;
+      overflow-y: auto;
+      padding: env(safe-area-inset-top, 20px) 24px 40px;
+    }
+    @keyframes slideInRight { to { transform: translateX(0); } }
+    .sidebar-link {
+      display: flex; align-items: center; gap: 14px;
+      min-height: 52px; padding: 0 4px;
+      font-size: 13px; font-weight: 800; letter-spacing: 0.15em;
+      color: #777; transition: color 0.15s;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .sidebar-link:active { color: #fff; }
+    .sidebar-link-icon { width: 20px; text-align: center; font-size: 16px; }
+
+    /* ===== BOTTOM SHEET ===== */
+    .bottom-sheet-overlay {
+      position: fixed; inset: 0; z-index: 70;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      animation: fadeIn 0.2s ease-out;
+    }
+    .bottom-sheet {
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 71;
+      max-height: 85vh;
+      border-radius: 20px 20px 0 0;
+      background: #0a0a0a;
+      border-top: 1px solid rgba(37,99,235,0.2);
+      box-shadow: 0 -10px 40px rgba(0,0,0,0.8);
+      transform: translateY(100%);
+      animation: slideUp 0.35s cubic-bezier(.4,0,.2,1) forwards;
+      overflow-y: auto;
+      padding-bottom: env(safe-area-inset-bottom, 20px);
+    }
+    @keyframes slideUp { to { transform: translateY(0); } }
+    .bottom-sheet-handle {
+      width: 40px; height: 4px; border-radius: 2px;
+      background: #333; margin: 12px auto;
+    }
+
+    /* ===== CONCAVE NEUMORPHIC BUTTONS ===== */
+    .btn-concave {
+      background: #0a0a0a;
+      box-shadow: inset 3px 3px 8px rgba(0,0,0,0.8), inset -2px -2px 6px rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.04);
+      border-radius: 16px;
+      transition: all 0.2s cubic-bezier(.4,0,.2,1);
+    }
+    .btn-concave:active {
+      box-shadow: inset 4px 4px 12px rgba(0,0,0,0.9), inset -1px -1px 4px rgba(255,255,255,0.02);
+    }
+    .btn-concave-blue {
+      border-color: rgba(37,99,235,0.2);
+      box-shadow: inset 3px 3px 8px rgba(0,0,0,0.8), inset -2px -2px 6px rgba(255,255,255,0.03), 0 0 15px rgba(37,99,235,0.08);
+    }
+    .btn-concave-red {
+      border-color: rgba(255,51,51,0.2);
+      box-shadow: inset 3px 3px 8px rgba(0,0,0,0.8), inset -2px -2px 6px rgba(255,255,255,0.03), 0 0 15px rgba(255,51,51,0.08);
+    }
+
+    /* ===== CHAT TACTICAL (Terminal Style) ===== */
+    .chat-tactical {
+      background: #050505;
+      border: 1px solid rgba(255,255,255,0.04);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .chat-tactical-header {
+      padding: 10px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .chat-terminal-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+    }
+    .msg-user {
+      background: rgba(37,99,235,0.08);
+      border: 1px solid rgba(37,99,235,0.15);
+      border-radius: 16px;
+    }
+    .msg-ai {
+      background: linear-gradient(135deg, #0a0a14 0%, #050505 100%);
+      border: 1px solid rgba(37,99,235,0.1);
+      border-radius: 16px;
+    }
+
+    /* ===== NEON SPARK BORDER ===== */
+    @keyframes neonBorderSpark {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 200% 50%; }
+    }
+    .neon-spark-complete { position: relative; }
+    .neon-spark-complete::before {
+      content: ''; position: absolute; inset: -1px;
+      border-radius: inherit; padding: 1px;
+      background: linear-gradient(90deg, transparent 0%, #2563eb 25%, #00ff64 50%, #2563eb 75%, transparent 100%);
+      background-size: 200% 100%;
+      animation: neonBorderSpark 1.5s linear infinite;
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      opacity: 0.6;
+    }
+
   </style>
 </head>
 <body class="bg-black text-white min-h-screen flex flex-col select-none">
@@ -975,16 +1095,24 @@
 
   <!-- ========== HEADER ========== -->
   <header class="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-xl border-b border-border px-6 py-3.5 flex items-center justify-between" style="padding-top: env(safe-area-inset-top, 12px);">
-    <h1 class="text-xl font-extrabold tracking-tight">BE <span class="text-royal">UNSTOPPABLE</span></h1>
-    <div class="flex items-center gap-1.5">
-      <time id="headerDate" class="text-sm text-gray-500 font-semibold tabular-nums"></time>
-      <button onclick="switchTab('perfil')" title="Perfil" class="min-w-[48px] min-h-[48px] flex items-center justify-center text-gray-500 hover:text-royal transition-colors rounded-xl haptic active:bg-white/5">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-      </button>
-      <button onclick="handleLogout()" title="Sair" class="min-w-[48px] min-h-[48px] flex items-center justify-center text-gray-600 hover:text-red-400 transition-colors rounded-xl haptic active:bg-white/5">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-      </button>
+    <!-- Left: Date -->
+    <time id="headerDate" class="text-sm text-gray-500 font-semibold tabular-nums min-w-[48px]"></time>
+    <!-- Center: Spartan Helmet -->
+    <div class="flex-1 flex justify-center">
+      <svg class="w-8 h-8" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 0 8px rgba(255,255,255,0.15));">
+        <path d="M16 2C10 2 5 7 5 13v7c0 1 .5 2 1.5 2.5L9 24v4h3v-3l4-2 4 2v3h3v-4l2.5-1.5c1-.5 1.5-1.5 1.5-2.5v-7C27 7 22 2 16 2z" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M11 14h10M11 14c0 3-1 6-3 8M21 14c0 3 1 6 3 8" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+        <path d="M13 14v4c0 1.5 1.3 3 3 3s3-1.5 3-3v-4" stroke="white" stroke-width="1" stroke-linecap="round"/>
+        <line x1="16" y1="5" x2="16" y2="2" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+        <path d="M14 5h4" stroke="white" stroke-width="1" stroke-linecap="round"/>
+      </svg>
     </div>
+    <!-- Right: Hamburger Menu -->
+    <button onclick="openSidebar()" title="Menu" class="min-w-[48px] min-h-[48px] flex items-center justify-center text-gray-400 rounded-xl haptic active:bg-white/5">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+        <line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/>
+      </svg>
+    </button>
   </header>
 
   <!-- ========== MAIN CONTENT ========== -->
@@ -2620,6 +2748,18 @@
 
       saveData();
       renderActiveTab();
+
+      // Neon spark animation on mission complete
+      if (m.concluida && !wasCompleted) {
+        setTimeout(() => {
+          const btns = document.querySelectorAll('.mission-btn');
+          const idx = missoes.indexOf(m);
+          if (btns[idx]) {
+            btns[idx].classList.add('neon-spark-complete');
+            setTimeout(() => btns[idx].classList.remove('neon-spark-complete'), 2000);
+          }
+        }, 50);
+      }
     }
 
     // =============================================
@@ -2843,25 +2983,24 @@
             </div>
             <div class="grid grid-cols-2 gap-3">
               <button onclick="addWarExpense('essencial')"
-                class="py-3 rounded-xl text-sm font-extrabold border-2 border-[#333] bg-black text-gray-300 hover:border-gray-500 transition-all active:scale-[0.93] haptic">
+                class="btn-concave btn-concave-blue py-4 rounded-2xl text-sm font-extrabold text-gray-300 min-h-[56px] active:scale-[0.93] haptic transition-all">
                 <span class="block text-lg mb-0.5">🛡️</span>
                 ESSENCIAL
               </button>
               <button onclick="addWarExpense('dopamina')"
-                class="btn-dopamina-idle py-3 rounded-xl text-sm font-extrabold border-2 border-red-900/50 bg-red-950/20 text-red-400 hover:border-red-700 transition-all active:scale-[0.93] haptic">
+                class="btn-concave btn-concave-red btn-dopamina-idle py-4 rounded-2xl text-sm font-extrabold text-red-400 min-h-[56px] active:scale-[0.93] haptic transition-all">
                 <span class="block text-lg mb-0.5">💀</span>
                 DOPAMINA BARATA
               </button>
             </div>
           </div>
 
-          <!-- GESTOR DE CAPITAL IA -->
-          <button onclick="showWarChestAdvisor=true;renderActiveTab();"
-            class="w-full py-4 rounded-2xl font-extrabold text-sm text-white min-h-[56px] active:scale-[0.93] haptic transition-transform ${showWarChestAdvisor ? 'hidden' : ''}"
+          <!-- GESTOR DE CAPITAL IA — Bottom Sheet -->
+          <button onclick="openGestorBottomSheet()"
+            class="w-full py-4 rounded-2xl font-extrabold text-sm text-white min-h-[56px] active:scale-[0.93] haptic transition-transform"
             style="background: linear-gradient(135deg, #1e3a5f 0%, #0a1a2e 50%, #000 100%); border: 1px solid rgba(37,99,235,0.3);">
             <span class="text-lg mr-2">🏦</span> CONSULTAR GESTOR DE CAPITAL — IA
           </button>
-          ${renderWarChestAdvisor()}
 
           <!-- Últimos 5 Registros -->
           ${last5.length > 0 ? `
@@ -3782,39 +3921,39 @@
     function renderStudyMentorPanel() {
       if (!showStudyMentor) return '';
       return `
-        <div class="card-neu rounded-2xl p-5 space-y-4">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <span class="text-xl">🧠</span>
-              <div>
-                <p class="text-base font-black text-purple-400">Mestre GigaChad</p>
-                <p class="text-xs font-bold text-gray-600">${deepWorkTopic ? 'Tema: ' + deepWorkTopic : 'Tutor IA'}</p>
-              </div>
+        <div class="chat-tactical" style="border-color: rgba(124,58,237,0.15);">
+          <div class="chat-tactical-header">
+            <span class="chat-terminal-dot bg-purple-500"></span>
+            <span class="chat-terminal-dot bg-purple-400"></span>
+            <span class="chat-terminal-dot bg-purple-300"></span>
+            <span class="text-[10px] font-bold text-gray-600 ml-2">TERMINAL — MESTRE GIGACHAD</span>
+            <div class="ml-auto">
+              <button onclick="showStudyMentor=false;renderActiveTab();" class="min-w-[36px] min-h-[36px] flex items-center justify-center text-gray-600 hover:text-red-400 rounded-lg active:bg-white/5">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+              </button>
             </div>
-            <button onclick="showStudyMentor=false;renderActiveTab();" class="min-w-[44px] min-h-[44px] flex items-center justify-center text-gray-600 hover:text-red-400 rounded-xl active:bg-white/5">
-              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-            </button>
           </div>
+          ${deepWorkTopic ? `<div class="px-4 py-2 border-b border-white/5"><p class="text-[10px] font-bold text-purple-400/60 tracking-wider">TEMA: ${deepWorkTopic.toUpperCase()}</p></div>` : ''}
 
-          <div id="studyMentorMessages" class="space-y-3 max-h-96 overflow-y-auto" style="scrollbar-width: thin; scrollbar-color: #222 #000;">
+          <div id="studyMentorMessages" class="p-4 space-y-3 max-h-96 overflow-y-auto" style="scrollbar-width: thin; scrollbar-color: #222 #000;">
             ${studyMentorChat.length === 0 ? `
               <div class="text-center py-4">
                 <p class="text-sm font-bold text-gray-600">Pergunte qualquer coisa sobre ${deepWorkTopic || 'seu estudo'}.</p>
               </div>
             ` : studyMentorChat.map(msg => `
               <div class="${msg.role === 'user' ? 'ml-8' : 'mr-4'}">
-                <div class="${msg.role === 'user' ? 'bg-purple-950/40 border border-purple-800/30' : 'mentor-bubble'} rounded-2xl p-4">
-                  <p class="text-xs font-extrabold ${msg.role === 'user' ? 'text-purple-400' : 'text-gray-500'} mb-1">${msg.role === 'user' ? 'VOCÊ' : 'PROFESSOR'}</p>
+                <div class="${msg.role === 'user' ? 'msg-user' : 'msg-ai'} p-4" style="${msg.role === 'user' ? 'border-color: rgba(124,58,237,0.15); background: rgba(124,58,237,0.08);' : 'border-color: rgba(124,58,237,0.1);'}">
+                  <p class="text-[10px] font-extrabold ${msg.role === 'user' ? 'text-purple-400' : 'text-gray-500'} mb-1">${msg.role === 'user' ? 'VOCÊ' : 'PROFESSOR'}</p>
                   ${msg.role === 'user'
-                    ? `<p class="text-sm font-semibold text-gray-300 leading-relaxed whitespace-pre-wrap break-words">${msg.text}</p>`
-                    : `<div class="ai-prose text-sm font-medium text-gray-400 leading-relaxed break-words">${typeof marked !== 'undefined' ? marked.parse(msg.text) : msg.text}</div>`
+                    ? '<p class="text-sm font-semibold text-gray-300 leading-relaxed whitespace-pre-wrap break-words">' + escapeHtml(msg.text) + '</p>'
+                    : '<div class="ai-prose text-sm font-medium text-gray-400 leading-relaxed break-words">' + (typeof marked !== 'undefined' ? marked.parse(msg.text) : msg.text) + '</div>'
                   }
                 </div>
               </div>
             `).join('')}
           </div>
 
-          <div class="flex gap-2">
+          <div class="border-t border-white/5 p-3 flex gap-2">
             <input id="studyMentorInput" type="text" placeholder="Sua dúvida..."
               class="forja-input flex-1 px-4 py-3.5 rounded-xl text-sm font-bold min-h-[56px]"
               onkeydown="if(event.key==='Enter')askStudyMentor();">
@@ -4362,39 +4501,38 @@
 
     function renderFuelAdvisor() {
       return `
-        <div class="card-neu rounded-xl p-4 space-y-3" style="border: 1px solid rgba(0,255,100,0.15);">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <div class="w-8 h-8 rounded-lg flex items-center justify-center text-sm" style="background: linear-gradient(135deg, #0a2a0a, #0a0a0a); border: 1px solid rgba(0,255,100,0.2);">🧬</div>
-              <div>
-                <p class="text-xs font-extrabold text-[#00FF64]">NUTRICIONISTA DE ELITE</p>
-                <p class="text-[9px] font-bold text-gray-600">Gemini AI — Modo Biohacking</p>
-              </div>
+        <div class="chat-tactical" style="border-color: rgba(0,255,100,0.1);">
+          <div class="chat-tactical-header">
+            <span class="chat-terminal-dot bg-green-500"></span>
+            <span class="chat-terminal-dot bg-green-400"></span>
+            <span class="chat-terminal-dot bg-green-300"></span>
+            <span class="text-[10px] font-bold text-gray-600 ml-2">TERMINAL — NUTRICIONISTA DE ELITE</span>
+            <div class="ml-auto">
+              <button onclick="showFuelAdvisor=false;renderActiveTab();" class="min-w-[36px] min-h-[36px] flex items-center justify-center text-gray-600 hover:text-red-400 rounded-lg active:bg-white/5">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+              </button>
             </div>
-            <button onclick="showFuelAdvisor=false;renderActiveTab();" class="min-w-[44px] min-h-[44px] flex items-center justify-center text-gray-600 hover:text-red-400 rounded-xl active:bg-white/5">
-              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-            </button>
           </div>
 
-          <div id="fuelMentorMessages" class="space-y-3 max-h-96 overflow-y-auto" style="scrollbar-width: thin; scrollbar-color: #0a2a0a #000;">
+          <div id="fuelMentorMessages" class="p-4 space-y-3 max-h-96 overflow-y-auto" style="scrollbar-width: thin; scrollbar-color: #0a2a0a #000;">
             ${fuelChat.length === 0 ? `
               <div class="text-center py-4">
                 <p class="text-sm font-bold text-gray-600">Pergunte sobre dieta, macros, suplementação, índice glicêmico...</p>
               </div>
             ` : fuelChat.map(msg => `
               <div class="${msg.role === 'user' ? 'ml-8' : 'mr-4'}">
-                <div class="${msg.role === 'user' ? 'bg-green-950/30 border border-green-800/20' : 'fuel-analysis-panel'} rounded-2xl p-4">
-                  <p class="text-xs font-extrabold ${msg.role === 'user' ? 'text-[#00FF64]' : 'text-gray-500'} mb-1">${msg.role === 'user' ? 'VOCÊ' : 'NUTRICIONISTA'}</p>
+                <div class="${msg.role === 'user' ? 'msg-user' : 'fuel-analysis-panel'} p-4" style="${msg.role === 'user' ? 'border-color: rgba(0,255,100,0.15); background: rgba(0,255,100,0.05);' : ''}">
+                  <p class="text-[10px] font-extrabold ${msg.role === 'user' ? 'text-[#00FF64]' : 'text-gray-500'} mb-1">${msg.role === 'user' ? 'VOCÊ' : 'NUTRICIONISTA'}</p>
                   ${msg.role === 'user'
-                    ? `<p class="text-sm font-semibold text-gray-300 leading-relaxed whitespace-pre-wrap break-words">${msg.text}</p>`
-                    : `<div class="ai-prose text-sm font-medium text-gray-400 leading-relaxed break-words">${typeof marked !== 'undefined' ? marked.parse(msg.text) : msg.text}</div>`
+                    ? '<p class="text-sm font-semibold text-gray-300 leading-relaxed whitespace-pre-wrap break-words">' + escapeHtml(msg.text) + '</p>'
+                    : '<div class="ai-prose text-sm font-medium text-gray-400 leading-relaxed break-words">' + (typeof marked !== 'undefined' ? marked.parse(msg.text) : msg.text) + '</div>'
                   }
                 </div>
               </div>
             `).join('')}
           </div>
 
-          <div class="flex gap-2">
+          <div class="border-t border-white/5 p-3 flex gap-2">
             <input id="fuelMentorInput" type="text" placeholder="Sua dúvida nutricional..."
               class="forja-input flex-1 px-4 py-3.5 rounded-xl text-sm font-bold min-h-[56px]"
               onkeydown="if(event.key==='Enter')askFuelMentor();">
@@ -4602,9 +4740,15 @@
             </div>
           </div>
 
-          <!-- Chat Area -->
-          <div class="bg-card border border-border rounded-xl overflow-hidden">
-            <div id="chatMessages" class="p-4 space-y-3 max-h-80 overflow-y-auto min-h-[200px]">
+          <!-- Chat Area — Terminal Tático -->
+          <div class="chat-tactical">
+            <div class="chat-tactical-header">
+              <span class="chat-terminal-dot bg-green-500"></span>
+              <span class="chat-terminal-dot bg-yellow-500"></span>
+              <span class="chat-terminal-dot bg-red-500"></span>
+              <span class="text-[10px] font-bold text-gray-600 ml-2">TERMINAL — MENTOR ESTOICO</span>
+            </div>
+            <div id="chatMessages" class="p-4 space-y-3 max-h-96 overflow-y-auto min-h-[200px]" style="scrollbar-width: thin; scrollbar-color: #222 #000;">
               ${userState.chatHistory.length === 0 ? `
                 <div class="text-center py-8">
                   <p class="text-3xl mb-2">🧠</p>
@@ -4612,16 +4756,20 @@
                   <p class="text-xs text-gray-600 mt-1">Pergunte sobre disciplina, hábitos, finanças ou mindset.</p>
                 </div>
               ` : userState.chatHistory.map(m => `
-                <div class="flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}">
-                  <div class="max-w-[80%] px-3 py-2 rounded-xl text-sm font-semibold ${m.role === 'user' ? 'bg-royal text-white' : 'bg-black text-gray-300 border border-border'}">
-                    ${escapeHtml(m.content)}
+                <div class="${m.role === 'user' ? 'ml-8' : 'mr-4'}">
+                  <div class="${m.role === 'user' ? 'msg-user' : 'msg-ai'} p-4">
+                    <p class="text-[10px] font-extrabold ${m.role === 'user' ? 'text-blue-400' : 'text-gray-500'} mb-1">${m.role === 'user' ? 'VOCÊ' : 'MENTOR'}</p>
+                    ${m.role === 'user'
+                      ? '<p class="text-sm font-semibold text-gray-200 leading-relaxed whitespace-pre-wrap break-words">' + escapeHtml(m.content) + '</p>'
+                      : '<div class="ai-prose text-sm font-medium text-gray-400 leading-relaxed break-words">' + (typeof marked !== 'undefined' ? marked.parse(m.content) : escapeHtml(m.content)) + '</div>'
+                    }
                   </div>
                 </div>
               `).join('')}
             </div>
 
             <!-- Input -->
-            <div class="border-t border-border p-3 flex gap-2">
+            <div class="border-t border-white/5 p-3 flex gap-2">
               <input type="text" id="chatInput" placeholder="Pergunte ao Mentor..."
                 class="flex-1 px-4 py-3 rounded-xl text-sm font-semibold min-h-[56px]"
                 onkeydown="if(event.key==='Enter')sendChat()">
@@ -4916,6 +5064,222 @@
         toast.style.transform = 'translateY(-10px)';
         setTimeout(() => toast.remove(), 300);
       }, duration);
+    }
+
+    // =============================================
+    // SIDEBAR MENU
+    // =============================================
+    function openSidebar() {
+      if (document.getElementById('sidebarOverlay')) return;
+      const lvl = calcularNivel(userState.xpTotal || 0);
+      const avatar = userState.profile?.avatar || '⚔️';
+      const name = userState.profile?.name || 'Guerreiro';
+
+      const overlay = document.createElement('div');
+      overlay.id = 'sidebarOverlay';
+      overlay.className = 'sidebar-overlay';
+      overlay.onclick = (e) => { if (e.target === overlay) closeSidebar(); };
+
+      const panel = document.createElement('div');
+      panel.className = 'sidebar-panel';
+      panel.innerHTML = `
+        <!-- Profile Header -->
+        <div class="flex items-center gap-3 mb-6 pb-5 border-b border-white/5">
+          <span class="text-3xl">${avatar}</span>
+          <div>
+            <p class="text-sm font-black text-white">${escapeHtml(name)}</p>
+            <p class="text-xs font-bold text-royal">LVL ${lvl.nivel} — ${(userState.xpTotal || 0).toLocaleString('pt-BR')} XP</p>
+          </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="space-y-0.5">
+          <a class="sidebar-link" onclick="closeSidebar();switchTab('dashboard');">
+            <span class="sidebar-link-icon">🏠</span> HOME
+          </a>
+          <a class="sidebar-link" onclick="closeSidebar();switchTab('grind');">
+            <span class="sidebar-link-icon">⚡</span> THE GRIND
+          </a>
+          <a class="sidebar-link" onclick="closeSidebar();switchTab('treino');">
+            <span class="sidebar-link-icon">🏋️</span> TREINO
+          </a>
+          <a class="sidebar-link" onclick="closeSidebar();switchTab('warchest');">
+            <span class="sidebar-link-icon">💰</span> WAR CHEST
+          </a>
+          <a class="sidebar-link" onclick="closeSidebar();switchTab('fuel');">
+            <span class="sidebar-link-icon">🍎</span> THE FUEL
+          </a>
+          <a class="sidebar-link" onclick="closeSidebar();switchTab('focus');">
+            <span class="sidebar-link-icon">⏱️</span> DEEP WORK
+          </a>
+          <a class="sidebar-link" onclick="closeSidebar();switchTab('status');">
+            <span class="sidebar-link-icon">📊</span> STATUS
+          </a>
+          <a class="sidebar-link" onclick="closeSidebar();switchTab('mentor');">
+            <span class="sidebar-link-icon">🧠</span> MENTOR IA
+          </a>
+          <a class="sidebar-link" onclick="closeSidebar();switchTab('perfil');">
+            <span class="sidebar-link-icon">👤</span> PERFIL
+          </a>
+        </nav>
+
+        <!-- Logout -->
+        <div class="mt-8 pt-5 border-t border-white/5">
+          <a class="sidebar-link" style="border:none; color:#ef4444;" onclick="closeSidebar();handleLogout();">
+            <span class="sidebar-link-icon">🚪</span> SAIR
+          </a>
+        </div>
+      `;
+
+      overlay.appendChild(panel);
+      document.body.appendChild(overlay);
+      haptic(20);
+    }
+
+    function closeSidebar() {
+      const overlay = document.getElementById('sidebarOverlay');
+      if (!overlay) return;
+      const panel = overlay.querySelector('.sidebar-panel');
+      if (panel) {
+        panel.style.animation = 'none';
+        panel.style.transform = 'translateX(100%)';
+        panel.style.transition = 'transform 0.25s cubic-bezier(.4,0,.2,1)';
+      }
+      overlay.style.opacity = '0';
+      overlay.style.transition = 'opacity 0.2s';
+      setTimeout(() => overlay.remove(), 250);
+    }
+
+    // =============================================
+    // BOTTOM SHEET — Gestor de Capital IA
+    // =============================================
+    function openGestorBottomSheet() {
+      if (document.getElementById('gestorBottomSheet')) return;
+      showWarChestAdvisor = true;
+
+      const overlay = document.createElement('div');
+      overlay.id = 'gestorBottomSheet';
+      overlay.className = 'bottom-sheet-overlay';
+      overlay.onclick = (e) => { if (e.target === overlay) closeGestorBottomSheet(); };
+
+      const sheet = document.createElement('div');
+      sheet.className = 'bottom-sheet';
+      sheet.innerHTML = `
+        <div class="bottom-sheet-handle"></div>
+        <div class="px-5 pb-4 space-y-4">
+          <!-- Header -->
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <div class="w-9 h-9 rounded-lg flex items-center justify-center text-sm" style="background: linear-gradient(135deg, #1e3a5f, #0a0a0a); border: 1px solid rgba(37,99,235,0.3);">🏦</div>
+              <div>
+                <p class="text-sm font-black text-blue-400">GESTOR DE CAPITAL</p>
+                <p class="text-[10px] font-bold text-gray-600">Gemini AI — Modo Banqueiro</p>
+              </div>
+            </div>
+            <button onclick="closeGestorBottomSheet()" class="min-w-[44px] min-h-[44px] flex items-center justify-center text-gray-600 hover:text-red-400 rounded-xl active:bg-white/5">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+
+          <!-- Messages -->
+          <div id="gestorSheetMessages" class="space-y-3 max-h-[50vh] overflow-y-auto" style="scrollbar-width: thin; scrollbar-color: #1e3a5f #000;">
+            ${warChestChat.length === 0 ? `
+              <div class="text-center py-6">
+                <p class="text-sm font-bold text-gray-600">Pergunte sobre investimentos, alocação, juros compostos...</p>
+              </div>
+            ` : warChestChat.map(msg => `
+              <div class="${msg.role === 'user' ? 'ml-6' : 'mr-3'}">
+                <div class="${msg.role === 'user' ? 'msg-user' : 'msg-ai'} p-4">
+                  <p class="text-[10px] font-extrabold ${msg.role === 'user' ? 'text-blue-400' : 'text-gray-500'} mb-1">${msg.role === 'user' ? 'VOCÊ' : 'GESTOR'}</p>
+                  ${msg.role === 'user'
+                    ? '<p class="text-sm font-semibold text-gray-300 leading-relaxed whitespace-pre-wrap break-words">' + escapeHtml(msg.text) + '</p>'
+                    : '<div class="ai-prose text-sm font-medium text-gray-400 leading-relaxed break-words">' + (typeof marked !== 'undefined' ? marked.parse(msg.text) : msg.text) + '</div>'
+                  }
+                </div>
+              </div>
+            `).join('')}
+          </div>
+
+          <!-- Input -->
+          <div class="flex gap-2">
+            <input id="gestorSheetInput" type="text" placeholder="Sua dúvida financeira..."
+              class="forja-input flex-1 px-4 py-3.5 rounded-xl text-sm font-bold min-h-[56px]"
+              onkeydown="if(event.key==='Enter')askGestorFromSheet();">
+            <button onclick="askGestorFromSheet()"
+              class="px-5 py-3.5 rounded-xl font-extrabold text-sm text-white min-h-[56px] active:scale-[0.93] haptic"
+              style="background: linear-gradient(135deg, #2563EB, #1e40af);">
+              ENVIAR
+            </button>
+          </div>
+        </div>
+      `;
+
+      overlay.appendChild(sheet);
+      document.body.appendChild(overlay);
+      haptic(20);
+      setTimeout(() => {
+        const el = document.getElementById('gestorSheetMessages');
+        if (el) el.scrollTop = el.scrollHeight;
+      }, 400);
+    }
+
+    function closeGestorBottomSheet() {
+      const overlay = document.getElementById('gestorBottomSheet');
+      if (!overlay) return;
+      const sheet = overlay.querySelector('.bottom-sheet');
+      if (sheet) {
+        sheet.style.animation = 'none';
+        sheet.style.transform = 'translateY(100%)';
+        sheet.style.transition = 'transform 0.3s cubic-bezier(.4,0,.2,1)';
+      }
+      overlay.style.opacity = '0';
+      overlay.style.transition = 'opacity 0.2s';
+      setTimeout(() => overlay.remove(), 300);
+    }
+
+    async function askGestorFromSheet() {
+      const input = document.getElementById('gestorSheetInput');
+      const question = input ? input.value.trim() : '';
+      if (!question) return;
+      warChestChat.push({ role: 'user', text: question });
+      input.value = '';
+      // Re-render the bottom sheet messages
+      refreshGestorSheetMessages();
+      try {
+        const expenses = getMonthExpenses();
+        const totalGasto = expenses.reduce((s, e) => s + e.amount, 0);
+        const budget = userState.profile?.budget || 0;
+        const essencial = expenses.filter(e => e.cat === 'essencial').reduce((s, e) => s + e.amount, 0);
+        const dopamina = expenses.filter(e => e.cat === 'dopamina').reduce((s, e) => s + e.amount, 0);
+        const ctx = `Contexto financeiro: Orçamento R$${budget}, Gasto total R$${totalGasto} (Essencial R$${essencial}, Dopamina R$${dopamina}), Sobra R$${budget - totalGasto}.`;
+        const previousMessages = warChestChat.slice(0, -1);
+        const historico = previousMessages.length > 0
+          ? previousMessages.map(m => ({ role: m.role === 'user' ? 'user' : 'model', text: m.text }))
+          : [];
+        const resp = await callGemini(question, 400, 'gestor', historico, ctx);
+        warChestChat.push({ role: 'model', text: resp });
+        refreshGestorSheetMessages();
+      } catch (err) {
+        warChestChat.push({ role: 'model', text: 'Erro ao consultar o Gestor. Tente novamente.' });
+        refreshGestorSheetMessages();
+      }
+    }
+
+    function refreshGestorSheetMessages() {
+      const el = document.getElementById('gestorSheetMessages');
+      if (!el) return;
+      el.innerHTML = warChestChat.map(msg => `
+        <div class="${msg.role === 'user' ? 'ml-6' : 'mr-3'}">
+          <div class="${msg.role === 'user' ? 'msg-user' : 'msg-ai'} p-4">
+            <p class="text-[10px] font-extrabold ${msg.role === 'user' ? 'text-blue-400' : 'text-gray-500'} mb-1">${msg.role === 'user' ? 'VOCÊ' : 'GESTOR'}</p>
+            ${msg.role === 'user'
+              ? '<p class="text-sm font-semibold text-gray-300 leading-relaxed whitespace-pre-wrap break-words">' + escapeHtml(msg.text) + '</p>'
+              : '<div class="ai-prose text-sm font-medium text-gray-400 leading-relaxed break-words">' + (typeof marked !== 'undefined' ? marked.parse(msg.text) : msg.text) + '</div>'
+            }
+          </div>
+        </div>
+      `).join('');
+      el.scrollTop = el.scrollHeight;
     }
 
     // =============================================
