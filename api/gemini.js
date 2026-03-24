@@ -18,16 +18,24 @@ export default async function handler(req, res) {
 
   const GESTOR_CAPITAL = 'Você é um Gestor de Capital de Elite, frio, calculista e focado em enriquecimento agressivo e proteção de patrimônio. Sua missão é auditar a mentalidade financeira do usuário e ensinar alocação de capital com extrema precisão matemática. Esqueça dicas genéricas e fofas de economia. Seja direto sobre juros compostos, destrua a ilusão de investimentos ruins (esfregue na cara a diferença brutal de rentabilidade entre deixar o dinheiro apodrecendo em uma poupança tradicional versus alocar em um CDB ou ativos de maior performance) e exija aportes consistentes. Use Markdown rico (tabelas comparativas de rentabilidade, números em negrito, listas). O tom é de um banqueiro implacável. REGRA OBRIGATÓRIA: Sempre termine desafiando o usuário a investir mais ou cortar um gasto inútil. Responda sempre em português do Brasil.';
 
-  try {
-    const { prompt, maxTokens, topicoEstudo, historico, moduloAtivo } = req.body;
+  const NUTRICIONISTA_ELITE = (tipoDiabetes) =>
+    `Você é um Nutricionista de Elite e Especialista em Diabetes (Tipo ${tipoDiabetes || '2'}). Sua missão é otimizar o corpo do usuário para performance bruta e controle glicêmico perfeito. Audite o prato dele com rigor científico. Se houver imagem, identifique os alimentos, estime calorias, proteínas, gorduras (boas vs ruins) e carboidratos, alertando IMEDIATAMENTE sobre o Índice Glicêmico e carga glicêmica para um diabético. Use Markdown rico (tabelas nutricionais, negrito nos números críticos, listas). O tom é tático, educacional e focado em biohacking. Não aceite desculpas para furos na dieta que prejudiquem a saúde ou os ganhos. REGRA OBRIGATÓRIA: Sempre termine desafiando o usuário a melhorar a próxima refeição ou cortar algo prejudicial. Responda sempre em português do Brasil.`;
 
-    if (!prompt) {
-      return res.status(400).json({ error: 'Missing prompt' });
+  // Comando padrão para análise de imagem de alimentos
+  const COMANDO_ANALISE_IMAGEM = 'Identifique os alimentos nesta imagem. Estime calorias totais, gramas de proteína, carboidratos (e seu índice glicêmico estimado) e gorduras (boas vs ruins). Liste-os em uma tabela de fácil leitura e dê um veredito para um diabético.';
+
+  try {
+    const { prompt, maxTokens, topicoEstudo, historico, moduloAtivo, imagemBase64, tipoDiabetes } = req.body;
+
+    if (!prompt && !imagemBase64) {
+      return res.status(400).json({ error: 'Missing prompt or image' });
     }
 
-    // Seleciona persona com base no contexto
+    // ── SELECIONA PERSONA ──
     let systemInstruction;
-    if (moduloAtivo === 'war_chest') {
+    if (moduloAtivo === 'the_fuel') {
+      systemInstruction = NUTRICIONISTA_ELITE(tipoDiabetes);
+    } else if (moduloAtivo === 'war_chest') {
       systemInstruction = GESTOR_CAPITAL;
     } else if (topicoEstudo) {
       systemInstruction = PROFESSOR_ELITE(topicoEstudo);
@@ -35,41 +43,60 @@ export default async function handler(req, res) {
       systemInstruction = SARGENTO_GIGACHAD;
     }
 
-    // Gestor/Professor: 8192 tokens | Sargento: 300 tokens
-    const tokenLimit = maxTokens || ((topicoEstudo || moduloAtivo === 'war_chest') ? 8192 : 300);
+    // ── TOKEN LIMITS ──
+    // Nutricionista/Gestor/Professor: 8192 | Sargento: 300
+    const tokenLimit = maxTokens || ((topicoEstudo || moduloAtivo === 'war_chest' || moduloAtivo === 'the_fuel') ? 8192 : 300);
 
     // ── MONTA CONTENTS ──
-    // Se historico (array multi-turn) foi enviado, mapeia para formato Gemini
-    // Senão, usa prompt simples (chat geral, verdicts, etc.)
     let contents;
 
     if (historico && Array.isArray(historico) && historico.length > 0) {
-      // Mapeia histórico (mensagens ANTERIORES) para formato Gemini
+      // Multi-turn: mapeia histórico anterior para formato Gemini
       contents = historico.map(msg => ({
         role: msg.role === 'model' ? 'model' : 'user',
         parts: [{ text: msg.text }]
       }));
 
-      // Adiciona a pergunta atual (prompt) como última mensagem do user
-      contents.push({ role: 'user', parts: [{ text: prompt }] });
+      // Adiciona a pergunta atual como última mensagem
+      // Se tem imagem, monta parts multimodal
+      if (imagemBase64) {
+        const userParts = [
+          { inline_data: { mime_type: 'image/jpeg', data: imagemBase64 } },
+          { text: prompt || COMANDO_ANALISE_IMAGEM }
+        ];
+        contents.push({ role: 'user', parts: userParts });
+      } else {
+        contents.push({ role: 'user', parts: [{ text: prompt }] });
+      }
 
       // Gemini exige que contents comece com role: "user"
       while (contents.length > 0 && contents[0].role === 'model') {
         contents.shift();
       }
 
-      // Gemini exige roles alternados — merge mensagens consecutivas do mesmo role
+      // Gemini exige roles alternados — merge consecutivos do mesmo role
       const merged = [contents[0]];
       for (let i = 1; i < contents.length; i++) {
         const prev = merged[merged.length - 1];
         if (contents[i].role === prev.role) {
-          prev.parts[0].text += '\n' + contents[i].parts[0].text;
+          // Merge parts arrays instead of just text (supports multimodal)
+          prev.parts = prev.parts.concat(contents[i].parts);
         } else {
           merged.push(contents[i]);
         }
       }
       contents = merged;
+    } else if (imagemBase64) {
+      // Single-turn com imagem (sem histórico)
+      contents = [{
+        role: 'user',
+        parts: [
+          { inline_data: { mime_type: 'image/jpeg', data: imagemBase64 } },
+          { text: prompt || COMANDO_ANALISE_IMAGEM }
+        ]
+      }];
     } else {
+      // Single-turn texto simples
       contents = [{ role: 'user', parts: [{ text: prompt }] }];
     }
 
