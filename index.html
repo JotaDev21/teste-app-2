@@ -161,27 +161,59 @@
     /* ===== FOCUS MODULE ===== */
     .focus-pulse { animation: focusPulse 2s ease-in-out infinite; }
     @keyframes focusPulse {
-      0%, 100% { box-shadow: 0 0 20px rgba(37,99,235,0.3), 0 0 60px rgba(37,99,235,0.1); }
-      50% { box-shadow: 0 0 40px rgba(37,99,235,0.6), 0 0 100px rgba(37,99,235,0.2); }
+      0%, 100% { box-shadow: 0 0 20px rgba(124,58,237,0.3), 0 0 60px rgba(124,58,237,0.1); }
+      50% { box-shadow: 0 0 40px rgba(124,58,237,0.6), 0 0 100px rgba(124,58,237,0.2); }
     }
     .focus-timer-text { font-family: 'Courier New', 'Consolas', monospace; font-variant-numeric: tabular-nums; letter-spacing: 3px; }
     .focus-immersive {
       position: fixed; inset: 0; z-index: 60;
-      background: rgba(0,0,0,0.96);
+      background: rgba(0,0,0,0.97);
       backdrop-filter: blur(12px);
       display: flex; align-items: center; justify-content: center;
       animation: fadeIn 0.4s ease-out;
     }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    .focus-ring-active { border: 3px solid #2563EB; animation: focusRingSpin 4s linear infinite; }
+    .focus-ring-active { border: 3px solid #7C3AED; animation: focusRingSpin 4s linear infinite; }
     @keyframes focusRingSpin {
-      0% { border-color: #2563EB; box-shadow: 0 0 30px rgba(37,99,235,0.3); }
-      33% { border-color: #3b82f6; box-shadow: 0 0 40px rgba(59,130,246,0.4); }
-      66% { border-color: #1d4ed8; box-shadow: 0 0 30px rgba(29,78,216,0.3); }
-      100% { border-color: #2563EB; box-shadow: 0 0 30px rgba(37,99,235,0.3); }
+      0% { border-color: #7C3AED; box-shadow: 0 0 30px rgba(124,58,237,0.4); }
+      33% { border-color: #06b6d4; box-shadow: 0 0 40px rgba(6,182,212,0.4); }
+      66% { border-color: #8b5cf6; box-shadow: 0 0 35px rgba(139,92,246,0.4); }
+      100% { border-color: #7C3AED; box-shadow: 0 0 30px rgba(124,58,237,0.4); }
     }
     .focus-scanline {
-      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(37,99,235,0.03) 2px, rgba(37,99,235,0.03) 4px);
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(124,58,237,0.02) 2px, rgba(124,58,237,0.02) 4px);
+    }
+    /* Deep Work study ring */
+    .study-ring {
+      background: conic-gradient(from 0deg, #7C3AED calc(var(--pct) * 3.6deg), #1a1a1a calc(var(--pct) * 3.6deg));
+      border-radius: 50%;
+      padding: 6px;
+    }
+    .study-ring-inner {
+      background: radial-gradient(circle, #050505 60%, #0a0a0a 100%);
+      border-radius: 50%;
+      width: 100%; height: 100%;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    /* Feynman modal */
+    .feynman-textarea {
+      background: #0a0a0a; border: 1px solid #222; color: #e5e5e5;
+      font-size: 15px; line-height: 1.6; resize: none;
+      transition: border-color 0.2s;
+    }
+    .feynman-textarea:focus { border-color: #7C3AED; outline: none; }
+    .feynman-textarea::placeholder { color: #444; }
+    /* Archive card */
+    .archive-card {
+      background: #111; border: 1px solid #1a1a1a; border-radius: 16px;
+      transition: border-color 0.2s;
+    }
+    .archive-card:hover { border-color: #333; }
+    /* Study mentor chat bubble */
+    .mentor-bubble {
+      background: linear-gradient(135deg, #1a0a2e 0%, #0a0a0a 100%);
+      border: 1px solid rgba(124,58,237,0.2);
+      border-radius: 16px;
     }
 
     /* ===== TREINO MODULE ===== */
@@ -1408,6 +1440,7 @@
         // Keep completed campaigns for history, but user can start new ones
       }
       if (!userState.missoesDiarias) userState.missoesDiarias = null;
+      if (!Array.isArray(userState.studyLogs)) userState.studyLogs = [];
       // Clean stale AI cache (keep only today's)
       const todayPrefix = 'verdict_' + today;
       Object.keys(userState.aiCache).forEach(k => {
@@ -2619,7 +2652,7 @@
     }
 
     // =============================================
-    // FOCUS (DEEP WORK) MODULE
+    // DEEP WORK — BIBLIOTECA DE ALEXANDRIA
     // =============================================
     let focusInterval = null;
     let focusStartTime = null;
@@ -2627,6 +2660,12 @@
     let restTimerInterval = null;
     let restTimerSeconds = 0;
     let extremeFocusMode = false;
+    let deepWorkTopic = '';
+    let showFeynmanModal = false;
+    let feynmanElapsed = 0;
+    let deepWorkSubTab = 'timer'; // 'timer' or 'arquivo'
+    let studyMentorChat = [];
+    let showStudyMentor = false;
 
     function getTodayFocus() {
       const today = getTodayKey();
@@ -2647,9 +2686,31 @@
       return FOCUS_PHRASES[Math.floor(Math.random() * FOCUS_PHRASES.length)];
     }
 
-    function startFocusSession() {
+    function getStudyLogs() {
+      if (!userState.studyLogs) userState.studyLogs = [];
+      return userState.studyLogs;
+    }
+
+    function promptStudyTopic() {
+      const input = document.getElementById('studyTopicInput');
+      const topic = input ? input.value.trim() : '';
+      if (!topic) { showToast('Digite o foco do estudo.', 2500); return; }
+      deepWorkTopic = topic;
       focusStartTime = Date.now();
       focusImmersive = true;
+      studyMentorChat = [];
+      showStudyMentor = false;
+      renderActiveTab();
+      showImmersiveOverlay();
+      startFocusTicker();
+    }
+
+    function startFocusSession() {
+      // If no topic set, just start without one (backward compat)
+      if (!deepWorkTopic) deepWorkTopic = 'Foco Livre';
+      focusStartTime = Date.now();
+      focusImmersive = true;
+      studyMentorChat = [];
       renderActiveTab();
       showImmersiveOverlay();
       startFocusTicker();
@@ -2660,31 +2721,33 @@
       focusInterval = setInterval(() => {
         if (!focusStartTime) return;
         const elapsed = Math.floor((Date.now() - focusStartTime) / 1000);
-        // Update immersive timer
         const imTimer = document.getElementById('focusImmersiveTimer');
         if (imTimer) imTimer.textContent = formatFocusTime(elapsed);
-        // Update phrase every 60 seconds
         const phEl = document.getElementById('focusPhrase');
         if (phEl && elapsed > 0 && elapsed % 60 === 0) {
           phEl.textContent = getRandomFocusPhrase();
           phEl.style.opacity = '0';
           setTimeout(() => { if (phEl) phEl.style.opacity = '1'; }, 50);
         }
-        // Update regular tab timer if visible
         const tabTimer = document.getElementById('focusTabTimer');
         if (tabTimer) tabTimer.textContent = formatFocusTime(elapsed);
+        // Update topic display
+        const topicEl = document.getElementById('immersiveTopic');
+        if (topicEl && deepWorkTopic) topicEl.textContent = deepWorkTopic;
       }, 1000);
     }
 
     function endFocusSession() {
       if (!focusStartTime) return;
       const elapsed = Math.floor((Date.now() - focusStartTime) / 1000);
+      feynmanElapsed = elapsed;
       if (elapsed > 0) {
         const todayFocus = getTodayFocus();
         todayFocus.totalSeconds += elapsed;
         todayFocus.sessions.push({
           start: new Date(focusStartTime).toISOString(),
           durationSec: elapsed,
+          topic: deepWorkTopic || 'Foco Livre',
         });
         saveData();
       }
@@ -2692,11 +2755,78 @@
       focusImmersive = false;
       if (focusInterval) { clearInterval(focusInterval); focusInterval = null; }
       removeImmersiveOverlay();
-      renderActiveTab();
-      if (elapsed > 0) {
+      // Show Feynman modal if session was > 2 min
+      if (elapsed >= 120) {
+        showFeynmanModal = true;
+      } else {
         const mins = Math.floor(elapsed / 60);
-        showToast(`Sessão encerrada: ${mins} min registrados.`);
+        showToast(`Sessão curta: ${mins}m registrados.`, 2500);
       }
+      renderActiveTab();
+    }
+
+    function submitFeynmanReport() {
+      const textarea = document.getElementById('feynmanTextarea');
+      const resumo = textarea ? textarea.value.trim() : '';
+      if (!resumo) { showToast('Escreva o que você absorveu.', 2500); return; }
+      const logs = getStudyLogs();
+      const xpGanho = Math.max(1, Math.floor(feynmanElapsed / 120)); // 1 XP per 2 min
+      const bonusFeynman = 10; // bonus for writing the report
+      logs.push({
+        id: 'study_' + Date.now(),
+        data: getTodayKey(),
+        hora: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+        tema: deepWorkTopic || 'Foco Livre',
+        tempoSeg: feynmanElapsed,
+        resumo,
+        xp: xpGanho + bonusFeynman,
+      });
+      userState.studyLogs = logs;
+      adicionarXP(xpGanho + bonusFeynman);
+      saveData();
+      showFeynmanModal = false;
+      deepWorkTopic = '';
+      feynmanElapsed = 0;
+      showToast(`DOSSIÊ REGISTRADO! +${xpGanho + bonusFeynman} XP`, 4000);
+      haptic([60, 30, 60]);
+      renderActiveTab();
+    }
+
+    function skipFeynmanReport() {
+      const xpGanho = Math.max(1, Math.floor(feynmanElapsed / 120));
+      adicionarXP(xpGanho);
+      showFeynmanModal = false;
+      deepWorkTopic = '';
+      feynmanElapsed = 0;
+      showToast(`Sessão salva. +${xpGanho} XP (sem bônus Feynman)`, 3000);
+      renderActiveTab();
+    }
+
+    async function askStudyMentor() {
+      const input = document.getElementById('studyMentorInput');
+      const question = input ? input.value.trim() : '';
+      if (!question) return;
+      studyMentorChat.push({ role: 'user', text: question });
+      input.value = '';
+      renderActiveTab();
+      // Scroll to bottom
+      setTimeout(() => {
+        const chatEl = document.getElementById('studyMentorMessages');
+        if (chatEl) chatEl.scrollTop = chatEl.scrollHeight;
+      }, 100);
+      try {
+        const tema = deepWorkTopic || 'estudo geral';
+        const contextPrompt = `Você é um mestre estoico de alta performance. O usuário está estudando o tema "${tema}". Responda à dúvida dele de forma cirúrgica, brutalmente clara e sem rodeios. Exija excelência intelectual.\n\nDúvida: ${question}`;
+        const resp = await callGemini(contextPrompt, 500);
+        studyMentorChat.push({ role: 'ai', text: resp });
+      } catch (e) {
+        studyMentorChat.push({ role: 'ai', text: 'Conexão falhou. Continue estudando, guerreiro.' });
+      }
+      renderActiveTab();
+      setTimeout(() => {
+        const chatEl = document.getElementById('studyMentorMessages');
+        if (chatEl) chatEl.scrollTop = chatEl.scrollHeight;
+      }, 100);
     }
 
     function showImmersiveOverlay() {
@@ -2706,18 +2836,25 @@
       overlay.className = 'focus-immersive focus-scanline';
       overlay.innerHTML = `
         <div class="flex flex-col items-center justify-center w-full px-6">
-          <p class="text-[10px] font-extrabold tracking-[0.3em] text-royal/60 mb-6">MODO IMERSIVO ATIVO</p>
-          <div class="w-52 h-52 rounded-full focus-ring-active focus-pulse flex items-center justify-center mb-8" style="background: radial-gradient(circle, #0a0a0a 60%, #111 100%);">
-            <span id="focusImmersiveTimer" class="focus-timer-text text-5xl font-black text-royal">00:00:00</span>
+          <p class="text-xs font-extrabold tracking-[0.3em] text-purple-400/60 mb-2">MODO IMERSIVO ATIVO</p>
+          ${deepWorkTopic ? `<p id="immersiveTopic" class="text-sm font-black text-purple-300/80 mb-6 text-center">${deepWorkTopic}</p>` : '<div class="mb-6"></div>'}
+          <div class="w-52 h-52 rounded-full focus-ring-active focus-pulse flex items-center justify-center mb-8" style="background: radial-gradient(circle, #050505 60%, #0a0a0a 100%);">
+            <span id="focusImmersiveTimer" class="focus-timer-text text-5xl font-black text-purple-400">00:00:00</span>
           </div>
-          <p id="focusPhrase" class="text-sm font-extrabold text-gray-500 text-center max-w-xs mb-10 transition-opacity duration-500" style="letter-spacing:0.5px;">
+          <p id="focusPhrase" class="text-sm font-extrabold text-gray-500 text-center max-w-xs mb-8 transition-opacity duration-500" style="letter-spacing:0.5px;">
             ${getRandomFocusPhrase()}
           </p>
-          <button onclick="endFocusSession()"
-            class="px-8 py-4 rounded-xl border-2 border-red-900/60 bg-red-950/30 text-red-400 font-extrabold text-sm tracking-wider hover:bg-red-900/30 transition-all active:scale-95">
-            ENCERRAR SESSÃO
-          </button>
-          <p class="text-[9px] font-bold text-gray-700 mt-4">O tempo será salvo automaticamente</p>
+          <div class="flex gap-3">
+            <button onclick="showStudyMentor=true;removeImmersiveOverlay();renderActiveTab();"
+              class="px-5 py-4 rounded-xl border-2 border-purple-700/40 bg-purple-950/30 text-purple-400 font-extrabold text-sm min-h-[48px] active:scale-95 transition-all">
+              INVOCAR MENTOR
+            </button>
+            <button onclick="endFocusSession()"
+              class="px-5 py-4 rounded-xl border-2 border-red-900/60 bg-red-950/30 text-red-400 font-extrabold text-sm min-h-[48px] active:scale-95 transition-all">
+              FINALIZAR
+            </button>
+          </div>
+          <p class="text-xs font-bold text-gray-700 mt-4">O tempo será salvo automaticamente</p>
         </div>
       `;
       document.body.appendChild(overlay);
@@ -2728,136 +2865,303 @@
       if (el) el.remove();
     }
 
+    function renderFeynmanModal() {
+      if (!showFeynmanModal) return '';
+      const mins = Math.floor(feynmanElapsed / 60);
+      const secs = feynmanElapsed % 60;
+      return `
+        <div class="fixed inset-0 bg-black/85 backdrop-blur-sm z-[100] flex items-end justify-center" onclick="if(event.target===this){skipFeynmanReport();}">
+          <div class="bg-[#111] border-t border-purple-900/30 rounded-t-3xl w-full max-w-lg p-6 space-y-5" style="max-height:85vh; overflow-y:auto;">
+            <div class="text-center">
+              <div class="w-12 h-1.5 bg-[#333] rounded-full mx-auto mb-4"></div>
+              <p class="text-xl font-black text-white">Relatório de Missão</p>
+              <p class="text-base font-bold text-purple-400 mt-1">O que você absorveu?</p>
+            </div>
+
+            <div class="bg-black/50 rounded-xl p-4 flex justify-between items-center">
+              <div>
+                <p class="text-xs font-extrabold text-gray-500 tracking-wider">TEMA</p>
+                <p class="text-base font-black text-white mt-0.5">${deepWorkTopic || 'Foco Livre'}</p>
+              </div>
+              <div class="text-right">
+                <p class="text-xs font-extrabold text-gray-500 tracking-wider">TEMPO</p>
+                <p class="text-base font-black text-purple-400 focus-timer-text mt-0.5">${mins}m ${secs}s</p>
+              </div>
+            </div>
+
+            <div>
+              <label class="text-xs font-extrabold text-gray-500 tracking-wider block mb-2">RESUMO FEYNMAN — Explique como se ensinasse a alguém</label>
+              <textarea id="feynmanTextarea" rows="6" placeholder="O que eu aprendi hoje foi..."
+                class="feynman-textarea w-full px-4 py-4 rounded-xl"></textarea>
+            </div>
+
+            <div class="flex gap-3">
+              <button onclick="submitFeynmanReport()"
+                class="flex-1 py-4 rounded-xl font-extrabold text-base text-white min-h-[52px] active:scale-[0.97] transition-all"
+                style="background: linear-gradient(135deg, #7C3AED, #5B21B6); box-shadow: 0 0 20px rgba(124,58,237,0.3);">
+                REGISTRAR DOSSIÊ
+              </button>
+              <button onclick="skipFeynmanReport()"
+                class="px-5 py-4 rounded-xl bg-[#0a0a0a] border border-[#333] text-gray-500 font-extrabold text-sm min-h-[52px] active:scale-[0.97]">
+                PULAR
+              </button>
+            </div>
+            <p class="text-xs text-center text-gray-600 font-bold">Bônus de +10 XP por escrever o relatório Feynman</p>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderStudyMentorPanel() {
+      if (!showStudyMentor) return '';
+      return `
+        <div class="card-neu rounded-2xl p-5 space-y-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-xl">🧠</span>
+              <div>
+                <p class="text-base font-black text-purple-400">Mestre GigaChad</p>
+                <p class="text-xs font-bold text-gray-600">${deepWorkTopic ? 'Tema: ' + deepWorkTopic : 'Tutor IA'}</p>
+              </div>
+            </div>
+            <button onclick="showStudyMentor=false;renderActiveTab();" class="min-w-[44px] min-h-[44px] flex items-center justify-center text-gray-600 hover:text-red-400 rounded-xl active:bg-white/5">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+
+          <div id="studyMentorMessages" class="space-y-3 max-h-64 overflow-y-auto" style="scrollbar-width: thin; scrollbar-color: #222 #000;">
+            ${studyMentorChat.length === 0 ? `
+              <div class="text-center py-4">
+                <p class="text-sm font-bold text-gray-600">Pergunte qualquer coisa sobre ${deepWorkTopic || 'seu estudo'}.</p>
+              </div>
+            ` : studyMentorChat.map(msg => `
+              <div class="${msg.role === 'user' ? 'ml-8' : 'mr-4'}">
+                <div class="${msg.role === 'user' ? 'bg-purple-950/40 border border-purple-800/30' : 'mentor-bubble'} rounded-2xl p-4">
+                  <p class="text-xs font-extrabold ${msg.role === 'user' ? 'text-purple-400' : 'text-gray-500'} mb-1">${msg.role === 'user' ? 'VOCÊ' : 'MESTRE'}</p>
+                  <p class="text-sm font-semibold ${msg.role === 'user' ? 'text-gray-300' : 'text-gray-400'} leading-relaxed">${msg.text}</p>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+
+          <div class="flex gap-2">
+            <input id="studyMentorInput" type="text" placeholder="Sua dúvida..."
+              class="forja-input flex-1 px-4 py-3.5 rounded-xl text-sm font-bold min-h-[48px]"
+              onkeydown="if(event.key==='Enter')askStudyMentor();">
+            <button onclick="askStudyMentor()"
+              class="px-5 py-3.5 rounded-xl font-extrabold text-sm text-white min-h-[48px] active:scale-[0.97]"
+              style="background: linear-gradient(135deg, #7C3AED, #5B21B6);">
+              ENVIAR
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderArquivo() {
+      const logs = getStudyLogs().slice().reverse();
+      if (logs.length === 0) {
+        return `
+          <div class="bg-[#111] border border-[#333] rounded-2xl p-8 text-center">
+            <p class="text-3xl mb-3">📜</p>
+            <p class="text-lg font-black text-gray-400">O Arquivo está vazio</p>
+            <p class="text-sm font-bold text-gray-600 mt-2">Complete sessões de Deep Work e registre dossiês para preencher seu histórico intelectual.</p>
+          </div>
+        `;
+      }
+      return `
+        <div class="space-y-3">
+          <p class="text-xs font-extrabold tracking-wider text-gray-500">${logs.length} DOSSIÊ(S) REGISTRADO(S)</p>
+          ${logs.map(log => {
+            const mins = Math.floor(log.tempoSeg / 60);
+            return `
+              <div class="archive-card p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <span class="text-xs font-black text-purple-400">${log.tema}</span>
+                  <span class="text-xs font-bold text-gray-600">${log.data} — ${log.hora}</span>
+                </div>
+                <p class="text-sm font-semibold text-gray-400 leading-relaxed mb-3">${log.resumo}</p>
+                <div class="flex items-center gap-4 text-xs font-bold text-gray-600">
+                  <span class="focus-timer-text">${mins}min</span>
+                  <span class="text-purple-500">+${log.xp} XP</span>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+    }
+
     function renderFocus() {
       const today = getTodayKey();
       const todayFocus = getTodayFocus();
       const totalSec = todayFocus.totalSeconds + (focusStartTime ? Math.floor((Date.now() - focusStartTime) / 1000) : 0);
-      const goalSec = 4 * 3600; // 4h goal
+      const goalSec = (userState.profile?.focusGoalHours || 4) * 3600;
       const pct = Math.min(100, Math.round((totalSec / goalSec) * 100));
       const totalHours = (totalSec / 3600).toFixed(1);
-      const goalColor = pct >= 100 ? '#00FF64' : pct >= 50 ? '#2563EB' : '#444';
+      const goalHours = (userState.profile?.focusGoalHours || 4);
+      const goalColor = pct >= 100 ? '#00FF64' : pct >= 50 ? '#7C3AED' : '#444';
       const isActive = !!focusStartTime;
       const sessions = todayFocus.sessions || [];
-      const lastSessions = sessions.slice(-5).reverse();
 
       return `
-        <div class="tab-enter space-y-4 max-w-lg mx-auto">
-          <div class="pt-1">
-            <h2 class="text-2xl font-extrabold">Deep <span class="text-royal">Work</span></h2>
-            <p class="text-gray-500 text-sm font-semibold mt-1">Foco inabalável. Sem distrações. Sem piedade.</p>
+        <div class="tab-enter space-y-5 max-w-lg mx-auto">
+          <div class="pt-1 flex items-center justify-between">
+            <div>
+              <h2 class="text-2xl font-extrabold">Deep <span class="text-purple-400">Work</span></h2>
+              <p class="text-gray-500 text-base font-semibold mt-1">A Biblioteca de Alexandria.</p>
+            </div>
           </div>
 
-          <!-- TIMER HERO -->
-          <div class="card-neu rounded-2xl p-6 flex flex-col items-center focus-scanline">
-            <p class="text-[10px] font-extrabold tracking-[0.25em] text-gray-500 mb-4">CRONÔMETRO TÁTICO</p>
-            <div class="w-44 h-44 rounded-full border-3 flex items-center justify-center mb-4 ${isActive ? 'focus-ring-active focus-pulse' : 'border-[#333]'}" style="background: radial-gradient(circle, #0a0a0a 60%, #111 100%);">
-              <span id="focusTabTimer" class="focus-timer-text text-4xl font-black ${isActive ? 'text-royal' : 'text-gray-600'}">
-                ${isActive ? formatFocusTime(Math.floor((Date.now() - focusStartTime) / 1000)) : '00:00:00'}
-              </span>
+          <!-- SUB-TAB TOGGLE -->
+          <div class="flex gap-2">
+            <button onclick="deepWorkSubTab='timer';renderActiveTab();"
+              class="flex-1 py-3 rounded-xl font-extrabold text-sm min-h-[48px] transition-all active:scale-[0.97] ${deepWorkSubTab === 'timer' ? 'text-white' : 'bg-[#111] border border-[#333] text-gray-500'}"
+              ${deepWorkSubTab === 'timer' ? 'style="background:linear-gradient(135deg,#7C3AED,#5B21B6);box-shadow:0 0 15px rgba(124,58,237,0.3);"' : ''}>
+              DEEP WORK
+            </button>
+            <button onclick="deepWorkSubTab='arquivo';renderActiveTab();"
+              class="flex-1 py-3 rounded-xl font-extrabold text-sm min-h-[48px] transition-all active:scale-[0.97] ${deepWorkSubTab === 'arquivo' ? 'text-white' : 'bg-[#111] border border-[#333] text-gray-500'}"
+              ${deepWorkSubTab === 'arquivo' ? 'style="background:linear-gradient(135deg,#7C3AED,#5B21B6);box-shadow:0 0 15px rgba(124,58,237,0.3);"' : ''}>
+              O ARQUIVO
+            </button>
+          </div>
+
+          ${deepWorkSubTab === 'arquivo' ? renderArquivo() : `
+
+            <!-- TIMER HERO with STUDY RING -->
+            <div class="card-neu rounded-2xl p-6 flex flex-col items-center focus-scanline">
+              <p class="text-xs font-extrabold tracking-[0.2em] text-gray-500 mb-4">CRONÔMETRO TÁTICO</p>
+
+              <!-- Neon ring with conic gradient progress -->
+              <div class="w-48 h-48 rounded-full mb-5 ${isActive ? 'focus-pulse' : ''}" style="background: conic-gradient(from 0deg, ${goalColor} ${pct * 3.6}deg, #1a1a1a ${pct * 3.6}deg); padding: 5px; box-shadow: ${isActive ? '0 0 30px rgba(124,58,237,0.4)' : '0 0 10px rgba(0,0,0,0.3)'};">
+                <div class="study-ring-inner">
+                  <span id="focusTabTimer" class="focus-timer-text text-4xl font-black ${isActive ? 'text-purple-400' : 'text-gray-600'}">
+                    ${isActive ? formatFocusTime(Math.floor((Date.now() - focusStartTime) / 1000)) : '00:00:00'}
+                  </span>
+                  ${isActive && deepWorkTopic ? `<p class="text-xs font-bold text-purple-400/60 mt-2 text-center px-4 truncate max-w-[160px]">${deepWorkTopic}</p>` : ''}
+                  ${!isActive ? `<p class="text-xs font-bold text-gray-700 mt-1">${pct}%</p>` : ''}
+                </div>
+              </div>
+
+              ${isActive ? `
+                <p class="text-sm font-extrabold text-purple-400/60 mb-4 tracking-wider">SESSÃO EM ANDAMENTO</p>
+                <div class="flex gap-3 w-full max-w-xs">
+                  <button onclick="endFocusSession()"
+                    class="flex-1 py-3.5 rounded-xl border-2 border-red-900/60 bg-red-950/30 text-red-400 font-extrabold text-sm min-h-[48px] active:scale-95 transition-all">
+                    FINALIZAR
+                  </button>
+                  <button onclick="showImmersiveOverlay(); startFocusTicker();"
+                    class="flex-1 py-3.5 rounded-xl border-2 border-purple-700/40 bg-purple-950/30 text-purple-400 font-extrabold text-sm min-h-[48px] active:scale-95 transition-all">
+                    IMERSIVO
+                  </button>
+                </div>
+              ` : `
+                <!-- TOPIC INPUT + START -->
+                <div class="w-full space-y-3 max-w-xs">
+                  <input id="studyTopicInput" type="text" placeholder="Foco do estudo (ex: Kotlin, Inglês...)"
+                    class="forja-input w-full px-4 py-3.5 rounded-xl text-base font-bold min-h-[48px] text-center"
+                    onkeydown="if(event.key==='Enter')promptStudyTopic();">
+                  <button onclick="promptStudyTopic()"
+                    class="w-full py-4 rounded-xl font-extrabold text-base text-white min-h-[52px] active:scale-[0.97] transition-all"
+                    style="background: linear-gradient(135deg, #7C3AED, #5B21B6); box-shadow: 0 0 20px rgba(124,58,237,0.3);">
+                    INICIAR SESSÃO DE FOCO
+                  </button>
+                </div>
+              `}
             </div>
 
-            ${isActive ? `
-              <p class="text-xs font-extrabold text-royal/60 mb-4 tracking-wider">SESSÃO EM ANDAMENTO</p>
-              <div class="flex gap-3">
-                <button onclick="endFocusSession()"
-                  class="px-6 py-3 rounded-xl border-2 border-red-900/60 bg-red-950/30 text-red-400 font-extrabold text-sm tracking-wider hover:bg-red-900/30 transition-all active:scale-95">
-                  ABORTAR MISSÃO
-                </button>
-                <button onclick="showImmersiveOverlay(); startFocusTicker();"
-                  class="px-6 py-3 rounded-xl border-2 border-royal/40 bg-royal/10 text-royal font-extrabold text-sm tracking-wider hover:bg-royal/20 transition-all active:scale-95">
-                  MODO IMERSIVO
-                </button>
+            <!-- AI STUDY MENTOR (if toggled on during session) -->
+            ${isActive && showStudyMentor ? renderStudyMentorPanel() : ''}
+            ${isActive && !showStudyMentor ? `
+              <button onclick="showStudyMentor=true;renderActiveTab();"
+                class="w-full py-3.5 rounded-xl border border-purple-800/30 bg-purple-950/20 text-purple-400 font-extrabold text-sm min-h-[48px] active:scale-[0.97] transition-all flex items-center justify-center gap-2">
+                <span>🧠</span> INVOCAR MENTOR (DÚVIDA)
+              </button>
+            ` : ''}
+
+            <!-- META DIÁRIA -->
+            <div class="bg-[#111] border border-[#333] rounded-2xl p-5">
+              <div class="flex justify-between items-center mb-3">
+                <span class="text-xs font-extrabold tracking-widest text-gray-500">META: ${goalHours}H DE DEEP WORK</span>
+                <span class="focus-timer-text text-sm font-black" style="color:${goalColor}">${totalHours}h / ${goalHours}.0h</span>
+              </div>
+              <div class="w-full h-4 bg-black rounded-full overflow-hidden">
+                <div class="h-full rounded-full transition-all duration-700 ease-out" style="width:${pct}%; background:${goalColor}; box-shadow: 0 0 10px ${goalColor}40;"></div>
+              </div>
+              <div class="flex justify-between items-center mt-2">
+                <span class="text-xs font-bold text-gray-600">${sessions.length} sessão(ões) hoje</span>
+                <span class="text-sm font-black ${pct >= 100 ? 'neon-text' : 'text-gray-500'}">${pct}%</span>
+              </div>
+            </div>
+
+            <!-- FOCO ADAPTATIVO — IA -->
+            ${(() => {
+              const adaptiveFeedback = getFocusAdaptiveFeedback();
+              if (adaptiveFeedback) return `
+                <div class="ai-verdict-card rounded-2xl p-5 border border-yellow-900/30">
+                  <div class="flex items-center gap-2.5 mb-3">
+                    <span class="text-xl">🧠</span>
+                    <span class="text-xs font-extrabold tracking-[0.2em] text-yellow-400">FOCO ADAPTATIVO — IA</span>
+                  </div>
+                  <p class="text-sm font-bold text-yellow-200/80 leading-relaxed">${adaptiveFeedback}</p>
+                </div>
+              `;
+              return '';
+            })()}
+
+            ${pct >= 100 ? `
+              <div class="rounded-2xl p-6 text-center border border-[#00FF64]/30" style="background: rgba(0,255,100,0.05); box-shadow: 0 0 30px rgba(0,255,100,0.1);">
+                <p class="text-4xl mb-3">🎯</p>
+                <p class="neon-text font-black text-2xl tracking-wide">META ATINGIDA</p>
+                <p class="text-gray-400 text-sm font-bold mt-2">${goalHours} horas de deep work. Você é imparável.</p>
+              </div>
+            ` : ''}
+
+            <!-- FRASE MOTIVACIONAL -->
+            <div class="card-neu border-purple-900/20 p-5 text-center">
+              <p class="text-sm font-extrabold text-purple-400/60 tracking-wide">${getRandomFocusPhrase()}</p>
+            </div>
+
+            <!-- EXTREME FOCUS MODE -->
+            <button onclick="toggleExtremeFocus()"
+              class="w-full py-3.5 rounded-xl ${extremeFocusMode ? 'bg-red-950/30 border-2 border-red-900/40 text-red-400' : 'bg-[#111] border border-[#333] text-gray-400'} font-extrabold text-sm tracking-wider min-h-[48px] active:scale-[0.97] transition-all flex items-center justify-center gap-2">
+              <span>${extremeFocusMode ? '\u{1F441}\u{FE0F}' : '\u{1F512}'}</span>
+              ${extremeFocusMode ? 'DESATIVAR MODO EXTREMO' : 'ATIVAR MODO EXTREMO (ESCONDER NAV)'}
+            </button>
+
+            <!-- SESSÕES DE HOJE -->
+            ${sessions.length > 0 ? `
+              <div class="bg-[#111] border border-[#333] rounded-2xl p-5">
+                <p class="text-xs font-extrabold tracking-widest text-gray-500 mb-3">REGISTRO DE OPERAÇÕES</p>
+                <div class="space-y-2.5">
+                  ${sessions.slice(-5).reverse().map((s, i) => {
+                    const startTime = new Date(s.start).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                    const durMin = Math.floor(s.durationSec / 60);
+                    return `
+                      <div class="flex items-center gap-3 p-3.5 bg-black rounded-xl">
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center text-xs font-black bg-purple-950/30 text-purple-400 border border-purple-800/20 flex-shrink-0 focus-timer-text">
+                          ${String(i + 1).padStart(2, '0')}
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          <p class="text-sm font-bold text-gray-300">${s.topic || 'Foco Livre'}</p>
+                          <p class="text-xs font-semibold text-gray-600 focus-timer-text">${durMin}min — ${startTime}</p>
+                        </div>
+                        <span class="text-lg">📖</span>
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
               </div>
             ` : `
-              <button onclick="startFocusSession()"
-                class="px-8 py-4 rounded-xl btn-royal text-white font-extrabold text-base tracking-wider active:scale-95 transition-all w-full max-w-xs">
-                INICIAR SESSÃO DE FOCO
-              </button>
+              <div class="bg-[#111] border border-[#333] rounded-2xl p-6 text-center">
+                <p class="text-gray-700 text-sm font-bold">Nenhuma sessão registrada hoje.</p>
+                <p class="text-gray-800 text-xs font-semibold mt-1">Inicie sua primeira sessão de foco.</p>
+              </div>
             `}
-          </div>
-
-          <!-- META DIÁRIA -->
-          <div class="bg-[#111] border border-[#333] rounded-xl p-4">
-            <div class="flex justify-between items-center mb-2">
-              <span class="text-[10px] font-extrabold tracking-widest text-gray-500">META DIÁRIA: 4 HORAS</span>
-              <span class="focus-timer-text text-xs font-black" style="color:${goalColor}">${totalHours}h / 4.0h</span>
-            </div>
-            <div class="w-full h-3 bg-black rounded-full overflow-hidden">
-              <div class="h-full rounded-full transition-all duration-700 ease-out" style="width:${pct}%; background:${goalColor}; box-shadow: 0 0 10px ${goalColor}40;"></div>
-            </div>
-            <div class="flex justify-between items-center mt-2">
-              <span class="text-[10px] font-bold text-gray-600">${sessions.length} sessão(ões) hoje</span>
-              <span class="text-[10px] font-black ${pct >= 100 ? 'neon-text' : 'text-gray-500'}">${pct}%</span>
-            </div>
-          </div>
-
-          <!-- FOCO ADAPTATIVO — IA -->
-          ${(() => {
-            const adaptiveFeedback = getFocusAdaptiveFeedback();
-            if (adaptiveFeedback) return `
-              <div class="ai-verdict-card rounded-xl p-4 border border-yellow-900/30">
-                <div class="flex items-center gap-2 mb-2">
-                  <span class="text-lg">🧠</span>
-                  <span class="text-[10px] font-extrabold tracking-[0.2em] text-yellow-400">FOCO ADAPTATIVO — IA</span>
-                </div>
-                <p class="text-sm font-bold text-yellow-200/80 leading-relaxed">${adaptiveFeedback}</p>
-              </div>
-            `;
-            return '';
-          })()}
-
-          ${pct >= 100 ? `
-            <div class="rounded-xl p-5 text-center border border-[#00FF64]/30" style="background: rgba(0,255,100,0.05); box-shadow: 0 0 30px rgba(0,255,100,0.1);">
-              <p class="text-3xl mb-2">🎯</p>
-              <p class="neon-text font-black text-xl tracking-wide">META ATINGIDA</p>
-              <p class="text-gray-400 text-xs font-bold mt-2">4 horas de deep work. Você é imparável.</p>
-            </div>
-          ` : ''}
-
-          <!-- FRASE MOTIVACIONAL -->
-          <div class="card-neu border-royal/20 p-4 text-center">
-            <p class="text-xs font-extrabold text-royal/70 tracking-wide">${getRandomFocusPhrase()}</p>
-          </div>
-
-          <!-- EXTREME FOCUS MODE -->
-          <button onclick="toggleExtremeFocus()"
-            class="w-full py-3 rounded-xl ${extremeFocusMode ? 'bg-red-950/30 border-2 border-red-900/40 text-red-400' : 'bg-[#111] border border-[#333] text-gray-400'} font-extrabold text-sm tracking-wider active:scale-[0.97] transition-all flex items-center justify-center gap-2">
-            <span>${extremeFocusMode ? '\u{1F441}\u{FE0F}' : '\u{1F512}'}</span>
-            ${extremeFocusMode ? 'DESATIVAR MODO EXTREMO' : 'ATIVAR MODO EXTREMO (ESCONDER NAV)'}
-          </button>
-
-          <!-- SESSÕES DE HOJE -->
-          ${lastSessions.length > 0 ? `
-            <div class="bg-[#111] border border-[#333] rounded-xl p-4">
-              <p class="text-[10px] font-extrabold tracking-widest text-gray-500 mb-3">REGISTRO DE OPERAÇÕES</p>
-              <div class="space-y-2">
-                ${lastSessions.map((s, i) => {
-                  const startTime = new Date(s.start).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-                  const durMin = Math.floor(s.durationSec / 60);
-                  const durSec = s.durationSec % 60;
-                  return `
-                    <div class="flex items-center gap-3 p-3 bg-black rounded-xl">
-                      <div class="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black bg-royal/10 text-royal border border-royal/20 flex-shrink-0 focus-timer-text">
-                        ${String(i + 1).padStart(2, '0')}
-                      </div>
-                      <div class="flex-1 min-w-0">
-                        <p class="text-sm font-bold text-gray-400 focus-timer-text">${durMin}m ${durSec}s</p>
-                        <p class="text-[10px] font-semibold text-gray-700">Início: ${startTime}</p>
-                      </div>
-                      <span class="text-lg">🎯</span>
-                    </div>
-                  `;
-                }).join('')}
-              </div>
-              ${sessions.length > 5 ? `<p class="text-[10px] text-gray-700 font-bold text-center mt-2">+ ${sessions.length - 5} sessões anteriores</p>` : ''}
-            </div>
-          ` : `
-            <div class="bg-[#111] border border-[#333] rounded-xl p-6 text-center">
-              <p class="text-gray-700 text-sm font-bold">Nenhuma sessão registrada hoje.</p>
-              <p class="text-gray-800 text-xs font-semibold mt-1">Inicie sua primeira sessão de foco.</p>
-            </div>
           `}
         </div>
+        ${renderFeynmanModal()}
       `;
     }
 
