@@ -693,6 +693,69 @@
       box-shadow: 0 4px 16px rgba(0,0,0,0.6), 0 0 20px rgba(124,58,237,0.15), inset 0 1px 0 rgba(255,255,255,0.05);
     }
 
+    /* ===== BATTLE CALENDAR ===== */
+    .battle-calendar-overlay {
+      position: fixed; inset: 0; z-index: 60;
+      background: rgba(0,0,0,0.97);
+      display: flex; flex-direction: column; align-items: center;
+      padding: 24px 20px; overflow-y: auto;
+      animation: fadeIn 0.3s ease-out;
+    }
+    .cal-grid {
+      display: grid; grid-template-columns: repeat(7, 1fr);
+      gap: 6px; width: 100%; max-width: 380px;
+    }
+    .cal-header {
+      font-size: 10px; font-weight: 800; color: #555;
+      text-align: center; padding: 4px 0; letter-spacing: 0.1em;
+    }
+    .cal-day {
+      aspect-ratio: 1; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.03);
+      color: #555; transition: all 0.2s;
+    }
+    .cal-day-won {
+      background: rgba(0,255,100,0.12);
+      border-color: rgba(0,255,100,0.4);
+      color: #00ff64;
+      box-shadow: 0 0 12px rgba(0,255,100,0.15);
+    }
+    @keyframes calTodayPulse {
+      0%, 100% { border-color: rgba(255,51,51,0.4); box-shadow: 0 0 8px rgba(255,51,51,0.1); }
+      50% { border-color: rgba(255,51,51,0.8); box-shadow: 0 0 20px rgba(255,51,51,0.25); }
+    }
+    .cal-day-today {
+      border-color: rgba(255,51,51,0.5); color: #ff3333;
+      animation: calTodayPulse 2s ease-in-out infinite; font-weight: 900;
+    }
+    .cal-day-today.cal-day-won {
+      animation: none;
+      background: rgba(0,255,100,0.15);
+      border-color: rgba(0,255,100,0.6);
+      color: #00ff64;
+      box-shadow: 0 0 20px rgba(0,255,100,0.25);
+    }
+    .cal-day-missed {
+      background: rgba(255,51,51,0.05);
+      border-color: rgba(255,51,51,0.15);
+      color: #442222;
+    }
+    .cal-day-future { opacity: 0.25; }
+    .cal-day-empty { border: none; background: transparent; }
+    .precision-timer {
+      font-family: 'Courier New', 'Consolas', monospace;
+      font-variant-numeric: tabular-nums;
+      font-size: 2rem; font-weight: 900;
+      letter-spacing: 2px; line-height: 1;
+    }
+    .precision-timer-label {
+      font-size: 9px; font-weight: 800;
+      letter-spacing: 0.3em; color: #555;
+    }
+
     /* SVG progress ring */
     .progress-ring-circle {
       transition: stroke-dashoffset 0.5s cubic-bezier(.4,0,.2,1);
@@ -1802,7 +1865,10 @@
       }
       DEFAULT_VICIOS.forEach(v => {
         if (!userState.vicios[v.id]) {
-          userState.vicios[v.id] = { startedAt: null, label: v.label };
+          userState.vicios[v.id] = { startedAt: null, label: v.label, diasVencidos: [], ultimoCheckin: null };
+        } else {
+          if (!Array.isArray(userState.vicios[v.id].diasVencidos)) userState.vicios[v.id].diasVencidos = [];
+          if (userState.vicios[v.id].ultimoCheckin === undefined) userState.vicios[v.id].ultimoCheckin = null;
         }
       });
       // Initialize focusSessions if needed
@@ -1961,8 +2027,12 @@
 
     function startSobriety(vicioId) {
       userState.vicios[vicioId].startedAt = new Date().toISOString();
+      userState.vicios[vicioId].diasVencidos = [];
+      userState.vicios[vicioId].ultimoCheckin = null;
+      haptic([50, 30, 50]);
       saveData();
       renderActiveTab();
+      showToast('⚔️ MISSÃO INICIADA! Sobreviva o dia.');
     }
 
     function resetSobriety(vicioId) {
@@ -1986,13 +2056,41 @@
         const active = !!data.startedAt;
         const level = active ? getVicioLevel(time.days) : { label: 'INATIVO', cls: 'text-gray-700', border: 'border-[#333]' };
         const displayLabel = v.id === 'custom' ? (data.label || 'Personalizado') : v.label;
+        const streak = active ? calcularStreakSobriedade(data.diasVencidos) : 0;
+        const streakGlow = active && streak >= 7 ? ' streak-glow' : '';
 
-        const streakGlow = active && time.days >= 7 ? ' streak-glow' : '';
-        const glowColor = active ? (time.days >= 30 ? 'rgba(0,255,100,0.3)' : time.days >= 7 ? 'rgba(37,99,235,0.25)' : 'rgba(255,255,255,0.06)') : 'rgba(255,255,255,0.04)';
+        if (!active) {
+          return `
+            <div class="sobriety-card glass-panel ${level.border} p-4">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                  <span class="text-xl">${v.icon}</span>
+                  <div>
+                    <p class="text-xs font-extrabold text-gray-200">${escapeHtml(displayLabel)}</p>
+                    <p class="text-[9px] font-bold text-gray-700 tracking-wider">INATIVO</p>
+                  </div>
+                </div>
+                <button onclick="event.stopPropagation(); startSobriety('${v.id}')" class="glow-circle-btn glow-green w-10 h-10 haptic" title="Iniciar">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                </button>
+              </div>
+              ${v.id === 'custom' ? `
+                <div class="float-input-group mt-3">
+                  <input type="text" id="customVicioInput" value="${escapeHtml(data.label || '')}" placeholder=" "
+                    class="w-full px-3 py-2 rounded-lg text-[11px] font-semibold" onchange="updateCustomVicioLabel()">
+                  <span class="float-label">Nome do vício</span>
+                </div>
+              ` : ''}
+            </div>
+          `;
+        }
 
+        // Active vice — compact card with streak + tap to open calendar
+        const checkedToday = data.diasVencidos.includes(getTodayKey());
+        const totalWon = data.diasVencidos.length;
         return `
-          <div class="sobriety-card glass-panel ${level.border}${streakGlow} p-4">
-            <div class="flex items-center justify-between mb-3">
+          <div class="sobriety-card glass-panel ${level.border}${streakGlow} p-4 cursor-pointer active:scale-[0.97] transition-transform" onclick="openBattleCalendar('${v.id}')">
+            <div class="flex items-center justify-between mb-2">
               <div class="flex items-center gap-2.5">
                 <span class="text-xl">${v.icon}</span>
                 <div>
@@ -2000,40 +2098,18 @@
                   <p class="text-[9px] font-bold ${level.cls} tracking-wider">${level.label}</p>
                 </div>
               </div>
-              ${active ? `
-                <button onclick="resetSobriety('${v.id}')" class="glow-circle-btn glow-red w-10 h-10 haptic" title="Recaída">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4l16 16M4 20L20 4"/></svg>
-                </button>
-              ` : `
-                <button onclick="startSobriety('${v.id}')" class="glow-circle-btn glow-green w-10 h-10 haptic" title="Iniciar">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-                </button>
-              `}
+              <div class="text-right">
+                <p class="text-lg font-black ${streak > 0 ? 'text-white' : 'text-gray-600'}" id="timer-${v.id}">${streak > 0 ? '🔥 ' + streak : time.days + 'd'}</p>
+                <p class="text-[9px] font-bold text-gray-600">${streak > 0 ? 'STREAK' : 'TOTAL'}</p>
+              </div>
             </div>
-            ${active ? `
-              <div class="bg-black/60 rounded-xl p-4 text-center" style="box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);">
-                <p class="soberania-giant ${level.cls}" id="timer-${v.id}" style="text-shadow: 0 4px 12px rgba(0,0,0,0.8), 0 0 30px ${glowColor};">
-                  ${String(time.days).padStart(2, '0')}
-                </p>
-                <p class="soberania-unit text-gray-500 -mt-1">DIAS</p>
-                <p class="mono-timer text-sm font-bold text-gray-600 mt-1" id="timer-sub-${v.id}">
-                  ${String(time.hours).padStart(2, '0')}h ${String(time.mins).padStart(2, '0')}m
-                </p>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full ${checkedToday ? 'bg-green-500' : 'bg-red-500/50'} inline-block"></span>
+                <span class="text-[10px] font-bold ${checkedToday ? 'text-green-500' : 'text-gray-600'}">${checkedToday ? 'HOJE ✓' : 'PENDENTE'}</span>
               </div>
-            ` : `
-              <div class="bg-black/60 rounded-xl p-4 text-center" style="box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);">
-                <p class="soberania-giant text-gray-800">00</p>
-                <p class="soberania-unit text-gray-800 -mt-1">DIAS</p>
-                <p class="mono-timer text-sm font-bold text-gray-800 mt-1">00h 00m</p>
-              </div>
-            `}
-            ${v.id === 'custom' ? `
-              <div class="float-input-group mt-2">
-                <input type="text" id="customVicioInput" value="${escapeHtml(data.label || '')}" placeholder=" "
-                  class="w-full px-3 py-2 rounded-lg text-[11px] font-semibold" onchange="updateCustomVicioLabel()">
-                <span class="float-label">Nome do vício</span>
-              </div>
-            ` : ''}
+              <span class="text-[10px] font-bold text-gray-600">${totalWon} dias vencidos</span>
+            </div>
           </div>
         `;
       }).join('');
@@ -2060,6 +2136,233 @@
           }
         });
       }, 30000);
+    }
+
+    // =============================================
+    // BATTLE CALENDAR — Calendário de Batalha
+    // =============================================
+    let battleTimerInterval = null;
+
+    function calcularStreakSobriedade(diasVencidos) {
+      if (!diasVencidos || diasVencidos.length === 0) return 0;
+      const sorted = [...diasVencidos].sort().reverse();
+      const today = getTodayKey();
+      const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+      // Streak must include today or yesterday to be "active"
+      if (sorted[0] !== today && sorted[0] !== yesterday) return 0;
+      let streak = 1;
+      for (let i = 1; i < sorted.length; i++) {
+        const prev = new Date(sorted[i - 1]);
+        const curr = new Date(sorted[i]);
+        const diffDays = Math.round((prev - curr) / 86400000);
+        if (diffDays === 1) streak++;
+        else break;
+      }
+      return streak;
+    }
+
+    function renderCalendarGrid(vicioId) {
+      const data = userState.vicios[vicioId];
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = now.getMonth();
+      const today = getTodayKey();
+      const startDate = data.startedAt ? data.startedAt.split('T')[0] : null;
+      const diasSet = new Set(data.diasVencidos || []);
+      const firstDay = new Date(year, month, 1).getDay(); // 0=Sun
+      const lastDate = new Date(year, month + 1, 0).getDate();
+      const monthNames = ['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'];
+
+      let html = `<p class="text-xs font-extrabold text-gray-500 tracking-[0.2em] text-center mb-3">${monthNames[month]} ${year}</p>`;
+      html += '<div class="cal-grid">';
+      // Headers
+      ['D','S','T','Q','Q','S','S'].forEach(d => { html += `<div class="cal-header">${d}</div>`; });
+      // Empty cells before day 1
+      for (let i = 0; i < firstDay; i++) html += '<div class="cal-day cal-day-empty"></div>';
+      // Days
+      for (let day = 1; day <= lastDate; day++) {
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const isToday = dateStr === today;
+        const isWon = diasSet.has(dateStr);
+        const isFuture = dateStr > today;
+        const isBeforeStart = startDate && dateStr < startDate;
+        const isPast = dateStr < today;
+        let cls = 'cal-day';
+        let content = day;
+        if (isBeforeStart) {
+          cls += ' cal-day-empty';
+          content = '';
+        } else if (isFuture) {
+          cls += ' cal-day-future';
+        } else if (isToday) {
+          cls += ' cal-day-today';
+          if (isWon) cls += ' cal-day-won';
+        } else if (isPast && isWon) {
+          cls += ' cal-day-won';
+          content = '✓';
+        } else if (isPast && !isWon) {
+          cls += ' cal-day-missed';
+        }
+        html += `<div class="${cls}">${content}</div>`;
+      }
+      html += '</div>';
+      return html;
+    }
+
+    function canCheckinToday(vicioId) {
+      const data = userState.vicios[vicioId];
+      if (!data || !data.startedAt) return false;
+      const today = getTodayKey();
+      const startDate = data.startedAt.split('T')[0];
+      if (today === startDate) return false; // Survive the day first
+      if (data.diasVencidos.includes(today)) return false; // Already checked
+      return true;
+    }
+
+    function checkinSobriedade(vicioId) {
+      const data = userState.vicios[vicioId];
+      const today = getTodayKey();
+      if (!canCheckinToday(vicioId)) return;
+      data.diasVencidos.push(today);
+      data.ultimoCheckin = new Date().toISOString();
+      const streak = calcularStreakSobriedade(data.diasVencidos);
+      const xpGanho = 25 + Math.min(streak * 5, 50);
+      adicionarXP(xpGanho);
+      haptic([100, 50, 100]);
+      saveData();
+      updateBattleCalendarUI(vicioId);
+      showToast(`✓ TERRITÓRIO CONQUISTADO! +${xpGanho} XP (Streak: ${streak})`);
+    }
+
+    function updateBattleCalendarUI(vicioId) {
+      const calGrid = document.getElementById('battleCalGrid');
+      if (calGrid) calGrid.innerHTML = renderCalendarGrid(vicioId);
+      const statsRow = document.getElementById('battleCalStats');
+      if (statsRow) statsRow.innerHTML = renderBattleStats(vicioId);
+      const checkinBtn = document.getElementById('battleCheckinBtn');
+      if (checkinBtn) {
+        const can = canCheckinToday(vicioId);
+        checkinBtn.disabled = !can;
+        checkinBtn.className = can
+          ? 'w-full min-h-[56px] rounded-2xl font-extrabold text-sm tracking-wider active:scale-[0.93] haptic transition-all bg-green-950/40 border-2 border-green-500/50 text-green-400'
+          : 'w-full min-h-[56px] rounded-2xl font-extrabold text-sm tracking-wider transition-all bg-[#111] border border-[#333] text-gray-600 cursor-not-allowed';
+        checkinBtn.textContent = can ? '⚔️  MARCAR TERRITÓRIO — CHECK-IN' : (userState.vicios[vicioId].diasVencidos.includes(getTodayKey()) ? '✓  HOJE JÁ CONQUISTADO' : '🔒  SOBREVIVA O DIA PRIMEIRO');
+      }
+    }
+
+    function renderBattleStats(vicioId) {
+      const data = userState.vicios[vicioId];
+      const streak = calcularStreakSobriedade(data.diasVencidos);
+      const totalDays = data.diasVencidos.length;
+      const time = calcTimeSince(data.startedAt);
+      const totalPossible = time ? time.days : 0;
+      const rate = totalPossible > 0 ? Math.round((totalDays / totalPossible) * 100) : 0;
+      return `
+        <div class="glass-panel p-3 text-center">
+          <p class="text-lg font-black text-white">🔥 ${streak}</p>
+          <p class="text-[9px] font-bold text-gray-500 tracking-wider">STREAK</p>
+        </div>
+        <div class="glass-panel p-3 text-center">
+          <p class="text-lg font-black text-white">${totalDays}</p>
+          <p class="text-[9px] font-bold text-gray-500 tracking-wider">VENCIDOS</p>
+        </div>
+        <div class="glass-panel p-3 text-center">
+          <p class="text-lg font-black text-white">${rate}%</p>
+          <p class="text-[9px] font-bold text-gray-500 tracking-wider">TAXA</p>
+        </div>
+      `;
+    }
+
+    function startBattleTimer(vicioId) {
+      if (battleTimerInterval) clearInterval(battleTimerInterval);
+      const tick = () => {
+        const data = userState.vicios[vicioId];
+        if (!data || !data.startedAt) return;
+        const el = document.getElementById('battlePrecisionTimer');
+        if (!el) return;
+        const diff = Date.now() - new Date(data.startedAt).getTime();
+        if (diff < 0) { el.textContent = '00 : 00 : 00 : 00'; return; }
+        const d = Math.floor(diff / 86400000);
+        const h = Math.floor((diff % 86400000) / 3600000);
+        const m = Math.floor((diff % 3600000) / 60000);
+        const s = Math.floor((diff % 60000) / 1000);
+        el.textContent = `${String(d).padStart(2,'0')} : ${String(h).padStart(2,'0')} : ${String(m).padStart(2,'0')} : ${String(s).padStart(2,'0')}`;
+      };
+      tick();
+      battleTimerInterval = setInterval(tick, 1000);
+    }
+
+    function openBattleCalendar(vicioId) {
+      const data = userState.vicios[vicioId];
+      if (!data || !data.startedAt) return;
+      const vicio = DEFAULT_VICIOS.find(v => v.id === vicioId);
+      const displayLabel = vicioId === 'custom' ? (data.label || 'Personalizado') : vicio.label;
+      const can = canCheckinToday(vicioId);
+      const checkedToday = data.diasVencidos.includes(getTodayKey());
+      const checkinLabel = can ? '⚔️  MARCAR TERRITÓRIO — CHECK-IN' : (checkedToday ? '✓  HOJE JÁ CONQUISTADO' : '🔒  SOBREVIVA O DIA PRIMEIRO');
+      const checkinCls = can
+        ? 'w-full min-h-[56px] rounded-2xl font-extrabold text-sm tracking-wider active:scale-[0.93] haptic transition-all bg-green-950/40 border-2 border-green-500/50 text-green-400'
+        : 'w-full min-h-[56px] rounded-2xl font-extrabold text-sm tracking-wider transition-all bg-[#111] border border-[#333] text-gray-600 cursor-not-allowed';
+
+      const overlay = document.createElement('div');
+      overlay.id = 'battleCalendarOverlay';
+      overlay.className = 'battle-calendar-overlay';
+      overlay.innerHTML = `
+        <div class="w-full max-w-md space-y-5">
+          <!-- Header -->
+          <div class="flex items-center gap-3">
+            <button onclick="closeBattleCalendar()" class="glow-circle-btn w-10 h-10 haptic">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+            </button>
+            <div>
+              <p class="text-lg font-black text-white">${vicio.icon} MISSÃO: ${escapeHtml(displayLabel.toUpperCase())}</p>
+              <p class="text-[10px] font-bold text-gray-500 tracking-wider">CALENDÁRIO DE BATALHA</p>
+            </div>
+          </div>
+
+          <!-- Precision Timer -->
+          <div class="glass-panel p-5 text-center">
+            <p class="text-[10px] font-extrabold text-gray-500 tracking-[0.3em] mb-2">TEMPO DE LIBERDADE</p>
+            <p class="precision-timer text-white" id="battlePrecisionTimer">00 : 00 : 00 : 00</p>
+            <div class="flex justify-center gap-8 mt-2">
+              <span class="precision-timer-label">DIAS</span>
+              <span class="precision-timer-label">HRS</span>
+              <span class="precision-timer-label">MIN</span>
+              <span class="precision-timer-label">SEG</span>
+            </div>
+          </div>
+
+          <!-- Stats Row -->
+          <div class="grid grid-cols-3 gap-3" id="battleCalStats">
+            ${renderBattleStats(vicioId)}
+          </div>
+
+          <!-- Calendar Grid -->
+          <div class="glass-panel p-4" id="battleCalGrid">
+            ${renderCalendarGrid(vicioId)}
+          </div>
+
+          <!-- Check-in Button -->
+          <button id="battleCheckinBtn" onclick="checkinSobriedade('${vicioId}')" ${!can ? 'disabled' : ''} class="${checkinCls}">
+            ${checkinLabel}
+          </button>
+
+          <!-- Relapse Button -->
+          <button onclick="resetSobriety('${vicioId}')" class="w-full py-3 rounded-xl bg-red-950/20 border border-red-900/30 text-red-500/60 font-bold text-xs tracking-wider active:scale-[0.93] haptic transition-all">
+            💀 RECAÍ HOJE
+          </button>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+      startBattleTimer(vicioId);
+      haptic(30);
+    }
+
+    function closeBattleCalendar() {
+      if (battleTimerInterval) { clearInterval(battleTimerInterval); battleTimerInterval = null; }
+      const el = document.getElementById('battleCalendarOverlay');
+      if (el) el.remove();
+      renderActiveTab();
     }
 
     // =============================================
@@ -5290,8 +5593,13 @@ Formato terminal militar. Sem emojis. Direto e brutal.`;
 
     function confirmRecaida(vicioId) {
       closeRecaidaOverlay();
+      // Reset all progress
       userState.vicios[vicioId].startedAt = new Date().toISOString();
+      userState.vicios[vicioId].diasVencidos = [];
+      userState.vicios[vicioId].ultimoCheckin = null;
       haptic(100);
+      // Close battle calendar if open
+      if (document.getElementById('battleCalendarOverlay')) closeBattleCalendar();
       // Invalidate verdict cache (force refresh)
       const today = getTodayKey();
       Object.keys(userState.aiCache).forEach(k => { if (k.startsWith('verdict_' + today)) delete userState.aiCache[k]; });
