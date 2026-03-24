@@ -732,6 +732,126 @@
       letter-spacing: 0.05em;
     }
 
+    /* ===== FLASH QUEST SYSTEM ===== */
+
+    /* Emergency overlay */
+    .flash-quest-overlay {
+      position: fixed; inset: 0; z-index: 9999;
+      background: rgba(0,0,0,0.97);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px;
+    }
+    .flash-quest-overlay.entering {
+      animation: flashQuestIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+    @keyframes flashQuestIn {
+      0% { opacity: 0; }
+      30% { opacity: 1; }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .flash-quest-overlay.exiting {
+      animation: flashQuestOut 0.6s ease-out forwards;
+    }
+    @keyframes flashQuestOut {
+      0% { opacity: 1; transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { opacity: 0; transform: scale(0.9); }
+    }
+
+    /* Pulsing red border container */
+    .flash-quest-card {
+      width: 100%; max-width: 400px;
+      border: 2px solid rgba(255,51,51,0.6);
+      border-radius: 24px;
+      background: rgba(10,0,0,0.9);
+      box-shadow: 0 0 40px rgba(255,51,51,0.2), inset 0 0 30px rgba(255,51,51,0.05);
+      animation: flashBorderPulse 1.5s ease-in-out infinite;
+      position: relative;
+      overflow: hidden;
+    }
+    @keyframes flashBorderPulse {
+      0%, 100% { border-color: rgba(255,51,51,0.4); box-shadow: 0 0 30px rgba(255,51,51,0.15), inset 0 0 20px rgba(255,51,51,0.03); }
+      50% { border-color: rgba(255,51,51,0.8); box-shadow: 0 0 60px rgba(255,51,51,0.3), 0 0 100px rgba(255,51,51,0.1), inset 0 0 30px rgba(255,51,51,0.06); }
+    }
+    .flash-quest-card.phase-active {
+      border-color: rgba(37,99,235,0.6);
+      animation: flashBorderBlue 1.5s ease-in-out infinite;
+    }
+    @keyframes flashBorderBlue {
+      0%, 100% { border-color: rgba(37,99,235,0.4); box-shadow: 0 0 30px rgba(37,99,235,0.15), inset 0 0 20px rgba(37,99,235,0.03); }
+      50% { border-color: rgba(37,99,235,0.8); box-shadow: 0 0 60px rgba(37,99,235,0.3), 0 0 100px rgba(37,99,235,0.1), inset 0 0 30px rgba(37,99,235,0.06); }
+    }
+    .flash-quest-card.phase-complete {
+      border-color: rgba(0,255,100,0.6);
+      animation: flashBorderGreen 1.5s ease-in-out infinite;
+    }
+    @keyframes flashBorderGreen {
+      0%, 100% { border-color: rgba(0,255,100,0.4); box-shadow: 0 0 30px rgba(0,255,100,0.15), inset 0 0 20px rgba(0,255,100,0.03); }
+      50% { border-color: rgba(0,255,100,0.8); box-shadow: 0 0 60px rgba(0,255,100,0.3), 0 0 100px rgba(0,255,100,0.1), inset 0 0 30px rgba(0,255,100,0.06); }
+    }
+
+    /* Scanline effect on card */
+    .flash-quest-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(255,51,51,0.6), transparent);
+      animation: flashScanline 2s linear infinite;
+    }
+    @keyframes flashScanline {
+      0% { top: 0; opacity: 1; }
+      100% { top: 100%; opacity: 0.3; }
+    }
+    .flash-quest-card.phase-active::before { background: linear-gradient(90deg, transparent, rgba(37,99,235,0.6), transparent); }
+    .flash-quest-card.phase-complete::before { background: linear-gradient(90deg, transparent, rgba(0,255,100,0.6), transparent); }
+
+    /* Lightning icon glow */
+    .flash-zap {
+      filter: drop-shadow(0 0 8px rgba(255,51,51,0.8)) drop-shadow(0 0 20px rgba(255,51,51,0.4));
+      animation: zapPulse 0.8s ease-in-out infinite alternate;
+    }
+    @keyframes zapPulse {
+      from { filter: drop-shadow(0 0 8px rgba(255,51,51,0.6)) drop-shadow(0 0 15px rgba(255,51,51,0.3)); transform: scale(1); }
+      to { filter: drop-shadow(0 0 14px rgba(255,51,51,1)) drop-shadow(0 0 30px rgba(255,51,51,0.6)); transform: scale(1.08); }
+    }
+
+    /* Countdown timer ring */
+    .flash-timer-ring {
+      width: 100px; height: 100px;
+      border-radius: 50%;
+      position: relative;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .flash-timer-ring svg {
+      position: absolute; inset: 0;
+      transform: rotate(-90deg);
+    }
+    .flash-timer-ring .timer-text {
+      font-family: 'Courier New', 'Consolas', monospace;
+      font-variant-numeric: tabular-nums;
+      font-size: 1.5rem;
+      font-weight: 900;
+      z-index: 1;
+    }
+
+    /* Neon spark particles on completion */
+    @keyframes sparkFloat {
+      0% { transform: translate(0, 0) scale(1); opacity: 1; }
+      100% { transform: translate(var(--sx), var(--sy)) scale(0); opacity: 0; }
+    }
+    .neon-spark {
+      position: absolute;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #00FF64;
+      box-shadow: 0 0 8px #00FF64, 0 0 16px rgba(0,255,100,0.5);
+      animation: sparkFloat 0.8s cubic-bezier(.4,0,.2,1) forwards;
+      pointer-events: none;
+    }
+
     /* Glass panel utility */
     .glass-panel {
       background: rgba(17,17,17,0.6);
@@ -963,6 +1083,7 @@
       updateHeaderDate();
       switchTab('dashboard');
       checkScarcity();
+      startFlashQuestLoop();
     }
 
     // =============================================
@@ -1711,6 +1832,8 @@
       if (!Array.isArray(userState.studyLogs)) userState.studyLogs = [];
       if (!Array.isArray(userState.mealLogs)) userState.mealLogs = [];
       if (!userState.fuelGoal) userState.fuelGoal = 'manutenção';
+      if (!userState.flashQuestsDone) userState.flashQuestsDone = {};
+      if (typeof userState.flashQuestsTotal !== 'number') userState.flashQuestsTotal = 0;
       // Clean stale AI cache (keep only today's)
       const todayPrefix = 'verdict_' + today;
       Object.keys(userState.aiCache).forEach(k => {
@@ -2115,8 +2238,42 @@
             </div>
           </div>
 
+          <!-- FLASH QUEST CARD -->
+          ${(() => {
+            const fqToday = userState.flashQuestsDone?.[today] || [];
+            const fqTotal = userState.flashQuestsTotal || 0;
+            return `
+              <div class="glass-panel rounded-2xl p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-2.5">
+                    <span class="text-xl">⚡</span>
+                    <div>
+                      <span class="text-xs font-extrabold tracking-[0.2em] text-red-400">FLASH QUEST</span>
+                      <p class="text-[9px] font-bold text-gray-600">Missões bônus aleatórias — XP 2x</p>
+                    </div>
+                  </div>
+                  <div class="text-right">
+                    <p class="text-2xl font-black text-white">${fqToday.length}</p>
+                    <p class="text-[9px] font-bold text-gray-600">HOJE</p>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between bg-black/40 rounded-xl p-3">
+                  <div class="text-center flex-1">
+                    <p class="text-lg font-black text-yellow-400">${fqTotal}</p>
+                    <p class="text-[9px] font-bold text-gray-600">TOTAL FEITAS</p>
+                  </div>
+                  <div class="w-px h-8 bg-gray-800"></div>
+                  <div class="text-center flex-1">
+                    <p class="text-lg font-black text-red-400">${FLASH_QUESTS.length - fqToday.length}</p>
+                    <p class="text-[9px] font-bold text-gray-600">DISPONÍVEIS</p>
+                  </div>
+                </div>
+              </div>
+            `;
+          })()}
+
           <!-- STATUS DE BATALHA -->
-          <div class="bg-[#111] border ${status.bg} rounded-2xl p-6 text-center" style="background:${status.bgInner};">
+          <div class="glass-panel border ${status.bg} rounded-2xl p-6 text-center" style="background:${status.bgInner};">
             <span class="text-4xl">${status.icon}</span>
             <p class="text-2xl font-black ${status.cls} mt-3 tracking-wide">${status.text}</p>
             <p class="text-sm font-bold text-gray-600 mt-2">${score <= 30 ? 'Acorde. O dia não espera.' : score <= 70 ? 'Bom, mas bom não é o bastante.' : 'Você está no controle total.'}</p>
@@ -4697,6 +4854,325 @@ Formato terminal militar. Sem emojis. Direto e brutal.`;
       if (result) result.textContent = analysis;
       if (btn) { btn.textContent = 'ANÁLISE DE GUERRA COMPLETA'; btn.disabled = false; }
     }
+
+    // =============================================
+    // FLASH QUEST SYSTEM (Missões Bônus Aleatórias)
+    // =============================================
+    const FLASH_QUESTS = [
+      { id: 'agachamentos',  titulo: 'BLITZ AGACHAMENTO',         desc: 'Fazer 25 agachamentos com boa postura',        icone: '🦵', xpBase: 40, tempoExec: 5 },
+      { id: 'agua',          titulo: 'PROTOCOLO HIDRATAÇÃO',      desc: 'Beber 500ml de água agora mesmo',               icone: '💧', xpBase: 25, tempoExec: 3 },
+      { id: 'prancha',       titulo: 'PLANCHA DE AÇO',            desc: '5 minutos de prancha sem parar',                icone: '💪', xpBase: 60, tempoExec: 6 },
+      { id: 'mesa',          titulo: 'ORDEM NO QG',               desc: 'Organizar mesa de trabalho — zero bagunça',     icone: '🗂️', xpBase: 30, tempoExec: 8 },
+      { id: 'flexoes',       titulo: 'DROP AND GIVE ME 20',       desc: 'Fazer 20 flexões com forma perfeita',           icone: '🔥', xpBase: 45, tempoExec: 5 },
+      { id: 'alongamento',   titulo: 'MOBILIDADE TÁTICA',         desc: '3 minutos de alongamento completo',             icone: '🧘', xpBase: 25, tempoExec: 4 },
+      { id: 'respiracao',    titulo: 'RESET MENTAL',              desc: '2 minutos de respiração 4-7-8 (inspirar-segurar-expirar)', icone: '🌬️', xpBase: 30, tempoExec: 3 },
+      { id: 'caminhada',     titulo: 'PATRULHA RÁPIDA',           desc: 'Caminhar 5 minutos ao ar livre ou pela casa',   icone: '🚶', xpBase: 35, tempoExec: 6 },
+      { id: 'leitura',       titulo: 'INTEL RÁPIDO',              desc: 'Ler 3 páginas de qualquer livro',               icone: '📖', xpBase: 35, tempoExec: 8 },
+      { id: 'frio',          titulo: 'CHOQUE ESPARTANO',          desc: '30 segundos de água fria no rosto ou banho',    icone: '🧊', xpBase: 50, tempoExec: 2 },
+      { id: 'burpees',       titulo: 'BURPEE BLITZ',              desc: 'Fazer 10 burpees sem descanso',                 icone: '⚡', xpBase: 55, tempoExec: 4 },
+      { id: 'diario',        titulo: 'LOG DE GUERRA',             desc: 'Escrever 3 frases sobre como foi o dia até agora', icone: '📝', xpBase: 30, tempoExec: 5 },
+    ];
+
+    let flashQuestInterval = null;
+    let flashQuestActive = false;
+    let flashQuestTimer = null;
+    let flashQuestCountdown = null;
+    let flashQuestCurrentMission = null;
+    let flashQuestPhase = null; // 'call' | 'active' | 'complete'
+
+    function startFlashQuestLoop() {
+      if (flashQuestInterval) clearInterval(flashQuestInterval);
+      // Check every 30 minutes with 15% chance
+      flashQuestInterval = setInterval(() => {
+        if (flashQuestActive) return; // Don't overlap
+        if (Math.random() < 0.15) {
+          triggerFlashQuest();
+        }
+      }, 30 * 60 * 1000);
+    }
+
+    function triggerFlashQuest() {
+      if (flashQuestActive) return;
+
+      // Pick random mission not yet done today
+      const today = getTodayKey();
+      const doneToday = userState.flashQuestsDone?.[today] || [];
+      const available = FLASH_QUESTS.filter(q => !doneToday.includes(q.id));
+      if (available.length === 0) return;
+
+      const mission = available[Math.floor(Math.random() * available.length)];
+      flashQuestCurrentMission = mission;
+      flashQuestActive = true;
+      flashQuestPhase = 'call';
+
+      // S25 vibration: emergency pattern
+      haptic([200, 100, 200, 100, 300]);
+
+      renderFlashQuestModal();
+      startCallCountdown(5 * 60); // 5 min to accept
+    }
+
+    function renderFlashQuestModal() {
+      // Remove existing
+      const existing = document.getElementById('flashQuestOverlay');
+      if (existing) existing.remove();
+
+      const m = flashQuestCurrentMission;
+      const xpReward = m.xpBase * 2;
+
+      const overlay = document.createElement('div');
+      overlay.id = 'flashQuestOverlay';
+      overlay.className = 'flash-quest-overlay entering';
+
+      if (flashQuestPhase === 'call') {
+        overlay.innerHTML = `
+          <div class="flash-quest-card p-6 text-center" id="flashQuestCard">
+            <div class="flex justify-center mb-4">
+              <svg class="w-14 h-14 text-red-500 flash-zap" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/>
+              </svg>
+            </div>
+            <p class="text-[10px] font-extrabold tracking-[0.3em] text-red-500 mb-2">⚠ PROTOCOLO DE EMERGÊNCIA ⚠</p>
+            <h2 class="text-2xl font-black text-white mb-1">${m.icone} ${m.titulo}</h2>
+            <p class="text-sm font-semibold text-gray-400 mb-5 leading-relaxed">${m.desc}</p>
+
+            <div class="flex justify-center mb-5">
+              <div class="flash-timer-ring" id="flashTimerRing">
+                <svg viewBox="0 0 100 100" class="w-full h-full">
+                  <circle cx="50" cy="50" r="44" fill="none" stroke="#1a1a1a" stroke-width="6"/>
+                  <circle id="flashTimerCircle" cx="50" cy="50" r="44" fill="none" stroke="#FF3333"
+                    stroke-width="6" stroke-linecap="round"
+                    stroke-dasharray="${2 * Math.PI * 44}" stroke-dashoffset="0"
+                    style="transition: stroke-dashoffset 1s linear;"/>
+                </svg>
+                <span class="timer-text text-red-400" id="flashTimerText">5:00</span>
+              </div>
+            </div>
+
+            <p class="text-[9px] font-bold tracking-[0.15em] text-gray-600 mb-4">ACEITE EM 5 MINUTOS OU A MISSÃO DESAPARECE</p>
+
+            <div class="space-y-3">
+              <button onclick="acceptFlashQuest()" class="w-full py-4 rounded-xl font-extrabold text-base text-white min-h-[56px] haptic"
+                style="background: linear-gradient(135deg, #dc2626, #991b1b); box-shadow: 0 0 25px rgba(255,51,51,0.3);">
+                ⚡ ACEITAR DESAFIO
+              </button>
+              <button onclick="declineFlashQuest()" class="w-full py-3 rounded-xl font-bold text-sm text-gray-600 min-h-[48px] haptic border border-gray-800 hover:border-gray-600 transition-colors">
+                RECUSAR (COVARDE)
+              </button>
+            </div>
+
+            <p class="text-xs font-extrabold text-yellow-500 mt-4">RECOMPENSA: +${xpReward} XP (2x BÔNUS)</p>
+          </div>
+        `;
+      } else if (flashQuestPhase === 'active') {
+        overlay.innerHTML = `
+          <div class="flash-quest-card phase-active p-6 text-center" id="flashQuestCard">
+            <p class="text-[10px] font-extrabold tracking-[0.3em] text-blue-400 mb-3">MISSÃO EM ANDAMENTO</p>
+            <h2 class="text-xl font-black text-white mb-1">${m.icone} ${m.titulo}</h2>
+            <p class="text-sm font-semibold text-gray-400 mb-5">${m.desc}</p>
+
+            <div class="flex justify-center mb-5">
+              <div class="flash-timer-ring" id="flashTimerRing">
+                <svg viewBox="0 0 100 100" class="w-full h-full">
+                  <circle cx="50" cy="50" r="44" fill="none" stroke="#1a1a1a" stroke-width="6"/>
+                  <circle id="flashTimerCircle" cx="50" cy="50" r="44" fill="none" stroke="#2563EB"
+                    stroke-width="6" stroke-linecap="round"
+                    stroke-dasharray="${2 * Math.PI * 44}" stroke-dashoffset="0"
+                    style="transition: stroke-dashoffset 1s linear;"/>
+                </svg>
+                <span class="timer-text text-blue-400" id="flashTimerText">${m.tempoExec}:00</span>
+              </div>
+            </div>
+
+            <p class="text-[9px] font-bold tracking-[0.15em] text-gray-600 mb-5">TEMPO RESTANTE PARA COMPLETAR</p>
+
+            <button onclick="completeFlashQuest()" class="w-full py-4 rounded-xl font-extrabold text-base text-white min-h-[56px] haptic"
+              style="background: linear-gradient(135deg, #2563EB, #1d4ed8); box-shadow: 0 0 25px rgba(37,99,235,0.3);">
+              ✅ MISSÃO CUMPRIDA
+            </button>
+
+            <p class="text-xs font-extrabold text-yellow-500 mt-4">+${xpReward} XP ESPERANDO POR VOCÊ</p>
+          </div>
+        `;
+      } else if (flashQuestPhase === 'complete') {
+        overlay.innerHTML = `
+          <div class="flash-quest-card phase-complete p-6 text-center" id="flashQuestCard">
+            <div class="text-6xl mb-3" id="flashSparkAnchor">🏆</div>
+            <p class="text-[10px] font-extrabold tracking-[0.3em] text-[#00FF64] mb-2">PROTOCOLO CONCLUÍDO</p>
+            <h2 class="text-2xl font-black text-white mb-2">${m.icone} ${m.titulo}</h2>
+            <p class="text-4xl font-black neon-text my-4">+${xpReward} XP</p>
+            <p class="text-sm font-bold text-gray-500 mb-5">Multiplicador 2x aplicado. Glória ao guerreiro.</p>
+
+            <button onclick="closeFlashQuest()" class="w-full py-4 rounded-xl font-extrabold text-base text-white min-h-[56px] haptic"
+              style="background: linear-gradient(135deg, #059669, #047857); box-shadow: 0 0 25px rgba(0,255,100,0.3);">
+              FECHAR
+            </button>
+          </div>
+        `;
+      }
+
+      document.body.appendChild(overlay);
+
+      // Trigger sparks on complete phase
+      if (flashQuestPhase === 'complete') {
+        setTimeout(() => spawnNeonSparks('flashSparkAnchor', 18), 200);
+      }
+    }
+
+    function startCallCountdown(totalSeconds) {
+      let remaining = totalSeconds;
+      const circumference = 2 * Math.PI * 44;
+
+      flashQuestCountdown = setInterval(() => {
+        remaining--;
+        if (remaining <= 0) {
+          clearInterval(flashQuestCountdown);
+          flashQuestCountdown = null;
+          declineFlashQuest();
+          return;
+        }
+
+        const mins = Math.floor(remaining / 60);
+        const secs = remaining % 60;
+        const textEl = document.getElementById('flashTimerText');
+        const circleEl = document.getElementById('flashTimerCircle');
+        if (textEl) textEl.textContent = `${mins}:${String(secs).padStart(2, '0')}`;
+        if (circleEl) {
+          const progress = 1 - (remaining / totalSeconds);
+          circleEl.setAttribute('stroke-dashoffset', String(circumference * progress));
+        }
+      }, 1000);
+    }
+
+    function startExecCountdown(totalMinutes) {
+      let remaining = totalMinutes * 60;
+      const totalSeconds = remaining;
+      const circumference = 2 * Math.PI * 44;
+
+      flashQuestTimer = setInterval(() => {
+        remaining--;
+        if (remaining <= 0) {
+          clearInterval(flashQuestTimer);
+          flashQuestTimer = null;
+          // Time ran out — mission failed
+          failFlashQuest();
+          return;
+        }
+
+        const mins = Math.floor(remaining / 60);
+        const secs = remaining % 60;
+        const textEl = document.getElementById('flashTimerText');
+        const circleEl = document.getElementById('flashTimerCircle');
+        if (textEl) textEl.textContent = `${mins}:${String(secs).padStart(2, '0')}`;
+        if (circleEl) {
+          const progress = 1 - (remaining / totalSeconds);
+          circleEl.setAttribute('stroke-dashoffset', String(circumference * progress));
+        }
+      }, 1000);
+    }
+
+    function acceptFlashQuest() {
+      if (flashQuestPhase !== 'call') return;
+      haptic([100, 50, 100]);
+
+      // Stop call countdown
+      if (flashQuestCountdown) { clearInterval(flashQuestCountdown); flashQuestCountdown = null; }
+
+      flashQuestPhase = 'active';
+      renderFlashQuestModal();
+      startExecCountdown(flashQuestCurrentMission.tempoExec);
+    }
+
+    function completeFlashQuest() {
+      if (flashQuestPhase !== 'active') return;
+      haptic([50, 30, 50, 30, 150]);
+
+      // Stop exec timer
+      if (flashQuestTimer) { clearInterval(flashQuestTimer); flashQuestTimer = null; }
+
+      // Grant 2x XP
+      const xpReward = flashQuestCurrentMission.xpBase * 2;
+      adicionarXP(xpReward);
+
+      // Record as done today
+      const today = getTodayKey();
+      if (!userState.flashQuestsDone) userState.flashQuestsDone = {};
+      if (!userState.flashQuestsDone[today]) userState.flashQuestsDone[today] = [];
+      userState.flashQuestsDone[today].push(flashQuestCurrentMission.id);
+
+      // Track stats
+      if (!userState.flashQuestsTotal) userState.flashQuestsTotal = 0;
+      userState.flashQuestsTotal++;
+      saveData();
+
+      flashQuestPhase = 'complete';
+      renderFlashQuestModal();
+    }
+
+    function failFlashQuest() {
+      haptic(300);
+      showToast('⏰ Tempo esgotado! A missão escapou.', 3000);
+      cleanupFlashQuest();
+    }
+
+    function declineFlashQuest() {
+      if (flashQuestCountdown) { clearInterval(flashQuestCountdown); flashQuestCountdown = null; }
+      haptic(100);
+      cleanupFlashQuest();
+    }
+
+    function closeFlashQuest() {
+      const overlay = document.getElementById('flashQuestOverlay');
+      if (overlay) {
+        overlay.classList.remove('entering');
+        overlay.classList.add('exiting');
+        setTimeout(() => { overlay.remove(); }, 600);
+      }
+      flashQuestActive = false;
+      flashQuestPhase = null;
+      flashQuestCurrentMission = null;
+    }
+
+    function cleanupFlashQuest() {
+      if (flashQuestCountdown) { clearInterval(flashQuestCountdown); flashQuestCountdown = null; }
+      if (flashQuestTimer) { clearInterval(flashQuestTimer); flashQuestTimer = null; }
+      const overlay = document.getElementById('flashQuestOverlay');
+      if (overlay) {
+        overlay.classList.remove('entering');
+        overlay.classList.add('exiting');
+        setTimeout(() => { overlay.remove(); }, 600);
+      }
+      flashQuestActive = false;
+      flashQuestPhase = null;
+      flashQuestCurrentMission = null;
+    }
+
+    function spawnNeonSparks(anchorId, count) {
+      const anchor = document.getElementById(anchorId);
+      if (!anchor) return;
+      const rect = anchor.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+
+      for (let i = 0; i < count; i++) {
+        const spark = document.createElement('div');
+        spark.className = 'neon-spark';
+        const angle = (Math.PI * 2 / count) * i + (Math.random() * 0.5);
+        const dist = 60 + Math.random() * 80;
+        const sx = Math.cos(angle) * dist;
+        const sy = Math.sin(angle) * dist;
+        spark.style.cssText = `left:${cx}px;top:${cy}px;--sx:${sx}px;--sy:${sy}px;animation-delay:${Math.random() * 0.2}s;`;
+        const colors = ['#00FF64', '#2563EB', '#FFD700', '#FF3333', '#7C3AED'];
+        const c = colors[Math.floor(Math.random() * colors.length)];
+        spark.style.background = c;
+        spark.style.boxShadow = `0 0 8px ${c}, 0 0 16px ${c}80`;
+        document.body.appendChild(spark);
+        setTimeout(() => spark.remove(), 1000);
+      }
+    }
+
+    // Manual trigger for testing (accessible via console: testFlashQuest())
+    window.testFlashQuest = triggerFlashQuest;
 
     // =============================================
     // HAPTIC FEEDBACK
