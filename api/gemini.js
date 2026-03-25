@@ -100,32 +100,49 @@ export default async function handler(req, res) {
     }
 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${API_KEY}`;
-
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        system_instruction: {
-          parts: [{ text: systemInstruction }]
-        },
-        contents,
-        generationConfig: { maxOutputTokens: tokenLimit, temperature: 0.85 }
-      })
+    const body = JSON.stringify({
+      system_instruction: { parts: [{ text: systemInstruction }] },
+      contents,
+      generationConfig: { maxOutputTokens: tokenLimit, temperature: 0.85 }
     });
 
-    const data = await response.json();
+    // ── RETRY WITH BACKOFF (handles 429 rate limits) ──
+    const MAX_RETRIES = 3;
+    let lastError = null;
 
-    if (!response.ok) {
+    for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body
+      });
+
+      // Success — return immediately
+      if (response.ok) {
+        const data = await response.json();
+        const text = data.candidates?.[0]?.content?.parts?.[0]?.text || null;
+        return res.status(200).json({ text });
+      }
+
+      const data = await response.json();
+
+      // 429 Rate Limited — wait and retry
+      if (response.status === 429 && attempt < MAX_RETRIES) {
+        const retryAfter = parseFloat(data?.error?.message?.match(/(\d+\.?\d*)\s*s/)?.[1]) || (5 * (attempt + 1));
+        const waitMs = Math.min(retryAfter * 1000, 25000); // cap at 25s (Vercel timeout safety)
+        console.log(`Rate limited. Retry ${attempt + 1}/${MAX_RETRIES} in ${waitMs}ms`);
+        await new Promise(resolve => setTimeout(resolve, waitMs));
+        continue;
+      }
+
+      // Other error or retries exhausted — return error
       console.error('Gemini API error:', response.status, JSON.stringify(data));
+      lastError = data;
       return res.status(response.status).json({
         error: data?.error?.message || `Gemini API HTTP ${response.status}`,
         details: data
       });
     }
-
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || null;
-
-    return res.status(200).json({ text });
   } catch (err) {
     console.error('Serverless function error:', err);
     return res.status(500).json({ error: err.message });
