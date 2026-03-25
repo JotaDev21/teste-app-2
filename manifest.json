@@ -12,37 +12,13 @@
   "theme_color": "#000000",
   "icons": [
     {
-      "src": "./icons/android/launchericon-48x48.png",
-      "sizes": "48x48",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "./icons/android/launchericon-72x72.png",
-      "sizes": "72x72",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "./icons/android/launchericon-96x96.png",
-      "sizes": "96x96",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "./icons/android/launchericon-144x144.png",
-      "sizes": "144x144",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "./icons/android/launchericon-192x192.png",
+      "src": "./icons/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "./icons/android/launchericon-512x512.png",
+      "src": "./icons/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
@@ -51,17 +27,17 @@
   "screenshots": [
     {
       "src": "./screenshots/screenshot1.png",
-      "sizes": "1080x1920",
+      "sizes": "1687x957",
       "type": "image/png",
-      "form_factor": "narrow",
+      "form_factor": "wide",
       "label": "Dashboard — Estado do Ressurgido"
     },
     {
       "src": "./screenshots/screenshot2.png",
-      "sizes": "1080x1920",
+      "sizes": "1688x987",
       "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Bio-Nutrição — Scanner e Glicemia DM1"
+      "form_factor": "wide",
+      "label": "Soberania — Controle de Vícios"
     }
   ],
   "categories": ["lifestyle", "productivity"],
