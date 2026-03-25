@@ -1390,7 +1390,7 @@
       { id: 'm_agua_3l',         titulo: 'Beber 3L de Água',        descricao: 'Hidratação é performance. Sem desculpa.', icone: '💧', xp: 15 },
       { id: 'm_journaling',      titulo: 'Journaling Noturno',      descricao: 'Escreva 3 vitórias do dia e 1 melhoria.', icone: '📝', xp: 20 },
       { id: 'm_deep_work_2h',    titulo: 'Foco Profundo 2h',         descricao: 'Duas horas ininterruptas no que importa.', icone: '🎯', xp: 45 },
-      { id: 'm_sem_reclamacao',   titulo: 'Sem Reclamar o Dia Todo', descricao: 'Zero queixa. Guerreiro resolve, não reclama.', icone: '🤐', xp: 30 },
+      { id: 'm_sem_reclamacao',   titulo: 'Sem Reclamar o Dia Todo', descricao: 'Zero queixa. Resolva, não reclame.', icone: '🤐', xp: 30 },
       { id: 'm_alongamento',     titulo: 'Alongamento 15min',       descricao: 'Mobilidade é a base. Não negligencie.', icone: '🤸', xp: 15 },
       { id: 'm_abs_200',         titulo: '200 Abdominais',          descricao: 'Divida em sets. Core de aço.', icone: '🔥', xp: 35 },
       { id: 'm_cama_arrumada',   titulo: 'Arrumar a Cama ao Levantar', descricao: 'Primeira vitória do dia. Disciplina nos detalhes.', icone: '🛏️', xp: 10 },
@@ -1814,7 +1814,7 @@
     function abandonarCampanha() {
       userState.prCampaign = null;
       saveData();
-      showToast('Campanha abandonada. O guerreiro sabe quando recuar.', 3000);
+      showToast('Campanha abandonada.', 3000);
       renderActiveTab();
     }
 
@@ -1922,7 +1922,7 @@
 
     let userState = {
       apiKey: '',  // Gemini key is now server-side only (Vercel env var)
-      profile: { name: 'Guerreiro', budget: 0, focusGoalHours: 4 },
+      profile: { name: 'Soldado', budget: 0, focusGoalHours: 4 },
       dailyHabits: {},
       monthlyExpenses: [],
       budget: 0,
@@ -2017,7 +2017,7 @@
       if (!userState.performanceLog || typeof userState.performanceLog !== 'object') userState.performanceLog = {};
       if (!userState.aiCache || typeof userState.aiCache !== 'object') userState.aiCache = {};
       if (!userState.apiKey) userState.apiKey = '';
-      if (!userState.profile) userState.profile = { name: 'Guerreiro', budget: 0, focusGoalHours: 4 };
+      if (!userState.profile) userState.profile = { name: 'Soldado', budget: 0, focusGoalHours: 4 };
       if (!userState.profile.avatar) userState.profile.avatar = '⚔️';
       if (typeof userState.xpTotal !== 'number') userState.xpTotal = 0;
       if (!Array.isArray(userState.cartasSecretas)) userState.cartasSecretas = [];
@@ -3934,7 +3934,7 @@
         studyMentorChat.push({ role: 'ai', text: resp });
       } catch (e) {
         console.error('ERRO PROFESSOR IA:', e);
-        studyMentorChat.push({ role: 'ai', text: 'Conexão falhou. Continue estudando, guerreiro.' });
+        studyMentorChat.push({ role: 'ai', text: 'Conexão falhou. Continue estudando.' });
       }
       renderActiveTab();
       scrollMentor();
@@ -5038,7 +5038,7 @@
       if (!userState.xpTotal) userState.xpTotal = 0;
       if (!userState.cartasSecretas) userState.cartasSecretas = [];
       const lvl = calcularNivel(userState.xpTotal);
-      const name = userState.profile?.name || 'Guerreiro';
+      const name = userState.profile?.name || 'Soldado';
       const avatar = userState.profile?.avatar || '⚔️';
       const cartasDesbloqueadas = getCartasDesbloqueadas(lvl.nivel);
 
@@ -5188,7 +5188,7 @@
       if (document.getElementById('sidebarOverlay')) return;
       const lvl = calcularNivel(userState.xpTotal || 0);
       const avatar = userState.profile?.avatar || '⚔️';
-      const name = userState.profile?.name || 'Guerreiro';
+      const name = userState.profile?.name || 'Soldado';
       const streak = userState.streakCount || 0;
 
       const overlay = document.createElement('div');
@@ -5552,7 +5552,7 @@
       } catch (err) {
         console.error('Erro Real da API — Exception:', err.message || err);
         console.error('Erro Real da API — Stack:', err.stack);
-        return 'Conexão com IA falhou. O guerreiro não depende de tecnologia.';
+        return 'Conexão com IA falhou. Continue na disciplina.';
       }
     }
 
@@ -5819,7 +5819,7 @@ Formato direto e disciplinado. Sem emojis.`;
             <p class="text-[10px] font-extrabold tracking-[0.3em] text-[#00FF64] mb-2">PROTOCOLO CONCLUÍDO</p>
             <h2 class="text-2xl font-black text-white mb-2">${m.icone} ${m.titulo}</h2>
             <p class="text-4xl font-black neon-text my-4">+${xpReward} XP</p>
-            <p class="text-sm font-bold text-gray-500 mb-5">Multiplicador 2x aplicado. Glória ao guerreiro.</p>
+            <p class="text-sm font-bold text-gray-500 mb-5">Multiplicador 2x aplicado.</p>
 
             <button onclick="closeFlashQuest()" class="w-full py-4 rounded-xl font-extrabold text-base text-white min-h-[56px] haptic"
               style="background: linear-gradient(135deg, #059669, #047857); box-shadow: 0 0 25px rgba(0,255,100,0.3);">
