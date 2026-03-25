@@ -1,15 +1,23 @@
-const CACHE_NAME = 'unstoppable-v1';
+const CACHE_NAME = 'resurrection-v4';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './manifest.json',
+  './icons/icon-192x192.png',
+  './icons/icon-512x512.png',
 ];
 
 // Install: cache core assets
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE);
+      return cache.addAll(ASSETS_TO_CACHE).catch((err) => {
+        console.warn('SW: some assets failed to cache', err);
+        // Cache what we can — don't block install if icons missing
+        return Promise.allSettled(
+          ASSETS_TO_CACHE.map((url) => cache.add(url).catch(() => {}))
+        );
+      });
     })
   );
   self.skipWaiting();
@@ -27,34 +35,44 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Fetch: network-first for HTML, cache-first for assets
+// Fetch: network-first for HTML/API, cache-first for static assets
 self.addEventListener('fetch', (event) => {
   const request = event.request;
 
-  // Skip non-GET requests
+  // Skip non-GET requests (API calls, etc.)
   if (request.method !== 'GET') return;
 
-  // Skip external requests (CDNs like Tailwind, Google Fonts)
-  if (!request.url.startsWith(self.location.origin)) {
-    // Try network, fall back to cache for CDN assets
+  // Skip API routes
+  if (request.url.includes('/api/')) return;
+
+  // Static assets (icons, screenshots, fonts, CDN) — cache-first
+  if (
+    request.url.match(/\.(png|jpg|jpeg|svg|gif|webp|woff2?|ttf|eot|css)$/) ||
+    !request.url.startsWith(self.location.origin)
+  ) {
     event.respondWith(
-      fetch(request)
-        .then((response) => {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+      caches.match(request).then((cached) => {
+        if (cached) return cached;
+        return fetch(request).then((response) => {
+          if (response.ok) {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+          }
           return response;
-        })
-        .catch(() => caches.match(request))
+        }).catch(() => cached);
+      })
     );
     return;
   }
 
-  // Local assets: network-first strategy
+  // HTML and JS — network-first
   event.respondWith(
     fetch(request)
       .then((response) => {
-        const clone = response.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+        if (response.ok) {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+        }
         return response;
       })
       .catch(() => caches.match(request))

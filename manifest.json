@@ -1,27 +1,60 @@
 {
+  "id": "/",
   "name": "Resurrection v4.0",
   "short_name": "Resurrection",
-  "description": "App de disciplina e renascimento pessoal com IA Gemini.",
+  "description": "App de disciplina e renascimento pessoal com IA Gemini. Controle de vícios, treino, nutrição DM1 e foco profundo.",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
+  "display_override": ["standalone", "window-controls-overlay"],
   "orientation": "portrait",
   "background_color": "#000000",
   "theme_color": "#000000",
   "icons": [
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='96' fill='%23000'/><text x='256' y='340' font-size='280' text-anchor='middle' fill='%232563EB' font-family='Arial' font-weight='900'>R</text></svg>",
-      "sizes": "512x512",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "src": "./icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
     },
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='36' fill='%23000'/><text x='96' y='130' font-size='110' text-anchor='middle' fill='%232563EB' font-family='Arial' font-weight='900'>R</text></svg>",
+      "src": "./icons/icon-192x192-maskable.png",
       "sizes": "192x192",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "./icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-512x512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
-  "categories": ["productivity", "health", "fitness"],
+  "screenshots": [
+    {
+      "src": "./screenshots/screenshot1.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Dashboard — Estado do Ressurgido"
+    },
+    {
+      "src": "./screenshots/screenshot2.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Bio-Nutrição — Scanner e Glicemia DM1"
+    }
+  ],
+  "categories": ["lifestyle", "productivity"],
+  "iarc_rating_id": "",
   "lang": "pt-BR",
-  "dir": "ltr"
+  "dir": "ltr",
+  "prefer_related_applications": false
 }
