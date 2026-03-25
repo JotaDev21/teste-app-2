@@ -1146,7 +1146,7 @@
   </header>
 
   <!-- ========== MAIN CONTENT ========== -->
-  <main id="mainContent" class="flex-1 mt-16 mb-8 px-8 py-6 overflow-y-auto" style="padding-bottom: env(safe-area-inset-bottom, 20px);">
+  <main id="mainContent" class="flex-1 mt-16 mb-8 px-10 py-6 overflow-y-auto" style="padding-bottom: env(safe-area-inset-bottom, 20px);">
     <!-- Dynamic content rendered here -->
   </main>
 
@@ -2031,6 +2031,7 @@
       if (!userState.fuelGoal) userState.fuelGoal = 'manutenção';
       if (!userState.flashQuestsDone) userState.flashQuestsDone = {};
       if (typeof userState.flashQuestsTotal !== 'number') userState.flashQuestsTotal = 0;
+      if (!userState.ultimaGlicemia) userState.ultimaGlicemia = null;
       // Clean stale AI cache (keep only today's)
       const todayPrefix = 'verdict_' + today;
       Object.keys(userState.aiCache).forEach(k => {
@@ -2190,7 +2191,7 @@
 
         if (!active) {
           return `
-            <div class="sobriety-card rounded-2xl p-4" style="background: rgba(0,210,180,0.02); border: 1px solid rgba(0,210,180,0.06);">
+            <div class="sobriety-card rounded-2xl p-6" style="background: rgba(0,210,180,0.02); border: 1px solid rgba(0,210,180,0.06);">
               <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2.5">
                   <span class="text-xl">${v.icon}</span>
@@ -2218,7 +2219,7 @@
         const checkedToday = data.diasVencidos.includes(getTodayKey());
         const totalWon = data.diasVencidos.length;
         return `
-          <div class="sobriety-card rounded-2xl p-4 cursor-pointer active:scale-[0.97] transition-transform" style="background: rgba(0,210,180,0.02); border: 1px solid rgba(0,210,180,0.08);" onclick="openBattleCalendar('${v.id}')">
+          <div class="sobriety-card rounded-2xl p-6 cursor-pointer active:scale-[0.97] transition-transform" style="background: rgba(0,210,180,0.02); border: 1px solid rgba(0,210,180,0.08);" onclick="openBattleCalendar('${v.id}')">
             <div class="flex items-center justify-between mb-2">
               <div class="flex items-center gap-2.5">
                 <span class="text-xl">${v.icon}</span>
@@ -2550,6 +2551,62 @@
     }
 
     // =============================================
+    // DASHBOARD HELPERS
+    // =============================================
+    function calcVitalidade() {
+      const today = getTodayKey();
+      const todayMeals = (userState.mealLogs || []).filter(l => l.date === today).length;
+      const mealScore = Math.min(todayMeals / 3, 1) * 50;
+      const wLog = userState.workoutLog[today];
+      let workoutScore = 0;
+      if (wLog && wLog.exercises) {
+        const exIds = Object.keys(wLog.exercises);
+        const doneCount = exIds.filter(id => wLog.exercises[id].done).length;
+        workoutScore = exIds.length > 0 ? (doneCount / exIds.length) * 50 : 0;
+      }
+      return Math.round(mealScore + workoutScore);
+    }
+
+    function calcResiliencia() {
+      let totalStreak = 0, activeCount = 0;
+      DEFAULT_VICIOS.forEach(v => {
+        const data = userState.vicios[v.id];
+        if (data && data.startedAt) {
+          activeCount++;
+          totalStreak += calcularStreakSobriedade(data.diasVencidos);
+        }
+      });
+      if (activeCount === 0) return 0;
+      return Math.min(Math.round((totalStreak / activeCount / 30) * 100), 100);
+    }
+
+    function getMissionSuccessRateThisWeek() {
+      let total = 0, done = 0;
+      for (let i = 0; i < 7; i++) {
+        const dk = getDateOffset(getTodayKey(), -i);
+        const habits = userState.dailyHabits[dk];
+        if (habits) {
+          const ids = Object.keys(habits);
+          total += ids.length;
+          done += ids.filter(id => habits[id] === true).length;
+        }
+      }
+      return total > 0 ? Math.round((done / total) * 100) : 0;
+    }
+
+    function getTotalSoberaniaDays() {
+      let total = 0;
+      DEFAULT_VICIOS.forEach(v => {
+        const data = userState.vicios[v.id];
+        if (data && data.startedAt) {
+          const time = calcTimeSince(data.startedAt);
+          if (time) total += time.days;
+        }
+      });
+      return total;
+    }
+
+    // =============================================
     // DASHBOARD TAB
     // =============================================
     function renderDashboard() {
@@ -2568,6 +2625,78 @@
 
       return `
         <div class="tab-enter stagger-enter space-y-8 max-w-md mx-auto">
+
+          <!-- ESTADO DO RESSURGIDO — Profile Card -->
+          <div class="card-neu rounded-2xl p-8">
+            <div class="flex items-center gap-4 mb-6">
+              <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl"
+                   style="background: linear-gradient(135deg, #0a0a1a, #000); border: 1px solid rgba(37,99,235,0.2); box-shadow: 0 0 20px rgba(37,99,235,0.08);">
+                ${userState.profile?.avatar || '⚔️'}
+              </div>
+              <div>
+                <p class="text-xl font-black text-white tracking-wide">${escapeHtml(userState.profile?.name || 'Soldado').toUpperCase()}</p>
+                <p class="text-[10px] font-extrabold tracking-[0.2em] text-royal">OPERADOR ATIVO</p>
+              </div>
+            </div>
+            ${(() => {
+              const vit = calcVitalidade();
+              return `
+                <div class="mb-3">
+                  <div class="flex justify-between items-center mb-1.5">
+                    <span class="text-[10px] font-extrabold tracking-[0.15em] text-gray-500">VITALIDADE</span>
+                    <span class="text-[10px] font-black text-emerald-400 tabular-nums font-mono">${vit}%</span>
+                  </div>
+                  <div class="w-full h-2 bg-black rounded-full overflow-hidden" style="box-shadow: inset 0 0 6px rgba(0,0,0,0.8);">
+                    <div class="h-full rounded-full transition-all duration-700" style="width:${vit}%; background: linear-gradient(90deg, #00FF64, #06B6D4); box-shadow: 0 0 8px rgba(0,255,100,0.3);"></div>
+                  </div>
+                  <p class="text-[9px] font-bold text-gray-700 mt-0.5">DIETA / TREINO</p>
+                </div>
+              `;
+            })()}
+            ${(() => {
+              const res = calcResiliencia();
+              return `
+                <div>
+                  <div class="flex justify-between items-center mb-1.5">
+                    <span class="text-[10px] font-extrabold tracking-[0.15em] text-gray-500">RESILIÊNCIA</span>
+                    <span class="text-[10px] font-black text-blue-400 tabular-nums font-mono">${res}%</span>
+                  </div>
+                  <div class="w-full h-2 bg-black rounded-full overflow-hidden" style="box-shadow: inset 0 0 6px rgba(0,0,0,0.8);">
+                    <div class="h-full rounded-full transition-all duration-700" style="width:${res}%; background: linear-gradient(90deg, #3B82F6, #8B5CF6); box-shadow: 0 0 8px rgba(59,130,246,0.3);"></div>
+                  </div>
+                  <p class="text-[9px] font-bold text-gray-700 mt-0.5">SOBERANIA</p>
+                </div>
+              `;
+            })()}
+          </div>
+
+          <!-- GRID DE ATRIBUTOS -->
+          <div class="grid grid-cols-2 gap-6">
+            <div class="card-neu rounded-2xl p-5 text-center">
+              <p class="text-3xl font-black text-white tabular-nums font-mono">${getTotalSoberaniaDays()}</p>
+              <p class="text-[9px] font-extrabold tracking-[0.15em] text-gray-500 mt-1">DIAS DE SOBERANIA</p>
+            </div>
+            <div class="card-neu rounded-2xl p-5 text-center">
+              <p class="text-3xl font-black text-white tabular-nums font-mono">${getMissionSuccessRateThisWeek()}%</p>
+              <p class="text-[9px] font-extrabold tracking-[0.15em] text-gray-500 mt-1">MISSÕES (SEMANA)</p>
+            </div>
+            <div class="card-neu rounded-2xl p-5 text-center">
+              <p class="text-3xl font-black tabular-nums font-mono ${userState.ultimaGlicemia ? (userState.ultimaGlicemia.value > 180 ? 'text-red-400' : userState.ultimaGlicemia.value < 70 ? 'text-yellow-400' : 'neon-text') : 'text-gray-700'}">
+                ${userState.ultimaGlicemia ? userState.ultimaGlicemia.value : '—'}
+              </p>
+              <p class="text-[9px] font-extrabold tracking-[0.15em] text-gray-500 mt-1">GLICEMIA mg/dL</p>
+              ${userState.ultimaGlicemia ? `<p class="text-[8px] font-bold text-gray-700">${new Date(userState.ultimaGlicemia.timestamp).toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'})}</p>` : ''}
+            </div>
+            ${(() => {
+              const lvl = calcularNivel(userState.xpTotal || 0);
+              return `
+                <div class="card-neu rounded-2xl p-5 text-center cursor-pointer active:scale-[0.97] transition-transform" onclick="switchTab('perfil')">
+                  <p class="text-3xl font-black ${lvl.isMax ? 'text-yellow-400' : 'text-royal'} tabular-nums font-mono">LVL ${lvl.nivel}</p>
+                  <p class="text-[9px] font-extrabold tracking-[0.15em] text-gray-500 mt-1">${(userState.xpTotal || 0).toLocaleString('pt-BR')} XP</p>
+                </div>
+              `;
+            })()}
+          </div>
 
           <!-- O VEREDITO DO MENTOR -->
           <div class="ai-verdict-card glass-panel rounded-2xl p-5 border border-red-900/20">
@@ -2598,24 +2727,13 @@
             <p class="text-xs font-extrabold tracking-[0.25em] text-gray-500 mb-5">RESURRECTION SCORE</p>
             <div class="score-ring w-40 h-40 flex items-center justify-center p-1.5" style="--score:${score}; --ring-color:${ringColor}">
               <div class="bg-[#111] w-full h-full rounded-full flex flex-col items-center justify-center">
-                <span class="text-6xl font-black tabular-nums ${status.cls}" style="letter-spacing:-3px;">${score}</span>
+                <span class="text-6xl font-black tabular-nums font-mono ${status.cls}" style="letter-spacing:-3px;">${score}</span>
                 <span class="text-sm font-extrabold text-gray-500 mt-0.5">/100</span>
               </div>
             </div>
             <div class="flex items-center gap-3 mt-4">
               ${streak > 0 ? `<span class="streak-fire text-xl">🔥</span><span class="text-base font-black neon-text">${streak} dia${streak !== 1 ? 's' : ''}</span>` : '<span class="text-base font-bold text-gray-700">Sem streak ativo</span>'}
             </div>
-            <!-- LEVEL BADGE -->
-            ${(() => {
-              const lvl = calcularNivel(userState.xpTotal || 0);
-              return `
-                <button onclick="switchTab('perfil')" class="mt-4 flex items-center gap-3 px-5 py-3.5 rounded-2xl bg-black border border-[#222] hover:border-royal transition-all min-h-[56px] active:bg-white/5 haptic">
-                  <span class="text-xl">${userState.profile?.avatar || '⚔️'}</span>
-                  <span class="text-sm font-black ${lvl.isMax ? 'text-yellow-400' : 'text-royal'}">LVL ${lvl.nivel}</span>
-                  <span class="text-xs font-bold text-gray-600">${(userState.xpTotal || 0).toLocaleString('pt-BR')} XP</span>
-                </button>
-              `;
-            })()}
           </div>
 
           <!-- SOBERANIA -->
@@ -2633,7 +2751,7 @@
           <div class="glass-panel rounded-2xl p-5">
             <div class="flex justify-between items-center mb-3">
               <span class="text-xs font-extrabold tracking-widest text-gray-500">PROGRESSO DIÁRIO</span>
-              <span class="text-sm font-black ${status.cls}">${score}%</span>
+              <span class="text-sm font-black font-mono ${status.cls}">${score}%</span>
             </div>
             <div class="w-full h-4 bg-black rounded-full overflow-hidden neon-bar-track">
               <div class="h-full rounded-full transition-all duration-700 ease-out" style="width:${score}%; background:${ringColor}; box-shadow: 0 0 10px ${ringColor}40;"></div>
@@ -2659,63 +2777,13 @@
                 const glowStyle = d.allDone ? `box-shadow: 0 0 8px ${barColor}50;` : '';
                 return `
                   <div class="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
-                    <span class="text-xs font-black tabular-nums ${d.isToday ? status.cls : d.allDone ? 'text-white' : 'text-gray-700'}">${d.score}</span>
+                    <span class="text-xs font-black tabular-nums font-mono ${d.isToday ? status.cls : d.allDone ? 'text-white' : 'text-gray-700'}">${d.score}</span>
                     <div class="w-full rounded-lg bar-grow" style="height:${h}%; background:${barColor}; ${glowStyle} animation-delay:${week.indexOf(d) * 0.07}s;"></div>
                     <span class="text-[10px] font-bold ${d.isToday ? 'text-white' : 'text-gray-600'}">${d.dayLabel}</span>
                   </div>
                 `;
               }).join('')}
             </div>
-          </div>
-
-          <!-- FLASH QUEST CARD -->
-          ${(() => {
-            const fqToday = userState.flashQuestsDone?.[today] || [];
-            const fqTotal = userState.flashQuestsTotal || 0;
-            return `
-              <div class="glass-panel rounded-2xl p-5">
-                <div class="flex items-center justify-between mb-3">
-                  <div class="flex items-center gap-2.5">
-                    <span class="text-xl">⚡</span>
-                    <div>
-                      <span class="text-xs font-extrabold tracking-[0.2em] text-red-400">FLASH QUEST</span>
-                      <p class="text-[9px] font-bold text-gray-600">Missões bônus aleatórias — XP 2x</p>
-                    </div>
-                  </div>
-                  <div class="text-right">
-                    <p class="text-2xl font-black text-white">${fqToday.length}</p>
-                    <p class="text-[9px] font-bold text-gray-600">HOJE</p>
-                  </div>
-                </div>
-                <div class="flex items-center justify-between bg-black/40 rounded-xl p-3">
-                  <div class="text-center flex-1">
-                    <p class="text-lg font-black text-yellow-400">${fqTotal}</p>
-                    <p class="text-[9px] font-bold text-gray-600">TOTAL FEITAS</p>
-                  </div>
-                  <div class="w-px h-8 bg-gray-800"></div>
-                  <div class="text-center flex-1">
-                    <p class="text-lg font-black text-red-400">${FLASH_QUESTS.length - fqToday.length}</p>
-                    <p class="text-[9px] font-bold text-gray-600">DISPONÍVEIS</p>
-                  </div>
-                </div>
-              </div>
-            `;
-          })()}
-
-          <!-- ATALHOS RÁPIDOS -->
-          <div class="grid grid-cols-3 gap-3">
-            <button onclick="switchTab('treino')" class="glass-panel p-4 text-center active:scale-[0.93] haptic transition-transform">
-              <span class="text-xl block mb-1">🏋️</span>
-              <p class="text-[10px] font-extrabold text-gray-500 tracking-wider">TREINO</p>
-            </button>
-            <button onclick="switchTab('fuel')" class="glass-panel p-4 text-center active:scale-[0.93] haptic transition-transform">
-              <span class="text-xl block mb-1">🍎</span>
-              <p class="text-[10px] font-extrabold text-gray-500 tracking-wider">NUTRIÇÃO</p>
-            </button>
-            <button onclick="switchTab('focus')" class="glass-panel p-4 text-center active:scale-[0.93] haptic transition-transform">
-              <span class="text-xl block mb-1">⏱️</span>
-              <p class="text-[10px] font-extrabold text-gray-500 tracking-wider">FOCO</p>
-            </button>
           </div>
 
           <!-- STATUS DE BATALHA -->
@@ -4379,7 +4447,10 @@
 
         // Send to API
         const objetivo = userState.fuelGoal || 'manutenção';
-        const prompt = `Objetivo atual do usuário: ${objetivo}. O usuário tem DIABETES TIPO 1 (insulinodependente). Identifique os alimentos nesta imagem. Estime calorias totais, gramas de proteína, carboidratos totais (com contagem de carboidratos para bolus de insulina), índice glicêmico estimado e gorduras (boas vs ruins). Liste em uma tabela. Dê um veredito focado em DM1: impacto glicêmico, sugestão de relação insulina/carbo e avalie se a refeição é adequada para o objetivo de ${objetivo}.`;
+        const glicemiaCtx = userState.ultimaGlicemia
+          ? `Glicemia atual: ${userState.ultimaGlicemia.value} mg/dL (medida às ${new Date(userState.ultimaGlicemia.timestamp).toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'})}). `
+          : '';
+        const prompt = `Objetivo: ${objetivo}. ${glicemiaCtx}O usuário tem DIABETES TIPO 1 (insulinodependente). Identifique os alimentos nesta imagem. Estime calorias totais, gramas de proteína, carboidratos totais (com contagem para bolus de insulina), IG estimado e gorduras (boas vs ruins). Liste em uma tabela. Veredito DM1: impacto glicêmico, sugestão de relação insulina/carbo, adequação para objetivo de ${objetivo}.`;
 
         const resp = await callGemini(prompt, null, null, null, 'the_fuel', base64);
 
@@ -4436,6 +4507,14 @@
       });
     }
 
+    function saveGlicemia(val) {
+      const v = parseInt(val);
+      if (isNaN(v) || v < 30 || v > 600) { userState.ultimaGlicemia = null; }
+      else { userState.ultimaGlicemia = { value: v, timestamp: new Date().toISOString() }; }
+      saveData();
+      renderActiveTab();
+    }
+
     async function askFuelMentor() {
       const input = document.getElementById('fuelMentorInput');
       const question = input ? input.value.trim() : '';
@@ -4454,7 +4533,8 @@
           ? previousMessages.map(m => ({ role: m.role === 'user' ? 'user' : 'model', text: m.text }))
           : null;
         const objetivo = userState.fuelGoal || 'manutenção';
-        const ctx = `[Objetivo: ${objetivo}]\n\n`;
+        const glicCtx = userState.ultimaGlicemia ? ` | Glicemia: ${userState.ultimaGlicemia.value} mg/dL` : '';
+        const ctx = `[Objetivo: ${objetivo}${glicCtx}]\n\n`;
         const resp = await callGemini(ctx + question, null, null, historico, 'the_fuel');
         fuelChat.push({ role: 'ai', text: resp });
       } catch (e) {
@@ -4501,6 +4581,25 @@
                   </button>
                 `).join('')}
               </div>
+            </div>
+
+            <!-- GLICEMIA ATUAL (DM1) -->
+            <div class="card-neu rounded-xl p-4">
+              <p class="text-[10px] font-extrabold tracking-[0.2em] text-gray-500 mb-3">GLICEMIA ATUAL (mg/dL)</p>
+              <div class="flex items-center gap-3">
+                <input type="number" id="glicemiaInput"
+                  value="${userState.ultimaGlicemia ? userState.ultimaGlicemia.value : ''}"
+                  placeholder="Ex: 120"
+                  min="30" max="600" step="1"
+                  class="flex-1 bg-black border border-[#222] rounded-xl px-4 py-3 text-white font-bold text-lg tabular-nums font-mono focus:border-[#00FF64]/40 focus:outline-none transition-colors min-h-[48px]"
+                  onchange="saveGlicemia(this.value)">
+                <span class="text-xs font-bold ${
+                  userState.ultimaGlicemia
+                    ? (userState.ultimaGlicemia.value > 180 ? 'text-red-400' : userState.ultimaGlicemia.value < 70 ? 'text-yellow-400' : 'neon-text')
+                    : 'text-gray-700'
+                }">mg/dL</span>
+              </div>
+              ${userState.ultimaGlicemia ? `<p class="text-[9px] font-bold text-gray-600 mt-2">Último: ${new Date(userState.ultimaGlicemia.timestamp).toLocaleString('pt-BR', {hour:'2-digit', minute:'2-digit', day:'2-digit', month:'2-digit'})}</p>` : ''}
             </div>
 
             <!-- SCANNER BUTTON — Minimal Frame -->
