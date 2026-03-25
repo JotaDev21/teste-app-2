@@ -6,15 +6,15 @@
   <meta name="theme-color" content="#000000">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Unstoppable">
-  <meta name="application-name" content="Unstoppable Clone">
+  <meta name="apple-mobile-web-app-title" content="Resurrection">
+  <meta name="application-name" content="Resurrection">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="format-detection" content="telephone=no">
   <meta name="msapplication-TileColor" content="#000000">
   <meta name="msapplication-tap-highlight" content="no">
   <link rel="manifest" href="./manifest.json">
-  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='36' fill='%23000'/><text x='90' y='122' font-size='100' text-anchor='middle' fill='%232563EB' font-family='Arial' font-weight='900'>U</text></svg>">
-  <title>BE UNSTOPPABLE</title>
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='36' fill='%23000'/><text x='90' y='122' font-size='100' text-anchor='middle' fill='%232563EB' font-family='Arial' font-weight='900'>R</text></svg>">
+  <title>RESURRECTION</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -297,7 +297,7 @@
       box-shadow: inset 0 0 20px rgba(0,0,0,0.5), 0 0 10px rgba(0,255,100,0.05);
     }
     .terminal-output::before {
-      content: '> UNSTOPPABLE v3.0 — TERMINAL DE GUERRA';
+      content: '> RESURRECTION v4.0 — TERMINAL DE GUERRA';
       display: block;
       color: rgba(0,255,100,0.4);
       font-size: 9px;
@@ -690,64 +690,71 @@
     /* ===== BATTLE CALENDAR ===== */
     .battle-calendar-overlay {
       position: fixed; inset: 0; z-index: 60;
-      background: rgba(0,0,0,0.97);
+      background: #000;
       display: flex; flex-direction: column; align-items: center;
-      padding: 24px 20px; overflow-y: auto;
+      padding: 24px 16px; overflow-y: auto;
       animation: fadeIn 0.3s ease-out;
     }
     .cal-grid {
       display: grid; grid-template-columns: repeat(7, 1fr);
-      gap: 6px; width: 100%; max-width: 380px;
+      gap: 10px; width: 100%; max-width: 380px;
+      margin: 0 auto; padding: 0 4px;
     }
     .cal-header {
-      font-size: 10px; font-weight: 800; color: #555;
-      text-align: center; padding: 4px 0; letter-spacing: 0.1em;
+      font-size: 10px; font-weight: 800; color: rgba(0,210,180,0.4);
+      text-align: center; padding: 4px 0; letter-spacing: 0.2em;
     }
     .cal-day {
       aspect-ratio: 1; border-radius: 10px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 12px; font-weight: 700;
-      border: 1px solid rgba(255,255,255,0.06);
-      background: rgba(255,255,255,0.03);
+      font-size: 12px; font-weight: 800;
+      border: 1px solid rgba(0,210,180,0.08);
+      background: rgba(0,210,180,0.02);
       color: #555; transition: all 0.2s;
     }
     .cal-day-won {
-      background: rgba(0,255,100,0.12);
-      border-color: rgba(0,255,100,0.4);
-      color: #00ff64;
-      box-shadow: 0 0 12px rgba(0,255,100,0.15);
+      background: rgba(16,185,129,0.12);
+      border-color: rgba(16,185,129,0.5);
+      color: #34d399;
+      box-shadow: 0 0 10px rgba(16,185,129,0.1), inset 0 0 6px rgba(16,185,129,0.05);
     }
     @keyframes calTodayPulse {
-      0%, 100% { border-color: rgba(255,51,51,0.4); box-shadow: 0 0 8px rgba(255,51,51,0.1); }
-      50% { border-color: rgba(255,51,51,0.8); box-shadow: 0 0 20px rgba(255,51,51,0.25); }
+      0%, 100% { border-color: rgba(0,210,180,0.3); box-shadow: 0 0 6px rgba(0,210,180,0.08); }
+      50% { border-color: rgba(0,210,180,0.7); box-shadow: 0 0 20px rgba(0,210,180,0.15), inset 0 0 10px rgba(0,210,180,0.05); }
     }
     .cal-day-today {
-      border-color: rgba(255,51,51,0.5); color: #ff3333;
-      animation: calTodayPulse 2s ease-in-out infinite; font-weight: 900;
+      border-color: rgba(0,210,180,0.4); color: #5eead4;
+      background: rgba(0,210,180,0.05);
+      animation: calTodayPulse 2.5s ease-in-out infinite; font-weight: 900;
     }
     .cal-day-today.cal-day-won {
       animation: none;
-      background: rgba(0,255,100,0.15);
-      border-color: rgba(0,255,100,0.6);
-      color: #00ff64;
-      box-shadow: 0 0 20px rgba(0,255,100,0.25);
+      background: rgba(16,185,129,0.15);
+      border-color: rgba(16,185,129,0.6);
+      color: #34d399;
+      box-shadow: 0 0 18px rgba(16,185,129,0.15), inset 0 0 8px rgba(16,185,129,0.05);
     }
     .cal-day-missed {
-      background: rgba(255,51,51,0.05);
-      border-color: rgba(255,51,51,0.15);
-      color: #442222;
+      background: rgba(255,51,51,0.03);
+      border-color: rgba(255,51,51,0.1);
+      color: #3a1515;
     }
-    .cal-day-future { opacity: 0.25; }
+    .cal-day-future {
+      opacity: 0.15;
+      border-color: rgba(255,255,255,0.02);
+    }
     .cal-day-empty { border: none; background: transparent; }
     .precision-timer {
       font-family: 'Courier New', 'Consolas', monospace;
       font-variant-numeric: tabular-nums;
-      font-size: 2rem; font-weight: 900;
-      letter-spacing: 2px; line-height: 1;
+      font-size: 2.5rem; font-weight: 900;
+      letter-spacing: 4px; line-height: 1;
+      color: #5eead4;
+      text-shadow: 0 0 25px rgba(0,210,180,0.35), 0 0 50px rgba(0,210,180,0.12);
     }
     .precision-timer-label {
       font-size: 9px; font-weight: 800;
-      letter-spacing: 0.3em; color: #555;
+      letter-spacing: 0.3em; color: rgba(0,210,180,0.3);
     }
 
     /* SVG progress ring */
@@ -1048,10 +1055,10 @@
       <!-- Logo -->
       <div class="text-center mb-8">
         <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-black border border-[#222] flex items-center justify-center">
-          <span class="text-3xl font-black text-royal">U</span>
+          <span class="text-3xl font-black text-royal">R</span>
         </div>
-        <h1 class="text-2xl font-black tracking-tight">BE <span class="text-royal">UNSTOPPABLE</span></h1>
-        <p class="text-xs font-bold text-gray-600 mt-1 tracking-widest">v3.0 — SISTEMA DE GUERRA</p>
+        <h1 class="text-2xl font-black tracking-tight"><span class="text-royal">RESURRECTION</span></h1>
+        <p class="text-xs font-bold text-gray-600 mt-1 tracking-widest">v4.0 — PROTOCOLO DE RENASCIMENTO</p>
       </div>
 
       <!-- Auth Error -->
@@ -1490,11 +1497,11 @@
       // ——— LENDÁRIAS (Ouro) — Níveis 85-150 ———
       { id: 'c28', nome: 'Lenda Viva',               raridade: 'Lendária', tipoDesbloqueio: 'nivel', requisito: 85,  descricao: 'Seu nome ecoa nos corredores da história.',                    lore: '"Lendas não morrem. Transcendem."' },
       { id: 'c29', nome: 'O Fantasma de Esparta',    raridade: 'Lendária', tipoDesbloqueio: 'nivel', requisito: 95,  descricao: 'Vingança contra a própria fraqueza. Destruição total do ego.', lore: '"Eu sou o monstro que os monstros temem."' },
-      { id: 'c30', nome: 'GigaChad Absoluto',        raridade: 'Lendária', tipoDesbloqueio: 'nivel', requisito: 105, descricao: 'O arquétipo final. Disciplina encarnada. Imparável.',           lore: '"Eu não sigo regras. Eu sou a regra."' },
+      { id: 'c30', nome: 'Ressurgido Absoluto',       raridade: 'Lendária', tipoDesbloqueio: 'nivel', requisito: 105, descricao: 'O arquétipo final. Disciplina encarnada. Renascido.',           lore: '"Das cinzas, eu me reconstruo."' },
       { id: 'c31', nome: 'Imperador do Tempo',       raridade: 'Lendária', tipoDesbloqueio: 'nivel', requisito: 115, descricao: 'Cada segundo é seu servo. O tempo obedece sua vontade.',        lore: '"Enquanto outros desperdiçam horas, eu construo impérios."' },
       { id: 'c32', nome: 'O Transcendente',          raridade: 'Lendária', tipoDesbloqueio: 'nivel', requisito: 125, descricao: 'Além do humano. Você redefiniu o que é possível.',              lore: '"O impossível é o playground dos determinados."' },
       { id: 'c33', nome: 'Deus da Disciplina',       raridade: 'Lendária', tipoDesbloqueio: 'nivel', requisito: 135, descricao: 'A disciplina se personificou em você.',                        lore: '"Mortais pedem motivação. Deuses criam disciplina."' },
-      { id: 'c34', nome: 'UNSTOPPABLE',              raridade: 'Lendária', tipoDesbloqueio: 'nivel', requisito: 150, descricao: 'Nível máximo. Você é a prova de que limites não existem.',      lore: '"EU. NÃO. PARO."' },
+      { id: 'c34', nome: 'RESURRECTION',              raridade: 'Lendária', tipoDesbloqueio: 'nivel', requisito: 150, descricao: 'Nível máximo. Renascido das cinzas. Indestrutível.',           lore: '"EU. RENASÇO. SEMPRE."' },
 
       // ——— SECRETAS (Anomalia/Glitch) — Condições Ocultas ———
       { id: 'c35', nome: '??E̷R̸R̶O̷??',              raridade: 'Secreta',  tipoDesbloqueio: 'secreto', requisito: '?????', descricao: '[DADOS CORROMPIDOS]',                               lore: '"Ṿ̸̈o̵̱̓c̷̣̾ê̶͕ ̴̨̛n̶̖̂ã̷̡o̶̤̔ ̵̬̌d̷̰̐e̵̮͊v̴̱͝e̸͓̊r̵̢̈́i̴̞͌a̸̭̍ ̵̣̈́e̸̗͂s̷̡̄t̵̨̋á̸̩r̶̙̈ ̵̠̇a̸̰͂q̷̥̀ụ̵̂i̵̦͋.̶̘̈"' },
@@ -1868,10 +1875,10 @@
       'SEU CELULAR PODE ESPERAR. SUA GRANDEZA NÃO.',
       'CADA MINUTO DE FOCO É UMA VITÓRIA CONTRA A MEDIOCRIDADE.',
       'DESLIGUE O MUNDO. LIGUE A MÁQUINA.',
-      'DEEP WORK: ONDE LENDAS SÃO CONSTRUÍDAS.',
+      'FOCO PROFUNDO: ONDE RESULTADOS SÃO CONSTRUÍDOS.',
       'REDES SOCIAIS ROUBAM SEU TEMPO. TOME-O DE VOLTA.',
       'VOCÊ NÃO ESTÁ AQUI PARA SER MÉDIO. TRABALHE.',
-      'FOCO É A ARMA DOS IMPARÁVEIS.',
+      'FOCO É A ARMA DOS DISCIPLINADOS.',
       'A DOR DA DISCIPLINA PESA GRAMAS. A DOR DO ARREPENDIMENTO PESA TONELADAS.',
       'NÃO OLHE PARA O LADO. OLHE PARA FRENTE.',
       'MODO GUERRA: ATIVADO.',
@@ -2148,7 +2155,7 @@
 
         if (!active) {
           return `
-            <div class="sobriety-card glass-panel ${level.border} p-4">
+            <div class="sobriety-card rounded-2xl p-4" style="background: rgba(0,210,180,0.02); border: 1px solid rgba(0,210,180,0.06);">
               <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2.5">
                   <span class="text-xl">${v.icon}</span>
@@ -2157,8 +2164,8 @@
                     <p class="text-[9px] font-bold text-gray-700 tracking-wider">INATIVO</p>
                   </div>
                 </div>
-                <button onclick="event.stopPropagation(); startSobriety('${v.id}')" class="glow-circle-btn glow-green w-10 h-10 haptic" title="Iniciar">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                <button onclick="event.stopPropagation(); startSobriety('${v.id}')" class="w-10 h-10 rounded-xl flex items-center justify-center border haptic active:scale-[0.93]" style="border-color: rgba(16,185,129,0.3); background: rgba(16,185,129,0.06);" title="Iniciar">
+                  <svg class="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                 </button>
               </div>
               ${v.id === 'custom' ? `
@@ -2176,7 +2183,7 @@
         const checkedToday = data.diasVencidos.includes(getTodayKey());
         const totalWon = data.diasVencidos.length;
         return `
-          <div class="sobriety-card glass-panel ${level.border}${streakGlow} p-4 cursor-pointer active:scale-[0.97] transition-transform" onclick="openBattleCalendar('${v.id}')">
+          <div class="sobriety-card rounded-2xl p-4 cursor-pointer active:scale-[0.97] transition-transform" style="background: rgba(0,210,180,0.02); border: 1px solid rgba(0,210,180,0.08);" onclick="openBattleCalendar('${v.id}')">
             <div class="flex items-center justify-between mb-2">
               <div class="flex items-center gap-2.5">
                 <span class="text-xl">${v.icon}</span>
@@ -2186,16 +2193,16 @@
                 </div>
               </div>
               <div class="text-right">
-                <p class="text-lg font-black ${streak > 0 ? 'text-white' : 'text-gray-600'}" id="timer-${v.id}">${streak > 0 ? '🔥 ' + streak : time.days + 'd'}</p>
-                <p class="text-[9px] font-bold text-gray-600">${streak > 0 ? 'STREAK' : 'TOTAL'}</p>
+                <p class="text-lg font-black" style="color: #5eead4;" id="timer-${v.id}">${streak > 0 ? streak + 'd' : time.days + 'd'}</p>
+                <p class="text-[9px] font-bold" style="color: rgba(0,210,180,0.3);">${streak > 0 ? 'STREAK' : 'TOTAL'}</p>
               </div>
             </div>
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-1.5">
-                <span class="w-2 h-2 rounded-full ${checkedToday ? 'bg-green-500' : 'bg-red-500/50'} inline-block"></span>
-                <span class="text-[10px] font-bold ${checkedToday ? 'text-green-500' : 'text-gray-600'}">${checkedToday ? 'HOJE ✓' : 'PENDENTE'}</span>
+                <span class="w-2 h-2 rounded-full ${checkedToday ? 'bg-emerald-500' : 'bg-red-500/30'} inline-block"></span>
+                <span class="text-[10px] font-bold ${checkedToday ? 'text-emerald-400' : 'text-gray-600'}">${checkedToday ? 'REGISTRADO' : 'PENDENTE'}</span>
               </div>
-              <span class="text-[10px] font-bold text-gray-600">${totalWon} dias vencidos</span>
+              <span class="text-[10px] font-bold text-gray-600">${totalWon} registros</span>
             </div>
           </div>
         `;
@@ -2331,9 +2338,9 @@
         const can = canCheckinToday(vicioId);
         checkinBtn.disabled = !can;
         checkinBtn.className = can
-          ? 'w-full min-h-[56px] rounded-2xl font-extrabold text-sm tracking-wider active:scale-[0.93] haptic transition-all bg-green-950/40 border-2 border-green-500/50 text-green-400'
-          : 'w-full min-h-[56px] rounded-2xl font-extrabold text-sm tracking-wider transition-all bg-[#111] border border-[#333] text-gray-600 cursor-not-allowed';
-        checkinBtn.textContent = can ? '⚔️  MARCAR TERRITÓRIO — CHECK-IN' : (userState.vicios[vicioId].diasVencidos.includes(getTodayKey()) ? '✓  HOJE JÁ CONQUISTADO' : '🔒  SOBREVIVA O DIA PRIMEIRO');
+          ? 'w-full min-h-[56px] rounded-2xl font-extrabold text-sm tracking-wider active:scale-[0.93] haptic transition-all border-2 text-emerald-400 bg-emerald-950/30 border-emerald-500/40'
+          : 'w-full min-h-[56px] rounded-2xl font-extrabold text-sm tracking-wider transition-all bg-[#080808] border border-white/5 text-gray-600 cursor-not-allowed';
+        checkinBtn.textContent = can ? 'CHECK-IN — MARCAR DIA' : (userState.vicios[vicioId].diasVencidos.includes(getTodayKey()) ? '✓  DIA REGISTRADO' : 'AGUARDANDO PRÓXIMO CICLO');
       }
     }
 
@@ -2345,17 +2352,17 @@
       const totalPossible = time ? time.days : 0;
       const rate = totalPossible > 0 ? Math.round((totalDays / totalPossible) * 100) : 0;
       return `
-        <div class="glass-panel p-3 text-center">
-          <p class="text-lg font-black text-white">🔥 ${streak}</p>
-          <p class="text-[9px] font-bold text-gray-500 tracking-wider">STREAK</p>
+        <div class="rounded-xl p-3 text-center" style="background: rgba(0,210,180,0.03); border: 1px solid rgba(0,210,180,0.08);">
+          <p class="text-lg font-black" style="color: #5eead4;">${streak}</p>
+          <p class="text-[9px] font-bold tracking-wider" style="color: rgba(0,210,180,0.3);">STREAK</p>
         </div>
-        <div class="glass-panel p-3 text-center">
-          <p class="text-lg font-black text-white">${totalDays}</p>
-          <p class="text-[9px] font-bold text-gray-500 tracking-wider">VENCIDOS</p>
+        <div class="rounded-xl p-3 text-center" style="background: rgba(0,210,180,0.03); border: 1px solid rgba(0,210,180,0.08);">
+          <p class="text-lg font-black" style="color: #5eead4;">${totalDays}</p>
+          <p class="text-[9px] font-bold tracking-wider" style="color: rgba(0,210,180,0.3);">REGISTROS</p>
         </div>
-        <div class="glass-panel p-3 text-center">
-          <p class="text-lg font-black text-white">${rate}%</p>
-          <p class="text-[9px] font-bold text-gray-500 tracking-wider">TAXA</p>
+        <div class="rounded-xl p-3 text-center" style="background: rgba(0,210,180,0.03); border: 1px solid rgba(0,210,180,0.08);">
+          <p class="text-lg font-black" style="color: #5eead4;">${rate}%</p>
+          <p class="text-[9px] font-bold tracking-wider" style="color: rgba(0,210,180,0.3);">TAXA</p>
         </div>
       `;
     }
@@ -2386,32 +2393,33 @@
       const displayLabel = vicioId === 'custom' ? (data.label || 'Personalizado') : vicio.label;
       const can = canCheckinToday(vicioId);
       const checkedToday = data.diasVencidos.includes(getTodayKey());
-      const checkinLabel = can ? '⚔️  MARCAR TERRITÓRIO — CHECK-IN' : (checkedToday ? '✓  HOJE JÁ CONQUISTADO' : '🔒  SOBREVIVA O DIA PRIMEIRO');
+      const checkinLabel = can ? 'CHECK-IN — MARCAR DIA' : (checkedToday ? '✓  DIA REGISTRADO' : 'AGUARDANDO PRÓXIMO CICLO');
       const checkinCls = can
-        ? 'w-full min-h-[56px] rounded-2xl font-extrabold text-sm tracking-wider active:scale-[0.93] haptic transition-all bg-green-950/40 border-2 border-green-500/50 text-green-400'
-        : 'w-full min-h-[56px] rounded-2xl font-extrabold text-sm tracking-wider transition-all bg-[#111] border border-[#333] text-gray-600 cursor-not-allowed';
+        ? 'w-full min-h-[56px] rounded-2xl font-extrabold text-sm tracking-wider active:scale-[0.93] haptic transition-all border-2 text-emerald-400' + " " + 'bg-emerald-950/30 border-emerald-500/40'
+        : 'w-full min-h-[56px] rounded-2xl font-extrabold text-sm tracking-wider transition-all bg-[#080808] border border-white/5 text-gray-600 cursor-not-allowed';
 
       const overlay = document.createElement('div');
       overlay.id = 'battleCalendarOverlay';
       overlay.className = 'battle-calendar-overlay';
       overlay.innerHTML = `
-        <div class="w-full max-w-md space-y-5">
+        <div class="w-full max-w-md flex flex-col" style="gap: 40px;">
+
           <!-- Header -->
           <div class="flex items-center gap-3">
-            <button onclick="closeBattleCalendar()" class="glow-circle-btn w-10 h-10 haptic">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+            <button onclick="closeBattleCalendar()" class="w-11 h-11 rounded-xl flex items-center justify-center border border-white/5 bg-white/[0.02] active:scale-[0.93] haptic">
+              <svg class="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
             </button>
             <div>
-              <p class="text-lg font-black text-white">${vicio.icon} MISSÃO: ${escapeHtml(displayLabel.toUpperCase())}</p>
-              <p class="text-[10px] font-bold text-gray-500 tracking-wider">CALENDÁRIO DE BATALHA</p>
+              <p class="text-base font-black text-white tracking-wide">${escapeHtml(displayLabel.toUpperCase())}</p>
+              <p class="text-[10px] font-bold tracking-[0.2em]" style="color: rgba(0,210,180,0.4);">PAINEL DE SOBERANIA</p>
             </div>
           </div>
 
-          <!-- Precision Timer -->
-          <div class="glass-panel p-5 text-center">
-            <p class="text-[10px] font-extrabold text-gray-500 tracking-[0.3em] mb-2">TEMPO DE LIBERDADE</p>
-            <p class="precision-timer text-white" id="battlePrecisionTimer">00 : 00 : 00 : 00</p>
-            <div class="flex justify-center gap-8 mt-2">
+          <!-- Precision Timer — Isolated -->
+          <div class="text-center">
+            <p class="text-[10px] font-extrabold tracking-[0.35em] mb-3" style="color: rgba(0,210,180,0.3);">TEMPO DE SOBERANIA</p>
+            <p class="precision-timer" id="battlePrecisionTimer">00 : 00 : 00 : 00</p>
+            <div class="flex justify-center mt-3" style="gap: 32px;">
               <span class="precision-timer-label">DIAS</span>
               <span class="precision-timer-label">HRS</span>
               <span class="precision-timer-label">MIN</span>
@@ -2425,7 +2433,7 @@
           </div>
 
           <!-- Calendar Grid -->
-          <div class="glass-panel p-4" id="battleCalGrid">
+          <div class="rounded-2xl p-5" style="background: rgba(0,210,180,0.02); border: 1px solid rgba(0,210,180,0.06);" id="battleCalGrid">
             ${renderCalendarGrid(vicioId)}
           </div>
 
@@ -2434,9 +2442,12 @@
             ${checkinLabel}
           </button>
 
+          <!-- Divider -->
+          <div style="height: 1px; background: linear-gradient(90deg, transparent, rgba(255,51,51,0.12), transparent);"></div>
+
           <!-- Relapse Button -->
-          <button onclick="resetSobriety('${vicioId}')" class="w-full py-3 rounded-xl bg-red-950/20 border border-red-900/30 text-red-500/60 font-bold text-xs tracking-wider active:scale-[0.93] haptic transition-all">
-            💀 RECAÍ HOJE
+          <button onclick="resetSobriety('${vicioId}')" class="w-full py-4 rounded-xl font-bold text-xs tracking-wider active:scale-[0.93] haptic transition-all" style="background: rgba(255,20,20,0.04); border: 1px solid rgba(255,51,51,0.1); color: rgba(255,80,80,0.5);">
+            REPORTAR RECAÍDA
           </button>
         </div>
       `;
@@ -2555,7 +2566,7 @@
 
           <!-- SCORE HERO -->
           <div class="card-neu rounded-2xl p-6 flex flex-col items-center">
-            <p class="text-xs font-extrabold tracking-[0.25em] text-gray-500 mb-4">UNSTOPPABLE SCORE</p>
+            <p class="text-xs font-extrabold tracking-[0.25em] text-gray-500 mb-4">RESURRECTION SCORE</p>
             <div class="score-ring w-40 h-40 flex items-center justify-center p-1.5" style="--score:${score}; --ring-color:${ringColor}">
               <div class="bg-[#111] w-full h-full rounded-full flex flex-col items-center justify-center">
                 <span class="text-6xl font-black tabular-nums ${status.cls}" style="letter-spacing:-3px;">${score}</span>
@@ -2666,15 +2677,15 @@
           <div class="grid grid-cols-3 gap-3">
             <button onclick="switchTab('treino')" class="glass-panel p-4 text-center active:scale-[0.93] haptic transition-transform">
               <span class="text-xl block mb-1">🏋️</span>
-              <p class="text-[10px] font-extrabold text-gray-500 tracking-wider">ATLAS</p>
+              <p class="text-[10px] font-extrabold text-gray-500 tracking-wider">TREINO</p>
             </button>
             <button onclick="switchTab('fuel')" class="glass-panel p-4 text-center active:scale-[0.93] haptic transition-transform">
               <span class="text-xl block mb-1">🍎</span>
-              <p class="text-[10px] font-extrabold text-gray-500 tracking-wider">FUEL</p>
+              <p class="text-[10px] font-extrabold text-gray-500 tracking-wider">NUTRIÇÃO</p>
             </button>
             <button onclick="switchTab('focus')" class="glass-panel p-4 text-center active:scale-[0.93] haptic transition-transform">
               <span class="text-xl block mb-1">⏱️</span>
-              <p class="text-[10px] font-extrabold text-gray-500 tracking-wider">DEEP WORK</p>
+              <p class="text-[10px] font-extrabold text-gray-500 tracking-wider">FOCO</p>
             </button>
           </div>
 
@@ -2752,7 +2763,7 @@
       return `
         <div class="tab-enter stagger-enter space-y-5 max-w-md mx-auto">
           <div class="pt-1">
-            <h2 class="text-3xl font-black">The <span class="text-royal">Grind</span></h2>
+            <h2 class="text-3xl font-black">Missões <span class="text-royal">Diárias</span></h2>
             <p class="text-gray-400 text-base font-semibold mt-1">10 missões de guerra. Sorteio diário. Sem moleza.</p>
           </div>
 
@@ -2859,7 +2870,7 @@
       return `
         <div class="tab-enter stagger-enter space-y-5 max-w-md mx-auto">
           <div class="pt-1">
-            <h2 class="text-3xl font-black">War <span class="text-royal">Chest</span></h2>
+            <h2 class="text-3xl font-black">Gestão de <span class="text-royal">Capital</span></h2>
             <p class="text-gray-400 text-base font-semibold mt-1">Controle rigoroso de capital. ${monthLabel}.</p>
           </div>
 
@@ -2974,7 +2985,7 @@
           <button onclick="openGestorBottomSheet()"
             class="w-full py-4 rounded-2xl font-extrabold text-sm text-white min-h-[56px] active:scale-[0.93] haptic transition-transform"
             style="background: linear-gradient(135deg, #1e3a5f 0%, #0a1a2e 50%, #000 100%); border: 1px solid rgba(37,99,235,0.3);">
-            <span class="text-lg mr-2">🏦</span> CONSULTAR GESTOR DE CAPITAL — IA
+            <span class="text-lg mr-2">🏦</span> CONSULTAR ESTRATEGISTA — IA
           </button>
 
           <!-- Últimos 5 Registros -->
@@ -3131,9 +3142,9 @@
             ` : warChestChat.map(msg => `
               <div class="${msg.role === 'user' ? 'ml-8' : 'mr-4'}">
                 <div class="${msg.role === 'user' ? 'bg-blue-950/30 border border-blue-800/20' : 'bg-gradient-to-br from-[#0a1a2e] to-[#0a0a0a] border border-blue-900/20'} rounded-2xl p-4">
-                  <p class="text-xs font-extrabold ${msg.role === 'user' ? 'text-blue-400' : 'text-gray-500'} mb-1">${msg.role === 'user' ? 'VOCÊ' : 'GESTOR'}</p>
+                  <p class="text-xs font-extrabold ${msg.role === 'user' ? 'text-blue-400' : 'text-gray-500'} mb-1">${msg.role === 'user' ? 'VOCÊ' : 'ESTRATEGISTA'}</p>
                   ${msg.role === 'user'
-                    ? `<p class="text-sm font-semibold text-gray-300 leading-relaxed whitespace-pre-wrap break-words">${msg.text}</p>`
+                    ? `<p class="text-sm font-semibold text-gray-300 leading-relaxed whitespace-pre-wrap break-words">${escapeHtml(msg.text)}</p>`
                     : `<div class="ai-prose text-sm font-medium text-gray-400 leading-relaxed break-words">${typeof marked !== 'undefined' ? marked.parse(msg.text) : msg.text}</div>`
                   }
                 </div>
@@ -3471,7 +3482,7 @@
       return `
         <div class="tab-enter stagger-enter space-y-5 max-w-md mx-auto">
           <div class="pt-1">
-            <h2 class="text-3xl font-black">Atlas <span class="text-royal">Treino</span></h2>
+            <h2 class="text-3xl font-black">Protocolo <span class="text-royal">de Treino</span></h2>
             <p class="text-gray-400 text-base font-semibold mt-1">Sua ficha de guerra. Sem papel, sem desculpa.</p>
           </div>
 
@@ -3901,7 +3912,7 @@
             <span class="chat-terminal-dot bg-purple-500"></span>
             <span class="chat-terminal-dot bg-purple-400"></span>
             <span class="chat-terminal-dot bg-purple-300"></span>
-            <span class="text-[10px] font-bold text-gray-600 ml-2">TERMINAL — MESTRE GIGACHAD</span>
+            <span class="text-[10px] font-bold text-gray-600 ml-2">TERMINAL — MESTRE DE COGNIÇÃO</span>
             <div class="ml-auto">
               <button onclick="showStudyMentor=false;renderActiveTab();" class="min-w-[36px] min-h-[36px] flex items-center justify-center text-gray-600 hover:text-red-400 rounded-lg active:bg-white/5">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -3918,7 +3929,7 @@
             ` : studyMentorChat.map(msg => `
               <div class="${msg.role === 'user' ? 'ml-8' : 'mr-4'}">
                 <div class="${msg.role === 'user' ? 'msg-user' : 'msg-ai'} p-4" style="${msg.role === 'user' ? 'border-color: rgba(124,58,237,0.15); background: rgba(124,58,237,0.08);' : 'border-color: rgba(124,58,237,0.1);'}">
-                  <p class="text-[10px] font-extrabold ${msg.role === 'user' ? 'text-purple-400' : 'text-gray-500'} mb-1">${msg.role === 'user' ? 'VOCÊ' : 'PROFESSOR'}</p>
+                  <p class="text-[10px] font-extrabold ${msg.role === 'user' ? 'text-purple-400' : 'text-gray-500'} mb-1">${msg.role === 'user' ? 'VOCÊ' : 'MESTRE'}</p>
                   ${msg.role === 'user'
                     ? '<p class="text-sm font-semibold text-gray-300 leading-relaxed whitespace-pre-wrap break-words">' + escapeHtml(msg.text) + '</p>'
                     : '<div class="ai-prose text-sm font-medium text-gray-400 leading-relaxed break-words">' + (typeof marked !== 'undefined' ? marked.parse(msg.text) : msg.text) + '</div>'
@@ -3949,7 +3960,7 @@
           <div class="glass-panel rounded-2xl p-8 text-center">
             <p class="text-3xl mb-3">📜</p>
             <p class="text-lg font-black text-gray-400">O Arquivo está vazio</p>
-            <p class="text-sm font-bold text-gray-600 mt-2">Complete sessões de Deep Work e registre dossiês para preencher seu histórico intelectual.</p>
+            <p class="text-sm font-bold text-gray-600 mt-2">Complete sessões de foco profundo e registre dossiês para preencher seu histórico.</p>
           </div>
         `;
       }
@@ -3992,8 +4003,8 @@
         <div class="tab-enter stagger-enter space-y-5 max-w-md mx-auto">
           <div class="pt-1 flex items-center justify-between">
             <div>
-              <h2 class="text-3xl font-black">Deep <span class="text-purple-400">Work</span></h2>
-              <p class="text-gray-400 text-base font-semibold mt-1">A Biblioteca de Alexandria.</p>
+              <h2 class="text-3xl font-black">Foco <span class="text-purple-400">Profundo</span></h2>
+              <p class="text-gray-400 text-base font-semibold mt-1">Sessões de estudo e concentração.</p>
             </div>
           </div>
 
@@ -4002,7 +4013,7 @@
             <button onclick="deepWorkSubTab='timer';renderActiveTab();"
               class="flex-1 py-3.5 rounded-2xl font-extrabold text-sm min-h-[56px] transition-all active:scale-[0.93] haptic ${deepWorkSubTab === 'timer' ? 'text-white' : 'glass-panel text-gray-500'}"
               ${deepWorkSubTab === 'timer' ? 'style="background:linear-gradient(135deg,#7C3AED,#5B21B6);box-shadow:0 0 15px rgba(124,58,237,0.3);"' : ''}>
-              DEEP WORK
+              FOCO
             </button>
             <button onclick="deepWorkSubTab='arquivo';renderActiveTab();"
               class="flex-1 py-3.5 rounded-2xl font-extrabold text-sm min-h-[56px] transition-all active:scale-[0.93] haptic ${deepWorkSubTab === 'arquivo' ? 'text-white' : 'glass-panel text-gray-500'}"
@@ -4067,7 +4078,7 @@
             <!-- META DIÁRIA -->
             <div class="glass-panel rounded-2xl p-5">
               <div class="flex justify-between items-center mb-3">
-                <span class="text-xs font-extrabold tracking-widest text-gray-500">META: ${goalHours}H DE DEEP WORK</span>
+                <span class="text-xs font-extrabold tracking-widest text-gray-500">META: ${goalHours}H DE FOCO</span>
                 <span class="focus-timer-text text-sm font-black" style="color:${goalColor}">${totalHours}h / ${goalHours}.0h</span>
               </div>
               <div class="w-full h-4 bg-black rounded-full overflow-hidden">
@@ -4210,11 +4221,11 @@
     }
 
     function getVerdict(avg) {
-      if (avg >= 90) return { text: 'VOCÊ É UM LEÃO. IMPARÁVEL. MANTENHA ESSE RITMO.', cls: 'neon-text', icon: '👑', bg: 'rgba(0,255,100,0.05)', border: 'border-[#00FF64]/30' };
-      if (avg >= 80) return { text: 'DESEMPENHO DE ELITE. POUCOS CHEGAM AQUI. CONTINUE.', cls: 'neon-text', icon: '🦅', bg: 'rgba(0,255,100,0.03)', border: 'border-[#00FF64]/20' };
-      if (avg >= 60) return { text: 'ACIMA DA MÉDIA, MAS MÉDIA NÃO É O SEU PADRÃO. SUBA.', cls: 'neon-yellow', icon: '⚔️', bg: 'rgba(250,204,21,0.04)', border: 'border-yellow-700/30' };
-      if (avg >= 40) return { text: 'VOCÊ ESTÁ SENDO MEDÍOCRE. O TEMPO NÃO ESPERA. REAJA.', cls: 'neon-red', icon: '⚠️', bg: 'rgba(255,50,50,0.04)', border: 'border-red-900/30' };
-      return { text: 'ALERTA VERMELHO. VOCÊ ESTÁ SE SABOTANDO. ACORDE AGORA.', cls: 'neon-red', icon: '💀', bg: 'rgba(255,50,50,0.06)', border: 'border-red-900/40' };
+      if (avg >= 90) return { text: 'PERFORMANCE EXCEPCIONAL. MANTENHA O PROTOCOLO.', cls: 'neon-text', icon: '👑', bg: 'rgba(0,255,100,0.05)', border: 'border-[#00FF64]/30' };
+      if (avg >= 80) return { text: 'DESEMPENHO DE ELITE. CONSISTÊNCIA É A CHAVE.', cls: 'neon-text', icon: '🦅', bg: 'rgba(0,255,100,0.03)', border: 'border-[#00FF64]/20' };
+      if (avg >= 60) return { text: 'ACIMA DA MÉDIA. MAS SEU PADRÃO É MAIS ALTO. SUBA.', cls: 'neon-yellow', icon: '⚔️', bg: 'rgba(250,204,21,0.04)', border: 'border-yellow-700/30' };
+      if (avg >= 40) return { text: 'ABAIXO DO ESPERADO. O TEMPO NÃO ESPERA. REAJA.', cls: 'neon-red', icon: '⚠️', bg: 'rgba(255,50,50,0.04)', border: 'border-red-900/30' };
+      return { text: 'ALERTA VERMELHO. VOCÊ ESTÁ SE SABOTANDO. RECOMECE AGORA.', cls: 'neon-red', icon: '💀', bg: 'rgba(255,50,50,0.06)', border: 'border-red-900/40' };
     }
 
     // =============================================
@@ -4343,8 +4354,8 @@
       return `
         <div class="tab-enter stagger-enter space-y-5 max-w-md mx-auto">
           <div class="pt-1">
-            <h2 class="text-3xl font-black">The <span class="neon-text">Fuel</span></h2>
-            <p class="text-gray-400 text-base font-semibold mt-1">O Combustível do Guerreiro.</p>
+            <h2 class="text-3xl font-black">Bio-<span class="neon-text">Nutrição</span></h2>
+            <p class="text-gray-400 text-base font-semibold mt-1">Biohacking e nutrição tática.</p>
           </div>
 
           <!-- SUB-TAB TOGGLE -->
@@ -4420,7 +4431,7 @@
             <button onclick="showFuelAdvisor=true;renderActiveTab();"
               class="w-full py-4 rounded-xl font-extrabold text-sm text-white active:scale-[0.93] haptic transition-transform ${showFuelAdvisor ? 'hidden' : ''}"
               style="background: linear-gradient(135deg, #0a2a0a 0%, #050f05 50%, #000 100%); border: 1px solid rgba(0,255,100,0.2);">
-              <span class="text-lg mr-2">🧬</span> CONSULTAR NUTRICIONISTA — IA
+              <span class="text-lg mr-2">🧬</span> CONSULTAR BIOHACKER — IA
             </button>
             ${showFuelAdvisor ? renderFuelAdvisor() : ''}
 
@@ -4481,7 +4492,7 @@
             <span class="chat-terminal-dot bg-green-500"></span>
             <span class="chat-terminal-dot bg-green-400"></span>
             <span class="chat-terminal-dot bg-green-300"></span>
-            <span class="text-[10px] font-bold text-gray-600 ml-2">TERMINAL — NUTRICIONISTA DE ELITE</span>
+            <span class="text-[10px] font-bold text-gray-600 ml-2">TERMINAL — BIOHACKER DE ELITE</span>
             <div class="ml-auto">
               <button onclick="showFuelAdvisor=false;renderActiveTab();" class="min-w-[36px] min-h-[36px] flex items-center justify-center text-gray-600 hover:text-red-400 rounded-lg active:bg-white/5">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -4497,7 +4508,7 @@
             ` : fuelChat.map(msg => `
               <div class="${msg.role === 'user' ? 'ml-8' : 'mr-4'}">
                 <div class="${msg.role === 'user' ? 'msg-user' : 'fuel-analysis-panel'} p-4" style="${msg.role === 'user' ? 'border-color: rgba(0,255,100,0.15); background: rgba(0,255,100,0.05);' : ''}">
-                  <p class="text-[10px] font-extrabold ${msg.role === 'user' ? 'text-[#00FF64]' : 'text-gray-500'} mb-1">${msg.role === 'user' ? 'VOCÊ' : 'NUTRICIONISTA'}</p>
+                  <p class="text-[10px] font-extrabold ${msg.role === 'user' ? 'text-[#00FF64]' : 'text-gray-500'} mb-1">${msg.role === 'user' ? 'VOCÊ' : 'BIOHACKER'}</p>
                   ${msg.role === 'user'
                     ? '<p class="text-sm font-semibold text-gray-300 leading-relaxed whitespace-pre-wrap break-words">' + escapeHtml(msg.text) + '</p>'
                     : '<div class="ai-prose text-sm font-medium text-gray-400 leading-relaxed break-words">' + (typeof marked !== 'undefined' ? marked.parse(msg.text) : msg.text) + '</div>'
@@ -4702,8 +4713,8 @@
       return `
         <div class="tab-enter stagger-enter space-y-5 max-w-md mx-auto">
           <div class="pt-1">
-            <h2 class="text-3xl font-black">Mentor <span class="text-royal">Estoico</span></h2>
-            <p class="text-gray-400 text-base font-semibold mt-1">Gemini AI — Coach implacável de alta performance.</p>
+            <h2 class="text-3xl font-black">Mentor <span class="text-royal">Ressurgido</span></h2>
+            <p class="text-gray-400 text-base font-semibold mt-1">Gemini AI — Disciplina pura e foco absoluto.</p>
           </div>
 
           <!-- Gemini Status -->
@@ -4711,7 +4722,7 @@
             <div class="w-2.5 h-2.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(0,255,100,0.5)]"></div>
             <div>
               <p class="text-xs font-extrabold text-gray-300">Gemini ${GEMINI_MODEL}</p>
-              <p class="text-[10px] font-bold text-gray-600">Conectado — Mentor Estoico GigaChad ativo</p>
+              <p class="text-[10px] font-bold text-gray-600">Conectado — Mentor Ressurgido ativo</p>
             </div>
           </div>
 
@@ -4721,7 +4732,7 @@
               <span class="chat-terminal-dot bg-green-500"></span>
               <span class="chat-terminal-dot bg-yellow-500"></span>
               <span class="chat-terminal-dot bg-red-500"></span>
-              <span class="text-[10px] font-bold text-gray-600 ml-2">TERMINAL — MENTOR ESTOICO</span>
+              <span class="text-[10px] font-bold text-gray-600 ml-2">TERMINAL — MENTOR RESSURGIDO</span>
             </div>
             <div id="chatMessages" class="p-4 space-y-3 max-h-96 overflow-y-auto min-h-[200px]" style="scrollbar-width: thin; scrollbar-color: #222 #000;">
               ${userState.chatHistory.length === 0 ? `
@@ -4758,7 +4769,7 @@
           <div class="bg-card border border-border rounded-xl p-4">
             <p class="text-xs font-bold text-gray-500 mb-2">PROMPTS RÁPIDOS</p>
             <div class="flex flex-wrap gap-2">
-              ${['Como criar disciplina?', 'Dicas para acordar cedo', 'Como economizar mais', 'Rotina de um guerreiro'].map(p => `
+              ${['Como criar disciplina?', 'Dicas para acordar cedo', 'Como economizar mais', 'Como manter consistência'].map(p => `
                 <button onclick="quickPrompt('${p}')" class="px-3 py-1.5 rounded-full bg-black border border-border text-xs font-bold text-gray-400 hover:border-royal hover:text-royal transition-colors">
                   ${p}
                 </button>
@@ -4805,10 +4816,10 @@
 
         // Build conversation context for Gemini
         const recentChat = userState.chatHistory.slice(-10).map(m =>
-          `${m.role === 'user' ? 'SOLDADO' : 'MENTOR'}: ${m.content}`
+          `${m.role === 'user' ? 'USUÁRIO' : 'MENTOR'}: ${m.content}`
         ).join('\n');
 
-        const prompt = `Histórico recente:\n${recentChat}\n\nResponda a última mensagem do SOLDADO de forma direta, concisa (máx 3 frases). Seja implacável e motivador.`;
+        const prompt = `Histórico recente:\n${recentChat}\n\nResponda a última mensagem do USUÁRIO de forma direta, concisa (máx 3 frases). Seja disciplinado e motivador.`;
 
         const reply = await callGemini(prompt, 200);
         userState.chatHistory.push({ role: 'assistant', content: reply });
@@ -5081,27 +5092,27 @@
           <a class="sidebar-link" onclick="closeSidebar();switchTab('grind');">
             <span class="sidebar-link-icon">
               <svg class="w-[18px] h-[18px] inline" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-            </span> THE GRIND
+            </span> MISSÕES DIÁRIAS
           </a>
           <a class="sidebar-link" onclick="closeSidebar();switchTab('treino');">
             <span class="sidebar-link-icon">
               <svg class="w-[18px] h-[18px] inline" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg>
-            </span> ATLAS
+            </span> PROTOCOLO DE TREINO
           </a>
           <a class="sidebar-link" onclick="closeSidebar();switchTab('warchest');">
             <span class="sidebar-link-icon">
               <svg class="w-[18px] h-[18px] inline" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            </span> WAR CHEST
+            </span> GESTÃO DE CAPITAL
           </a>
           <a class="sidebar-link" onclick="closeSidebar();switchTab('focus');">
             <span class="sidebar-link-icon">
               <svg class="w-[18px] h-[18px] inline" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            </span> DEEP WORK
+            </span> FOCO PROFUNDO
           </a>
           <a class="sidebar-link" onclick="closeSidebar();switchTab('fuel');">
             <span class="sidebar-link-icon">
               <svg class="w-[18px] h-[18px] inline" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 6.51 6.51 0 009 11.5a3 3 0 105.663-1.413l.688-5.873z"/></svg>
-            </span> THE FUEL
+            </span> BIO-NUTRIÇÃO
           </a>
           <a class="sidebar-link" onclick="closeSidebar();switchTab('dashboard');" style="border-bottom: none;">
             <span class="sidebar-link-icon">
@@ -5111,7 +5122,7 @@
         </nav>
 
         <!-- Separator -->
-        <div class="my-4" style="height: 1px; background: linear-gradient(90deg, transparent, rgba(37,99,235,0.2), rgba(124,58,237,0.15), transparent);"></div>
+        <div class="my-4" style="height: 1px; background: linear-gradient(90deg, transparent, rgba(0,210,180,0.15), rgba(37,99,235,0.1), transparent);"></div>
 
         <!-- Secondary -->
         <nav>
@@ -5183,8 +5194,8 @@
             <div class="flex items-center gap-2.5">
               <div class="w-9 h-9 rounded-lg flex items-center justify-center text-sm" style="background: linear-gradient(135deg, #1e3a5f, #0a0a0a); border: 1px solid rgba(37,99,235,0.3);">🏦</div>
               <div>
-                <p class="text-sm font-black text-blue-400">GESTOR DE CAPITAL</p>
-                <p class="text-[10px] font-bold text-gray-600">Gemini AI — Modo Banqueiro</p>
+                <p class="text-sm font-black text-blue-400">ESTRATEGISTA DE CAPITAL</p>
+                <p class="text-[10px] font-bold text-gray-600">Gemini AI — Modo Estrategista</p>
               </div>
             </div>
             <button onclick="closeGestorBottomSheet()" class="min-w-[44px] min-h-[44px] flex items-center justify-center text-gray-600 hover:text-red-400 rounded-xl active:bg-white/5">
@@ -5201,7 +5212,7 @@
             ` : warChestChat.map(msg => `
               <div class="${msg.role === 'user' ? 'ml-6' : 'mr-3'}">
                 <div class="${msg.role === 'user' ? 'msg-user' : 'msg-ai'} p-4">
-                  <p class="text-[10px] font-extrabold ${msg.role === 'user' ? 'text-blue-400' : 'text-gray-500'} mb-1">${msg.role === 'user' ? 'VOCÊ' : 'GESTOR'}</p>
+                  <p class="text-[10px] font-extrabold ${msg.role === 'user' ? 'text-blue-400' : 'text-gray-500'} mb-1">${msg.role === 'user' ? 'VOCÊ' : 'ESTRATEGISTA'}</p>
                   ${msg.role === 'user'
                     ? '<p class="text-sm font-semibold text-gray-300 leading-relaxed whitespace-pre-wrap break-words">' + escapeHtml(msg.text) + '</p>'
                     : '<div class="ai-prose text-sm font-medium text-gray-400 leading-relaxed break-words">' + (typeof marked !== 'undefined' ? marked.parse(msg.text) : msg.text) + '</div>'
@@ -5282,7 +5293,7 @@
       el.innerHTML = warChestChat.map(msg => `
         <div class="${msg.role === 'user' ? 'ml-6' : 'mr-3'}">
           <div class="${msg.role === 'user' ? 'msg-user' : 'msg-ai'} p-4">
-            <p class="text-[10px] font-extrabold ${msg.role === 'user' ? 'text-blue-400' : 'text-gray-500'} mb-1">${msg.role === 'user' ? 'VOCÊ' : 'GESTOR'}</p>
+            <p class="text-[10px] font-extrabold ${msg.role === 'user' ? 'text-blue-400' : 'text-gray-500'} mb-1">${msg.role === 'user' ? 'VOCÊ' : 'ESTRATEGISTA'}</p>
             ${msg.role === 'user'
               ? '<p class="text-sm font-semibold text-gray-300 leading-relaxed whitespace-pre-wrap break-words">' + escapeHtml(msg.text) + '</p>'
               : '<div class="ai-prose text-sm font-medium text-gray-400 leading-relaxed break-words">' + (typeof marked !== 'undefined' ? marked.parse(msg.text) : msg.text) + '</div>'
@@ -5438,7 +5449,7 @@
       if (hour >= 12 && done < total) extra += '\nALERTA: Passou do MEIO-DIA e hábitos INCOMPLETOS. Seja EXTRA AGRESSIVO sobre preguiça.';
       if (dopPct > 15) extra += '\nALERTA: Dopamina Barata acima de 15%! Inclua uma ORDEM DE CORTE DE GASTOS.';
 
-      const prompt = `DADOS (${today} ${hour}h): Hábitos ${done}/${total}, Score ${score}/100, Gastos hoje: Essencial R$${essencial.toFixed(0)} Dopamina R$${dopamina.toFixed(0)}, Streak ${userState.streakCount || 0}d.${extra}\n\nVEREDITO: Exatamente 2 frases. Direto, estoico, cobrador.`;
+      const prompt = `DADOS (${today} ${hour}h): Hábitos ${done}/${total}, Score ${score}/100, Gastos hoje: Essencial R$${essencial.toFixed(0)} Dopamina R$${dopamina.toFixed(0)}, Streak ${userState.streakCount || 0}d.${extra}\n\nVEREDITO: Exatamente 2 frases. Direto, disciplinado, cobrador.`;
       const verdict = await callGemini(prompt, 150);
 
       userState.aiCache[cacheKey] = verdict;
@@ -5457,7 +5468,7 @@
     }
 
     async function fetchRecaidaFeedback(label) {
-      const msg = await callGemini(`O soldado RECAIU no vício "${label}". Bronca em 1 frase curta. Mande recomeçar AGORA.`, 80);
+      const msg = await callGemini(`O usuário RECAIU no vício "${label}". Repreenda em 1 frase curta. Mande recomeçar AGORA.`, 80);
       showToast(msg, 5000);
     }
 
@@ -5491,7 +5502,7 @@
         return `${d.label || v.label}: ${t.days}d ${t.hours}h`;
       }).join(', ');
       const stag = Object.keys(getStagnationAlerts());
-      const prompt = `RELATÓRIO SEMANAL DO SOLDADO:
+      const prompt = `RELATÓRIO SEMANAL:
 Score Médio ${avg}/100, Streak ${userState.streakCount||0}d, Hábitos ${getWeekHabitRate()}%, Foco ${getWeekFocusHours()}h
 Scores: ${weekScores.map(d=>d.dayLabel+':'+d.score).join(' ')}
 Finanças: Budget R$${fin.budget}, Gasto R$${fin.totalGasto}, Essencial R$${fin.totalEssencial}, Dopamina R$${fin.totalDopamina}, Saldo R$${fin.saldo}
@@ -5499,10 +5510,10 @@ Vícios: ${vicData}
 Treino estagnado: ${stag.length>0?stag.join(', '):'nenhum'}
 
 ANÁLISE COMPLETA no formato:
-[VEREDITO ESTOICO] 2 frases estado geral
+[VEREDITO] 2 frases estado geral
 [ANÁLISE DE FALHAS] max 4 pontos fracos
 [MISSÃO PRÓXIMA SEMANA] 3 ordens executáveis
-Formato terminal militar. Sem emojis. Direto e brutal.`;
+Formato direto e disciplinado. Sem emojis.`;
       return await callGemini(prompt, 600);
     }
 
@@ -5527,7 +5538,7 @@ Formato terminal militar. Sem emojis. Direto e brutal.`;
       const btn = document.getElementById('analysisBtn');
       const result = document.getElementById('analysisResult');
       if (btn) { btn.textContent = 'PROCESSANDO...'; btn.disabled = true; }
-      if (result) { result.classList.remove('hidden'); result.textContent = '> Conectando ao Mentor Estoico...\n> Analisando dados de combate...\n> Processando...'; }
+      if (result) { result.classList.remove('hidden'); result.textContent = '> Conectando ao Mentor Ressurgido...\n> Analisando dados de combate...\n> Processando...'; }
       const analysis = await fetchFullAnalysis();
       if (result) result.textContent = analysis;
       if (btn) { btn.textContent = 'ANÁLISE DE GUERRA COMPLETA'; btn.disabled = false; }
