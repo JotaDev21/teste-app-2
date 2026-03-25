@@ -229,9 +229,10 @@
     .ai-prose code { background: rgba(124,58,237,0.15); color: #c4b5fd; padding: 0.15em 0.4em; border-radius: 4px; font-size: 0.85em; }
     .ai-prose pre { background: #0a0a0a; border: 1px solid #1a1a2e; border-radius: 8px; padding: 0.8em; overflow-x: auto; margin: 0.5em 0; }
     .ai-prose pre code { background: none; padding: 0; }
-    .ai-prose table { width: 100%; border-collapse: collapse; margin: 0.5em 0; font-size: 0.85em; }
-    .ai-prose th { background: rgba(124,58,237,0.2); color: #c4b5fd; padding: 0.4em 0.6em; text-align: left; border: 1px solid #2a1a4e; }
-    .ai-prose td { padding: 0.4em 0.6em; border: 1px solid #1a1a2e; }
+    .ai-prose table { width: 100%; border-collapse: collapse; margin: 0.8em 0; font-size: 0.8rem; display: table; table-layout: auto; }
+    .ai-prose th { background: rgba(124,58,237,0.2); color: #c4b5fd; padding: 8px 10px; text-align: left; border: 1px solid rgba(255,255,255,0.1); white-space: nowrap; }
+    .ai-prose td { padding: 8px 10px; border: 1px solid rgba(255,255,255,0.08); }
+    .ai-prose-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
     .ai-prose blockquote { border-left: 3px solid #7c3aed; padding-left: 0.8em; margin: 0.5em 0; color: #a78bfa; font-style: italic; }
     .ai-prose a { color: #a78bfa; text-decoration: underline; }
 
@@ -515,8 +516,8 @@
       border-radius: 18px;
     }
     .fuel-analysis-panel .ai-prose strong { color: #86efac; }
-    .fuel-analysis-panel .ai-prose th { background: rgba(0,255,100,0.12); color: #86efac; border-color: #0a2a0a; }
-    .fuel-analysis-panel .ai-prose td { border-color: #0a1a0a; }
+    .fuel-analysis-panel .ai-prose th { background: rgba(0,255,100,0.12); color: #86efac; border-color: rgba(0,255,100,0.15); }
+    .fuel-analysis-panel .ai-prose td { border-color: rgba(0,255,100,0.08); }
     .fuel-analysis-panel .ai-prose code { background: rgba(0,255,100,0.1); color: #86efac; }
     .fuel-analysis-panel .ai-prose li::marker { color: #00FF64; }
     .fuel-analysis-panel .ai-prose blockquote { border-left-color: #00FF64; color: #86efac; }
@@ -1150,6 +1151,13 @@
   </main>
 
   <script>
+    // =============================================
+    // MARKED.JS CONFIGURATION (GFM tables + breaks)
+    // =============================================
+    if (typeof marked !== 'undefined') {
+      marked.setOptions({ gfm: true, breaks: true });
+    }
+
     // =============================================
     // SUPABASE CONFIGURATION
     // =============================================
@@ -4377,7 +4385,7 @@
 
         // Send to API
         const objetivo = userState.fuelGoal || 'manutenção';
-        const prompt = `Objetivo atual do usuário: ${objetivo}. Identifique os alimentos nesta imagem. Estime calorias totais, gramas de proteína, carboidratos (e seu índice glicêmico estimado) e gorduras (boas vs ruins). Liste em uma tabela. Dê um veredito para um diabético e avalie se a refeição é adequada para o objetivo de ${objetivo}.`;
+        const prompt = `Objetivo atual do usuário: ${objetivo}. O usuário tem DIABETES TIPO 1 (insulinodependente). Identifique os alimentos nesta imagem. Estime calorias totais, gramas de proteína, carboidratos totais (com contagem de carboidratos para bolus de insulina), índice glicêmico estimado e gorduras (boas vs ruins). Liste em uma tabela. Dê um veredito focado em DM1: impacto glicêmico, sugestão de relação insulina/carbo e avalie se a refeição é adequada para o objetivo de ${objetivo}.`;
 
         const resp = await callGemini(prompt, null, null, null, 'the_fuel', base64);
 
@@ -4541,9 +4549,9 @@
               </div>
             ` : ''}
             ${fuelAnalysis ? `
-              <div class="fuel-analysis-panel p-5">
-                <p class="text-[10px] font-extrabold tracking-[0.2em] text-[#00FF64]/60 mb-3">ANÁLISE NUTRICIONAL</p>
-                <div class="ai-prose text-sm font-medium text-gray-400 leading-relaxed break-words">
+              <div class="fuel-analysis-panel p-8">
+                <p class="text-[10px] font-extrabold tracking-[0.2em] text-[#00FF64]/60 mb-4">ANÁLISE NUTRICIONAL — DM1</p>
+                <div class="ai-prose ai-prose-scroll text-sm font-medium text-gray-400 leading-relaxed break-words">
                   ${typeof marked !== 'undefined' ? marked.parse(fuelAnalysis.text) : fuelAnalysis.text}
                 </div>
               </div>
@@ -4601,7 +4609,7 @@
                       <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
                     </button>
                   </div>
-                  <div class="ai-prose text-xs font-medium text-gray-500 leading-relaxed break-words max-h-40 overflow-y-auto" style="scrollbar-width: thin; scrollbar-color: #1a1a1a #000;">
+                  <div class="ai-prose ai-prose-scroll text-xs font-medium text-gray-500 leading-relaxed break-words max-h-40 overflow-y-auto" style="scrollbar-width: thin; scrollbar-color: #1a1a1a #000;">
                     ${typeof marked !== 'undefined' ? marked.parse(l.analysis || '') : (l.analysis || '')}
                   </div>
                 </div>
@@ -4627,7 +4635,7 @@
             </div>
           </div>
 
-          <div id="fuelMentorMessages" class="p-4 space-y-3 max-h-96 overflow-y-auto" style="scrollbar-width: thin; scrollbar-color: #0a2a0a #000;">
+          <div id="fuelMentorMessages" class="p-6 space-y-4 max-h-96 overflow-y-auto" style="scrollbar-width: thin; scrollbar-color: #0a2a0a #000;">
             ${fuelChat.length === 0 ? `
               <div class="text-center py-4">
                 <p class="text-sm font-bold text-gray-600">Pergunte sobre dieta, macros, suplementação, índice glicêmico...</p>
@@ -4638,7 +4646,7 @@
                   <p class="text-[10px] font-extrabold ${msg.role === 'user' ? 'text-[#00FF64]' : 'text-gray-500'} mb-1">${msg.role === 'user' ? 'VOCÊ' : 'BIOHACKER'}</p>
                   ${msg.role === 'user'
                     ? '<p class="text-sm font-semibold text-gray-300 leading-relaxed whitespace-pre-wrap break-words">' + escapeHtml(msg.text) + '</p>'
-                    : '<div class="ai-prose text-sm font-medium text-gray-400 leading-relaxed break-words">' + (typeof marked !== 'undefined' ? marked.parse(msg.text) : msg.text) + '</div>'
+                    : '<div class="ai-prose ai-prose-scroll text-sm font-medium text-gray-400 leading-relaxed break-words">' + (typeof marked !== 'undefined' ? marked.parse(msg.text) : msg.text) + '</div>'
                   }
                 </div>
               </div>
