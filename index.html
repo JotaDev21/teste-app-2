@@ -2252,17 +2252,11 @@
           const data = userState.vicios[v.id];
           if (!data || !data.startedAt) return;
           const el = document.getElementById('timer-' + v.id);
-          const subEl = document.getElementById('timer-sub-' + v.id);
           if (!el) return;
+          // Only update text content — NEVER touch className or style (card owns those)
           const time = calcTimeSince(data.startedAt);
-          const level = getVicioLevel(time.days);
-          const glowColor = time.days >= 30 ? 'rgba(0,255,100,0.3)' : time.days >= 7 ? 'rgba(37,99,235,0.25)' : 'rgba(255,255,255,0.06)';
-          el.textContent = String(time.days).padStart(2, '0');
-          el.className = `soberania-giant ${level.cls}`;
-          el.style.textShadow = `0 4px 12px rgba(0,0,0,0.8), 0 0 30px ${glowColor}`;
-          if (subEl) {
-            subEl.textContent = `${String(time.hours).padStart(2, '0')}h ${String(time.mins).padStart(2, '0')}m`;
-          }
+          const streak = calcularStreakSobriedade(data.diasVencidos);
+          el.textContent = streak > 0 ? streak + 'd' : time.days + 'd';
         });
       }, 30000);
     }
@@ -2630,7 +2624,7 @@
               <span class="text-xl">⛓️</span>
               <span class="text-xs font-extrabold tracking-[0.2em] text-gray-400">SOBERANIA</span>
             </div>
-            <div class="grid grid-cols-2 gap-3">
+            <div class="flex flex-col gap-6">
               ${renderSoberaniaSection()}
             </div>
           </div>
@@ -6114,8 +6108,12 @@ Formato direto e disciplinado. Sem emojis.`;
 
     function confirmRecaida(vicioId) {
       closeRecaidaOverlay();
-      // Reset all progress
-      userState.vicios[vicioId].startedAt = new Date().toISOString();
+      // Kill battle timer IMMEDIATELY before any DOM update
+      if (battleTimerInterval) { clearInterval(battleTimerInterval); battleTimerInterval = null; }
+      const timerEl = document.getElementById('battlePrecisionTimer');
+      if (timerEl) timerEl.textContent = '00 : 00 : 00 : 00';
+      // FULL RESET — back to INACTIVE (startedAt = null, not new Date!)
+      userState.vicios[vicioId].startedAt = null;
       userState.vicios[vicioId].diasVencidos = [];
       userState.vicios[vicioId].ultimoCheckin = null;
       haptic(100);
