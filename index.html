@@ -51,6 +51,26 @@
     ::-webkit-scrollbar-track { background: #000; }
     ::-webkit-scrollbar-thumb { background: #222; border-radius: 4px; }
 
+    /* ===== PREMIUM DASHBOARD TOKENS ===== */
+    :root {
+      --prem-bg-card: #111113;
+      --prem-bg-card-elevated: #131315;
+      --prem-bg-surface: #1A1A1D;
+      --prem-border-subtle: rgba(255,255,255,0.04);
+      --prem-border-default: rgba(255,255,255,0.07);
+      --prem-text-primary: #F5F5F7;
+      --prem-text-secondary: #8E8E93;
+      --prem-text-tertiary: #48484A;
+      --prem-text-quaternary: #2C2C2E;
+      --prem-accent-green: #34D399;
+      --prem-accent-red: #F87171;
+      --prem-accent-amber: #FBBF24;
+      --prem-accent-blue: #3B82F6;
+      --prem-accent-purple: #A78BFA;
+      --prem-shadow-card: 0 1px 3px rgba(0,0,0,0.4), 0 4px 16px rgba(0,0,0,0.3);
+      --prem-shadow-elevated: 0 2px 8px rgba(0,0,0,0.5), 0 8px 32px rgba(0,0,0,0.4);
+    }
+
     /* ===== NEUMORPHIC CARD SYSTEM ===== */
     .card-neu {
       background: rgba(17,17,17,0.7);
@@ -628,6 +648,127 @@
     /* Haptic press — universal */
     .haptic { transition: transform 0.15s cubic-bezier(.4,0,.2,1); }
     .haptic:active { transform: scale(0.90); }
+
+    /* ===== PREMIUM DASHBOARD CLASSES ===== */
+    .prem-card {
+      background: var(--prem-bg-card);
+      border: 1px solid var(--prem-border-subtle);
+      border-radius: 16px;
+      box-shadow: var(--prem-shadow-card);
+      transition: border-color 0.2s ease;
+    }
+    .prem-card-elevated {
+      background: var(--prem-bg-card-elevated);
+      border: 1px solid var(--prem-border-default);
+      border-radius: 20px;
+      box-shadow: var(--prem-shadow-elevated);
+    }
+    .prem-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: var(--prem-text-tertiary);
+      text-transform: uppercase;
+    }
+    .prem-stat {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-variant-numeric: tabular-nums;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--prem-text-primary);
+    }
+    .prem-score-ring {
+      background: conic-gradient(
+        var(--ring-color) calc(var(--score) * 3.6deg),
+        var(--prem-bg-surface) 0deg
+      );
+      border-radius: 50%;
+      padding: 3px;
+    }
+    .prem-score-ring-inner {
+      background: var(--prem-bg-card-elevated);
+      border-radius: 50%;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .prem-bar-track {
+      background: var(--prem-bg-surface);
+      border-radius: 999px;
+      overflow: hidden;
+      height: 6px;
+    }
+    .prem-bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.7s cubic-bezier(.4,0,.2,1);
+    }
+    .prem-chart-bar {
+      border-radius: 6px 6px 3px 3px;
+      transition: height 0.6s cubic-bezier(.25,.46,.45,.94);
+    }
+    .prem-accent-stripe {
+      position: relative;
+      padding-left: 16px;
+    }
+    .prem-accent-stripe::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 4px;
+      bottom: 4px;
+      width: 3px;
+      border-radius: 2px;
+      background: var(--stripe-color, var(--prem-accent-blue));
+    }
+    .prem-glow-green { box-shadow: var(--prem-shadow-elevated), 0 0 30px rgba(52,211,153,0.06); }
+    .prem-glow-amber { box-shadow: var(--prem-shadow-elevated), 0 0 30px rgba(251,191,36,0.06); }
+    .prem-glow-red { box-shadow: var(--prem-shadow-elevated), 0 0 30px rgba(248,113,113,0.06); }
+    .prem-divider {
+      height: 1px;
+      background: var(--prem-border-subtle);
+    }
+    .prem-metric {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 12px;
+    }
+    .prem-metric-value {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      color: var(--prem-text-primary);
+      font-variant-numeric: tabular-nums;
+    }
+    .prem-metric-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--prem-text-tertiary);
+      margin-top: 8px;
+      text-transform: uppercase;
+    }
+    .prem-stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .prem-stat-row-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--prem-text-secondary);
+    }
+    .prem-stat-row-value {
+      font-size: 12px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
 
     /* Spring entrance for modals/panels */
     @keyframes springIn {
@@ -2677,147 +2818,79 @@
       // Schedule AI verdict fetch
       setTimeout(fetchAIVerdict, 300);
 
+      const premRingColor = score <= 30 ? '#F87171' : score <= 70 ? '#FBBF24' : '#34D399';
+      const premGlowClass = score <= 30 ? 'prem-glow-red' : score <= 70 ? 'prem-glow-amber' : 'prem-glow-green';
+      const premStatusText = score <= 30
+        ? 'Reagir ou morrer.'
+        : score <= 70
+        ? 'Bom, mas bom nao e o bastante.'
+        : 'Voce esta no controle total.';
+
       return `
-        <div class="tab-enter stagger-enter space-y-8 max-w-md mx-auto">
+        <div class="tab-enter stagger-enter space-y-5 max-w-md mx-auto">
 
-          <!-- ESTADO DO RESSURGIDO — Profile Card -->
-          <div class="card-neu rounded-2xl p-8">
-            <div class="flex items-center gap-4 mb-6">
-              <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl"
-                   style="background: linear-gradient(135deg, #0a0a1a, #000); border: 1px solid rgba(37,99,235,0.2); box-shadow: 0 0 20px rgba(37,99,235,0.08);">
-                ${userState.profile?.avatar || '⚔️'}
-              </div>
-              <div>
-                <p class="text-xl font-black text-white tracking-wide">${escapeHtml(userState.profile?.name || 'Soldado').toUpperCase()}</p>
-                <p class="text-[10px] font-extrabold tracking-[0.2em] text-royal">OPERADOR ATIVO</p>
+          <!-- S1: HERO SCORE -->
+          <div class="prem-card-elevated p-8 flex flex-col items-center ${premGlowClass}">
+            <p class="prem-label mb-5">Resurrection Score</p>
+            <div class="prem-score-ring w-36 h-36" style="--score:${score}; --ring-color:${premRingColor}">
+              <div class="prem-score-ring-inner">
+                <span class="prem-stat text-5xl" style="letter-spacing:-2px; color:${premRingColor};">${score}</span>
+                <span class="text-xs font-semibold mt-1" style="color:var(--prem-text-tertiary);">/100</span>
               </div>
             </div>
-            ${(() => {
-              const vit = calcVitalidade();
-              return `
-                <div class="mb-3">
-                  <div class="flex justify-between items-center mb-1.5">
-                    <span class="text-[10px] font-extrabold tracking-[0.15em] text-gray-500">VITALIDADE</span>
-                    <span class="text-[10px] font-black text-emerald-400 tabular-nums font-mono">${vit}%</span>
-                  </div>
-                  <div class="w-full h-2 bg-black rounded-full overflow-hidden" style="box-shadow: inset 0 0 6px rgba(0,0,0,0.8);">
-                    <div class="h-full rounded-full transition-all duration-700" style="width:${vit}%; background: linear-gradient(90deg, #00FF64, #06B6D4); box-shadow: 0 0 8px rgba(0,255,100,0.3);"></div>
-                  </div>
-                  <p class="text-[9px] font-bold text-gray-700 mt-0.5">DIETA / TREINO</p>
-                </div>
-              `;
-            })()}
-            ${(() => {
-              const res = calcResiliencia();
-              return `
-                <div>
-                  <div class="flex justify-between items-center mb-1.5">
-                    <span class="text-[10px] font-extrabold tracking-[0.15em] text-gray-500">RESILIÊNCIA</span>
-                    <span class="text-[10px] font-black text-blue-400 tabular-nums font-mono">${res}%</span>
-                  </div>
-                  <div class="w-full h-2 bg-black rounded-full overflow-hidden" style="box-shadow: inset 0 0 6px rgba(0,0,0,0.8);">
-                    <div class="h-full rounded-full transition-all duration-700" style="width:${res}%; background: linear-gradient(90deg, #3B82F6, #8B5CF6); box-shadow: 0 0 8px rgba(59,130,246,0.3);"></div>
-                  </div>
-                  <p class="text-[9px] font-bold text-gray-700 mt-0.5">SOBERANIA</p>
-                </div>
-              `;
-            })()}
+            <div class="flex items-center gap-2.5 mt-5">
+              ${streak > 0
+                ? `<span class="text-base">🔥</span>
+                   <span class="text-sm font-bold" style="color:${premRingColor};">${streak} dia${streak !== 1 ? 's' : ''} em sequencia</span>`
+                : `<span class="text-sm font-medium" style="color:var(--prem-text-tertiary);">Sem sequencia ativa</span>`}
+            </div>
+            <p class="text-sm font-semibold mt-3" style="color:var(--prem-text-secondary);">${premStatusText}</p>
           </div>
 
-          <!-- GRID DE ATRIBUTOS -->
-          <div class="grid grid-cols-2 gap-6">
-            <div class="card-neu rounded-2xl p-5 text-center">
-              <p class="text-3xl font-black text-white tabular-nums font-mono">${getTotalSoberaniaDays()}</p>
-              <p class="text-[9px] font-extrabold tracking-[0.15em] text-gray-500 mt-1">DIAS DE SOBERANIA</p>
-            </div>
-            <div class="card-neu rounded-2xl p-5 text-center">
-              <p class="text-3xl font-black text-white tabular-nums font-mono">${getMissionSuccessRateThisWeek()}%</p>
-              <p class="text-[9px] font-extrabold tracking-[0.15em] text-gray-500 mt-1">MISSÕES (SEMANA)</p>
-            </div>
-            <div class="card-neu rounded-2xl p-5 text-center">
-              <p class="text-3xl font-black tabular-nums font-mono ${userState.ultimaGlicemia ? (userState.ultimaGlicemia.value > 180 ? 'text-red-400' : userState.ultimaGlicemia.value < 70 ? 'text-yellow-400' : 'neon-text') : 'text-gray-700'}">
-                ${userState.ultimaGlicemia ? userState.ultimaGlicemia.value : '—'}
-              </p>
-              <p class="text-[9px] font-extrabold tracking-[0.15em] text-gray-500 mt-1">GLICEMIA mg/dL</p>
-              ${userState.ultimaGlicemia ? `<p class="text-[8px] font-bold text-gray-700">${new Date(userState.ultimaGlicemia.timestamp).toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'})}</p>` : ''}
-            </div>
-            ${(() => {
-              const lvl = calcularNivel(userState.xpTotal || 0);
-              return `
-                <div class="card-neu rounded-2xl p-5 text-center cursor-pointer active:scale-[0.97] transition-transform" onclick="switchTab('perfil')">
-                  <p class="text-3xl font-black ${lvl.isMax ? 'text-yellow-400' : 'text-royal'} tabular-nums font-mono">LVL ${lvl.nivel}</p>
-                  <p class="text-[9px] font-extrabold tracking-[0.15em] text-gray-500 mt-1">${(userState.xpTotal || 0).toLocaleString('pt-BR')} XP</p>
-                </div>
-              `;
-            })()}
-          </div>
-
-          <!-- O VEREDITO DO MENTOR -->
-          <div class="ai-verdict-card glass-panel rounded-2xl p-5 border border-red-900/20">
-            <div class="flex items-center gap-2.5 mb-3">
-              <span class="text-xl">⚖️</span>
-              <span class="text-xs font-extrabold tracking-[0.2em] text-red-400">O VEREDITO DO MENTOR</span>
-            </div>
-            <div id="aiVerdictSkeleton">
-              <div class="skeleton skeleton-text w-full"></div>
-              <div class="skeleton skeleton-text medium"></div>
-              <div class="skeleton skeleton-text short"></div>
-            </div>
-            <p id="aiVerdict" class="text-base font-bold text-gray-400 leading-relaxed hidden"></p>
-          </div>
-
-          <!-- ARMADURA DO DIA -->
-          <div class="verse-glow glass-panel rounded-2xl p-5">
-            <div class="flex items-center gap-2.5 mb-3">
-              <span class="text-xl">🛡️</span>
-              <span class="text-xs font-extrabold tracking-[0.2em] text-royal">ARMADURA DO DIA</span>
-            </div>
-            <p class="text-base font-bold text-gray-300 italic leading-relaxed">"${verse.text}"</p>
-            <p class="text-xs font-extrabold text-gray-600 mt-2 text-right">— ${verse.ref}</p>
-          </div>
-
-          <!-- PROTOCOLO GOGGINS -->
-          <div class="card-neu rounded-2xl p-5" style="border-color: rgba(255,51,51,0.15) !important; box-shadow: 0 0 20px rgba(255,51,51,0.05);">
-            <div class="flex items-center gap-2.5 mb-3">
-              <span class="text-xs font-extrabold tracking-[0.2em] text-red-400">PROTOCOLO GOGGINS</span>
-            </div>
-            <p class="text-base font-bold text-gray-300 leading-relaxed">"${getGogginsQuoteOfDay().text}"</p>
-            <p class="text-xs font-extrabold text-gray-600 mt-2 text-right">-- David Goggins</p>
-          </div>
-
-          <!-- SCORE HERO -->
-          <div class="card-neu rounded-2xl p-8 flex flex-col items-center">
-            <p class="text-xs font-extrabold tracking-[0.25em] text-gray-500 mb-5">RESURRECTION SCORE</p>
-            <div class="score-ring w-40 h-40 flex items-center justify-center p-1.5" style="--score:${score}; --ring-color:${ringColor}">
-              <div class="bg-[#111] w-full h-full rounded-full flex flex-col items-center justify-center">
-                <span class="text-6xl font-black tabular-nums font-mono ${status.cls}" style="letter-spacing:-3px;">${score}</span>
-                <span class="text-sm font-extrabold text-gray-500 mt-0.5">/100</span>
+          <!-- S2: ATTRIBUTE GRID -->
+          <div class="prem-card">
+            <div class="grid grid-cols-2">
+              <div class="prem-metric" style="border-right:1px solid var(--prem-border-subtle); border-bottom:1px solid var(--prem-border-subtle);">
+                <span class="prem-metric-value">${getTotalSoberaniaDays()}</span>
+                <span class="prem-metric-label">Dias soberania</span>
               </div>
-            </div>
-            <div class="flex items-center gap-3 mt-4">
-              ${streak > 0 ? `<span class="streak-fire text-xl">🔥</span><span class="text-base font-black neon-text">${streak} dia${streak !== 1 ? 's' : ''}</span>` : '<span class="text-base font-bold text-gray-700">Sem streak ativo</span>'}
+              <div class="prem-metric" style="border-bottom:1px solid var(--prem-border-subtle);">
+                <span class="prem-metric-value">${getMissionSuccessRateThisWeek()}%</span>
+                <span class="prem-metric-label">Missoes semana</span>
+              </div>
+              <div class="prem-metric" style="border-right:1px solid var(--prem-border-subtle);">
+                <span class="prem-metric-value" style="color:${
+                  userState.ultimaGlicemia
+                    ? (userState.ultimaGlicemia.value > 180 ? 'var(--prem-accent-red)'
+                      : userState.ultimaGlicemia.value < 70 ? 'var(--prem-accent-amber)'
+                      : 'var(--prem-accent-green)')
+                    : 'var(--prem-text-tertiary)'
+                }">
+                  ${userState.ultimaGlicemia ? userState.ultimaGlicemia.value : '—'}
+                </span>
+                <span class="prem-metric-label">Glicemia mg/dL</span>
+                ${userState.ultimaGlicemia ? `<span class="text-[9px] font-medium mt-1" style="color:var(--prem-text-quaternary);">${new Date(userState.ultimaGlicemia.timestamp).toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'})}</span>` : ''}
+              </div>
+              ${(() => {
+                const lvl = calcularNivel(userState.xpTotal || 0);
+                return `
+                  <div class="prem-metric cursor-pointer active:scale-[0.97] transition-transform" onclick="switchTab('perfil')">
+                    <span class="prem-metric-value" style="color:${lvl.isMax ? 'var(--prem-accent-amber)' : 'var(--prem-accent-blue)'};">LVL ${lvl.nivel}</span>
+                    <span class="prem-metric-label">${(userState.xpTotal || 0).toLocaleString('pt-BR')} XP</span>
+                  </div>
+                `;
+              })()}
             </div>
           </div>
 
-          <!-- SOBERANIA -->
-          <div class="card-neu p-6">
-            <div class="flex items-center gap-2.5 mb-5">
-              <span class="text-xl">⛓️</span>
-              <span class="text-xs font-extrabold tracking-[0.2em] text-gray-400">SOBERANIA</span>
-            </div>
-            <div class="flex flex-col gap-6">
-              ${renderSoberaniaSection()}
-            </div>
-          </div>
-
-          <!-- BARRA DE PROGRESSO DO DIA -->
-          <div class="glass-panel rounded-2xl p-5">
+          <!-- S3: DAILY PROGRESS -->
+          <div class="prem-card p-5">
             <div class="flex justify-between items-center mb-3">
-              <span class="text-xs font-extrabold tracking-widest text-gray-500">PROGRESSO DIÁRIO</span>
-              <span class="text-sm font-black font-mono ${status.cls}">${score}%</span>
+              <span class="prem-label">Progresso diario</span>
+              <span class="text-sm font-bold" style="color:${premRingColor};">${score}%</span>
             </div>
-            <div class="w-full h-4 bg-black rounded-full overflow-hidden neon-bar-track">
-              <div class="h-full rounded-full transition-all duration-700 ease-out" style="width:${score}%; background:${ringColor}; box-shadow: 0 0 10px ${ringColor}40;"></div>
+            <div class="prem-bar-track">
+              <div class="prem-bar-fill" style="width:${score}%; background:${premRingColor};"></div>
             </div>
             <div class="flex justify-between items-center mt-3">
               <div class="flex gap-1">
@@ -2826,34 +2899,106 @@
                   return ms.map(m => `<span class="text-sm ${m.concluida ? '' : 'opacity-20 grayscale'}" title="${m.titulo}">${m.icone}</span>`).join('');
                 })()}
               </div>
-              <span class="text-xs font-bold text-gray-600">${getMissoesDone()}/${MISSOES_POR_DIA} missões</span>
+              <span class="text-xs font-medium" style="color:var(--prem-text-tertiary);">${getMissoesDone()}/${MISSOES_POR_DIA} missoes</span>
             </div>
           </div>
 
-          <!-- GRÁFICO SEMANAL -->
-          <div class="glass-panel rounded-2xl p-5">
-            <p class="text-xs font-extrabold tracking-widest text-gray-500 mb-4">ÚLTIMOS 7 DIAS</p>
-            <div class="flex items-end justify-between gap-2" style="height:130px;">
-              ${week.map(d => {
+          <!-- S4: PROFILE -->
+          <div class="prem-card p-6">
+            <div class="flex items-center gap-4 mb-5">
+              <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl"
+                   style="background:var(--prem-bg-surface); border:1px solid var(--prem-border-default);">
+                ${userState.profile?.avatar || '⚔️'}
+              </div>
+              <div>
+                <p class="text-lg font-bold" style="color:var(--prem-text-primary);">${escapeHtml(userState.profile?.name || 'Soldado')}</p>
+                <p class="text-[10px] font-semibold tracking-wider" style="color:var(--prem-accent-blue);">Operador Ativo</p>
+              </div>
+            </div>
+            ${(() => {
+              const vit = calcVitalidade();
+              return `
+                <div class="mb-4">
+                  <div class="prem-stat-row">
+                    <span class="prem-stat-row-label">Vitalidade</span>
+                    <span class="prem-stat-row-value" style="color:var(--prem-accent-green);">${vit}%</span>
+                  </div>
+                  <div class="prem-bar-track">
+                    <div class="prem-bar-fill" style="width:${vit}%; background:linear-gradient(90deg, #34D399, #06B6D4);"></div>
+                  </div>
+                </div>
+              `;
+            })()}
+            ${(() => {
+              const res = calcResiliencia();
+              return `
+                <div>
+                  <div class="prem-stat-row">
+                    <span class="prem-stat-row-label">Resiliencia</span>
+                    <span class="prem-stat-row-value" style="color:var(--prem-accent-blue);">${res}%</span>
+                  </div>
+                  <div class="prem-bar-track">
+                    <div class="prem-bar-fill" style="width:${res}%; background:linear-gradient(90deg, #3B82F6, #A78BFA);"></div>
+                  </div>
+                </div>
+              `;
+            })()}
+          </div>
+
+          <!-- S5: INSPIRATION (combined) -->
+          <div class="prem-card p-6 space-y-5">
+            <div class="prem-accent-stripe" style="--stripe-color:var(--prem-accent-blue);">
+              <p class="prem-label mb-2">Veredito do Mentor</p>
+              <div id="aiVerdictSkeleton">
+                <div class="skeleton skeleton-text w-full"></div>
+                <div class="skeleton skeleton-text medium"></div>
+                <div class="skeleton skeleton-text short"></div>
+              </div>
+              <p id="aiVerdict" class="text-[15px] font-medium leading-relaxed hidden" style="color:var(--prem-text-secondary);"></p>
+            </div>
+            <div class="prem-divider"></div>
+            <div class="prem-accent-stripe" style="--stripe-color:var(--prem-accent-purple);">
+              <p class="prem-label mb-2">Armadura do Dia</p>
+              <p class="text-[15px] font-medium leading-relaxed" style="color:var(--prem-text-secondary);">"${verse.text}"</p>
+              <p class="text-xs font-semibold mt-2 text-right" style="color:var(--prem-text-tertiary);">— ${verse.ref}</p>
+            </div>
+            <div class="prem-divider"></div>
+            <div class="prem-accent-stripe" style="--stripe-color:var(--prem-accent-red);">
+              <p class="prem-label mb-2">Protocolo Goggins</p>
+              <p class="text-[15px] font-medium leading-relaxed" style="color:var(--prem-text-secondary);">"${getGogginsQuoteOfDay().text}"</p>
+              <p class="text-xs font-semibold mt-2 text-right" style="color:var(--prem-text-tertiary);">— David Goggins</p>
+            </div>
+          </div>
+
+          <!-- S6: SOBERANIA -->
+          <div class="prem-card p-6">
+            <div class="flex items-center gap-2.5 mb-5">
+              <span class="text-lg">⛓️</span>
+              <span class="prem-label">Soberania</span>
+            </div>
+            <div class="flex flex-col gap-5">
+              ${renderSoberaniaSection()}
+            </div>
+          </div>
+
+          <!-- S7: WEEKLY CHART -->
+          <div class="prem-card p-5">
+            <p class="prem-label mb-4">Ultimos 7 dias</p>
+            <div class="flex items-end justify-between gap-2" style="height:120px;">
+              ${week.map((d, i) => {
                 const h = Math.max(8, (d.score / 100) * 100);
-                const barColor = d.allDone ? (d.isToday ? ringColor : '#2563EB') : '#2a2a2a';
-                const glowStyle = d.allDone ? `box-shadow: 0 0 8px ${barColor}50;` : '';
+                const barBg = d.allDone
+                  ? (d.isToday ? premRingColor : 'var(--prem-accent-blue)')
+                  : 'var(--prem-bg-surface)';
                 return `
                   <div class="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
-                    <span class="text-xs font-black tabular-nums font-mono ${d.isToday ? status.cls : d.allDone ? 'text-white' : 'text-gray-700'}">${d.score}</span>
-                    <div class="w-full rounded-lg bar-grow" style="height:${h}%; background:${barColor}; ${glowStyle} animation-delay:${week.indexOf(d) * 0.07}s;"></div>
-                    <span class="text-[10px] font-bold ${d.isToday ? 'text-white' : 'text-gray-600'}">${d.dayLabel}</span>
+                    <span class="text-xs font-bold tabular-nums" style="color:${d.isToday ? premRingColor : d.allDone ? 'var(--prem-text-primary)' : 'var(--prem-text-quaternary)'};">${d.score}</span>
+                    <div class="w-full prem-chart-bar bar-grow" style="height:${h}%; background:${barBg}; animation-delay:${i * 0.07}s;"></div>
+                    <span class="text-[10px] font-semibold" style="color:${d.isToday ? 'var(--prem-text-primary)' : 'var(--prem-text-tertiary)'};">${d.dayLabel}</span>
                   </div>
                 `;
               }).join('')}
             </div>
-          </div>
-
-          <!-- STATUS DE BATALHA -->
-          <div class="glass-panel border ${status.bg} rounded-2xl p-6 text-center" style="background:${status.bgInner};">
-            <span class="text-4xl">${status.icon}</span>
-            <p class="text-2xl font-black ${status.cls} mt-3 tracking-wide">${status.text}</p>
-            <p class="text-sm font-bold text-gray-600 mt-2">${score <= 30 ? 'Acorde. O dia não espera.' : score <= 70 ? 'Bom, mas bom não é o bastante.' : 'Você está no controle total.'}</p>
           </div>
 
         </div>
