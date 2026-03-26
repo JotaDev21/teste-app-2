@@ -1,4 +1,4 @@
-const CACHE_NAME = 'resurrection-v4.1';
+const CACHE_NAME = 'resurrection-v4.2';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -77,4 +77,24 @@ self.addEventListener('fetch', (event) => {
       })
       .catch(() => caches.match(request))
   );
+});
+
+// Notification click: focus or open the app
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      for (const client of clientList) {
+        if (client.url.includes(self.location.origin) && 'focus' in client) {
+          return client.focus();
+        }
+      }
+      return clients.openWindow('/');
+    })
+  );
+});
+
+// Notification close: no-op (logged for analytics if needed)
+self.addEventListener('notificationclose', (event) => {
+  // Optional: track dismissals
 });

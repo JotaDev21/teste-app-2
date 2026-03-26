@@ -1280,6 +1280,7 @@
       switchTab('dashboard');
       checkScarcity();
       startFlashQuestLoop();
+      initNotifications();
     }
 
     // =============================================
@@ -1427,6 +1428,7 @@
       const shuffled = [...POOL_MISSOES].sort(() => Math.random() - 0.5);
       const selected = shuffled.slice(0, MISSOES_POR_DIA).map(m => ({
         ...m,
+        aceita: false,
         concluida: false
       }));
       userState.missoesDiarias = { date: today, missoes: selected };
@@ -1657,6 +1659,46 @@
       { ref: 'Salmos 27:1',        text: 'O Senhor é a minha luz e a minha salvação; de quem terei temor? O Senhor é a fortaleza da minha vida; de quem terei medo?' },
       { ref: 'Hebreus 12:11',      text: 'Nenhuma disciplina parece ser motivo de alegria no momento, mas sim de tristeza. Depois, porém, produz fruto de justiça e paz.' },
     ];
+
+    // =============================================
+    // DAVID GOGGINS — FRASES DE GUERRA
+    // =============================================
+    const GOGGINS_QUOTES = [
+      { id: 'g01', text: 'Quem vai te salvar? A resposta: VOCE. Voce e seu proprio heroi.' },
+      { id: 'g02', text: 'Quando voce acha que esta no limite, esta usando apenas 40% da sua capacidade.' },
+      { id: 'g03', text: 'Sofra mais para que o sofrimento perca o poder sobre voce.' },
+      { id: 'g04', text: 'Nao peca motivacao. Desenvolva disciplina. Motivacao vai embora. Disciplina fica.' },
+      { id: 'g05', text: 'Voce e a unica pessoa que pode mudar sua vida. Ninguem vai fazer isso por voce.' },
+      { id: 'g06', text: 'Dor e o seu professor mais valioso. Aprenda com ela ou seja destruido por ela.' },
+      { id: 'g07', text: 'Todo dia comeca com uma escolha: ficar na cama ou entrar na batalha. Escolha a batalha.' },
+      { id: 'g08', text: 'O caminho mais facil e sempre o mais lotado. Os grandes estao no caminho dificil.' },
+      { id: 'g09', text: 'Sua mente e um campo de batalha. Se voce nao a controlar, alguem vai controlar por voce.' },
+      { id: 'g10', text: 'Pare de procurar atalhos. O trabalho duro e o atalho.' },
+      { id: 'g11', text: 'A unica forma de crescer e se colocando em situacoes desconfortaveis todos os dias.' },
+      { id: 'g12', text: 'Seja obcecado ou seja mediocre. Nao existe meio-termo.' },
+      { id: 'g13', text: 'Nao conte a ninguem seus planos. Mostre resultados.' },
+      { id: 'g14', text: 'A maioria das pessoas para quando comeca a doer. E ali que a vida comeca.' },
+      { id: 'g15', text: 'Se o seu dia nao comecou com desconforto, voce esta fazendo errado.' },
+      { id: 'g16', text: 'Abracar a dor e a unica forma de se tornar inquebravel.' },
+      { id: 'g17', text: 'Voce nao precisa de aplausos. Precisa de resultados.' },
+      { id: 'g18', text: 'A vida real nao tem zonas de conforto. Saia agora ou sera expulso depois.' },
+      { id: 'g19', text: 'Enquanto voce pensa em desistir, alguem com menos que voce esta lutando.' },
+      { id: 'g20', text: 'Durma menos, trabalhe mais. O tempo nao espera por ninguem.' },
+      { id: 'g21', text: 'Seja a pessoa que voce precisa ser, nao a pessoa que e confortavel ser.' },
+      { id: 'g22', text: 'Falha nao e o oposto do sucesso. Desistir e.' },
+      { id: 'g23', text: 'Cada dia que voce treina, voce constroi um muro entre voce e a fraqueza.' },
+      { id: 'g24', text: 'Nao espere estar pronto. Comece agora. Aprenda durante o processo.' },
+      { id: 'g25', text: 'Voce e mais forte do que as desculpas que sua mente inventa.' },
+    ];
+
+    function getRandomGogginsQuote() {
+      return GOGGINS_QUOTES[Math.floor(Math.random() * GOGGINS_QUOTES.length)];
+    }
+
+    function getGogginsQuoteOfDay() {
+      const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
+      return GOGGINS_QUOTES[dayOfYear % GOGGINS_QUOTES.length];
+    }
 
     const WORKOUT_DAYS = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sab'];
     const WORKOUT_DAY_LABELS = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'];
@@ -2034,6 +2076,16 @@
       if (!userState.flashQuestsDone) userState.flashQuestsDone = {};
       if (typeof userState.flashQuestsTotal !== 'number') userState.flashQuestsTotal = 0;
       if (!userState.ultimaGlicemia) userState.ultimaGlicemia = null;
+      // Migrate missions: add 'aceita' field if missing
+      if (userState.missoesDiarias && userState.missoesDiarias.missoes) {
+        userState.missoesDiarias.missoes.forEach(m => {
+          if (typeof m.aceita === 'undefined') m.aceita = m.concluida ? true : false;
+        });
+      }
+      // Notification state
+      if (typeof userState.notificationsEnabled !== 'boolean') userState.notificationsEnabled = false;
+      if (!userState.notifPromptDismissed) userState.notifPromptDismissed = false;
+      if (!userState.firstUseDate) userState.firstUseDate = getTodayKey();
       // Clean stale AI cache (keep only today's)
       const todayPrefix = 'verdict_' + today;
       Object.keys(userState.aiCache).forEach(k => {
@@ -2724,6 +2776,15 @@
             <p class="text-xs font-extrabold text-gray-600 mt-2 text-right">— ${verse.ref}</p>
           </div>
 
+          <!-- PROTOCOLO GOGGINS -->
+          <div class="card-neu rounded-2xl p-5" style="border-color: rgba(255,51,51,0.15) !important; box-shadow: 0 0 20px rgba(255,51,51,0.05);">
+            <div class="flex items-center gap-2.5 mb-3">
+              <span class="text-xs font-extrabold tracking-[0.2em] text-red-400">PROTOCOLO GOGGINS</span>
+            </div>
+            <p class="text-base font-bold text-gray-300 leading-relaxed">"${getGogginsQuoteOfDay().text}"</p>
+            <p class="text-xs font-extrabold text-gray-600 mt-2 text-right">-- David Goggins</p>
+          </div>
+
           <!-- SCORE HERO -->
           <div class="card-neu rounded-2xl p-8 flex flex-col items-center">
             <p class="text-xs font-extrabold tracking-[0.25em] text-gray-500 mb-5">RESURRECTION SCORE</p>
@@ -2812,6 +2873,8 @@
       const missoes = getMissoesDoDia();
       const m = missoes.find(x => x.id === missionId);
       if (!m) return;
+      // Guard: must accept before completing
+      if (!m.aceita && !m.concluida) { openMissionModal(missionId); return; }
       const wasCompleted = m.concluida;
       m.concluida = !m.concluida;
       haptic(m.concluida ? 40 : 15);
@@ -2887,47 +2950,95 @@
 
       const impacts = MISSION_IMPACT_MAP[m.id] || ['DISCIPLINA'];
       const isDone = m.concluida;
+      const isAccepted = m.aceita;
 
       const overlay = document.createElement('div');
       overlay.id = 'missionModal';
       overlay.className = 'mission-modal-overlay';
       overlay.onclick = (e) => { if (e.target === overlay) closeMissionModal(); };
 
-      overlay.innerHTML = `
-        <div class="mission-modal">
-          <div class="text-center mb-8">
-            <span class="text-4xl">${m.icone}</span>
-          </div>
-
-          <h3 class="text-xl font-bold text-white text-center mb-3">${m.titulo}</h3>
-          <p class="text-sm leading-relaxed text-gray-400 text-center mb-8">${m.descricao}</p>
-
-          <div class="mb-8">
-            <p class="text-[10px] font-bold text-gray-600 tracking-widest mb-3 text-center">IMPACTO DA AÇÃO</p>
-            <div class="flex flex-wrap justify-center gap-2">
-              ${impacts.map(tag => `<span class="mission-impact-tag">${tag}</span>`).join('')}
-              <span class="mission-impact-tag" style="color: #00FF64; border-color: rgba(0,255,100,0.15);">+${m.xp} XP</span>
+      if (!isAccepted && !isDone) {
+        // === PHASE 1: ACCEPT MODAL ===
+        overlay.innerHTML = `
+          <div class="mission-modal">
+            <div class="text-center mb-6">
+              <div class="text-5xl mb-2">${m.icone}</div>
+              <p class="text-[10px] font-extrabold tracking-[0.25em] text-yellow-500 mb-2">MISSAO DISPONIVEL</p>
+            </div>
+            <h3 class="text-xl font-bold text-white text-center mb-3">${m.titulo}</h3>
+            <p class="text-sm leading-relaxed text-gray-400 text-center mb-6">${m.descricao}</p>
+            <div class="mb-6">
+              <p class="text-[10px] font-bold text-gray-600 tracking-widest mb-3 text-center">IMPACTO DA ACAO</p>
+              <div class="flex flex-wrap justify-center gap-2">
+                ${impacts.map(tag => `<span class="mission-impact-tag">${tag}</span>`).join('')}
+                <span class="mission-impact-tag" style="color: #00FF64; border-color: rgba(0,255,100,0.15);">+${m.xp} XP</span>
+              </div>
+            </div>
+            <div class="glass-panel rounded-xl p-4 mb-6 text-center" style="border-color: rgba(255,204,21,0.15) !important;">
+              <p class="text-xs font-bold text-yellow-500/70 leading-relaxed">
+                Ao aceitar, voce se compromete a completar esta missao hoje. Sem desculpas.
+              </p>
+            </div>
+            <div class="flex gap-3">
+              <button onclick="aceitarMissao('${m.id}')"
+                class="flex-1 py-4 rounded-xl font-bold text-sm text-white min-h-[52px] active:scale-[0.93] haptic"
+                style="background: linear-gradient(135deg, #2563EB, #1e40af); box-shadow: 0 0 15px rgba(37,99,235,0.3);">
+                ACEITAR MISSAO
+              </button>
+              <button onclick="closeMissionModal()"
+                class="px-6 py-4 rounded-xl font-bold text-sm text-gray-500 min-h-[52px] active:scale-[0.93] haptic border border-white/5">
+                FECHAR
+              </button>
             </div>
           </div>
-
-          <div class="flex gap-3">
-            <button onclick="toggleMissao('${m.id}');closeMissionModal();"
-              class="flex-1 py-4 rounded-xl font-bold text-sm min-h-[52px] active:scale-[0.93] haptic transition-all ${isDone
-                ? 'bg-white/[0.03] border border-white/10 text-gray-500'
-                : 'text-white'}"
-              ${isDone ? '' : 'style="background: linear-gradient(135deg, #2563EB, #1e40af);"'}>
-              ${isDone ? 'DESMARCAR' : 'COMPLETAR MISSÃO'}
-            </button>
-            <button onclick="closeMissionModal()"
-              class="px-6 py-4 rounded-xl font-bold text-sm text-gray-500 min-h-[52px] active:scale-[0.93] haptic border border-white/5">
-              FECHAR
-            </button>
+        `;
+      } else {
+        // === PHASE 2: COMPLETE/UNMARK MODAL ===
+        overlay.innerHTML = `
+          <div class="mission-modal">
+            <div class="text-center mb-8">
+              <span class="text-4xl">${m.icone}</span>
+            </div>
+            <h3 class="text-xl font-bold text-white text-center mb-3">${m.titulo}</h3>
+            <p class="text-sm leading-relaxed text-gray-400 text-center mb-8">${m.descricao}</p>
+            <div class="mb-8">
+              <p class="text-[10px] font-bold text-gray-600 tracking-widest mb-3 text-center">IMPACTO DA ACAO</p>
+              <div class="flex flex-wrap justify-center gap-2">
+                ${impacts.map(tag => `<span class="mission-impact-tag">${tag}</span>`).join('')}
+                <span class="mission-impact-tag" style="color: #00FF64; border-color: rgba(0,255,100,0.15);">+${m.xp} XP</span>
+              </div>
+            </div>
+            <div class="flex gap-3">
+              <button onclick="toggleMissao('${m.id}');closeMissionModal();"
+                class="flex-1 py-4 rounded-xl font-bold text-sm min-h-[52px] active:scale-[0.93] haptic transition-all ${isDone
+                  ? 'bg-white/[0.03] border border-white/10 text-gray-500'
+                  : 'text-white'}"
+                ${isDone ? '' : 'style="background: linear-gradient(135deg, #2563EB, #1e40af);"'}>
+                ${isDone ? 'DESMARCAR' : 'COMPLETAR MISSAO'}
+              </button>
+              <button onclick="closeMissionModal()"
+                class="px-6 py-4 rounded-xl font-bold text-sm text-gray-500 min-h-[52px] active:scale-[0.93] haptic border border-white/5">
+                FECHAR
+              </button>
+            </div>
           </div>
-        </div>
-      `;
+        `;
+      }
 
       document.body.appendChild(overlay);
       haptic(15);
+    }
+
+    function aceitarMissao(missionId) {
+      const missoes = getMissoesDoDia();
+      const m = missoes.find(x => x.id === missionId);
+      if (!m || m.aceita) return;
+      m.aceita = true;
+      haptic(40);
+      saveData();
+      closeMissionModal();
+      showToast('MISSAO ACEITA: ' + m.titulo, 3000);
+      renderActiveTab();
     }
 
     function closeMissionModal() {
@@ -2975,7 +3086,7 @@
             <!-- BARRA DE PROGRESSO -->
             <div class="mb-2">
               <div class="flex justify-between items-center mb-2">
-                <span class="text-xs font-extrabold tracking-widest ${pct === 100 ? 'neon-text' : 'text-gray-400'}">${done}/${total} CONCLUÍDAS HOJE</span>
+                <span class="text-xs font-extrabold tracking-widest ${pct === 100 ? 'neon-text' : 'text-gray-400'}">${done}/${total} CONCLUÍDAS · ${missoes.filter(m => m.aceita && !m.concluida).length} ACEITAS</span>
                 <span class="text-sm font-black ${pct === 100 ? 'neon-text' : 'text-royal'}">${pct}%</span>
               </div>
               <div class="w-full h-4 bg-black rounded-full overflow-hidden" style="box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);">
@@ -2996,20 +3107,40 @@
           <div class="space-y-3 mission-stagger">
             ${missoes.map((m, i) => {
               const isDone = m.concluida;
+              const isAccepted = m.aceita;
+              // 3 states: locked (!aceita) → accepted (aceita) → completed (concluida)
+              const cardBorder = isDone ? 'border-green-500/30' : isAccepted ? 'border-royal/20' : 'border-amber-500/20';
+              const cardBg = isDone ? 'bg-[#060606]' : isAccepted ? 'bg-[#080808]' : 'bg-[#0a0a08]';
+              const cardShadow = isDone ? 'box-shadow: 0 0 12px rgba(34,197,94,0.08);' : isAccepted ? '' : 'box-shadow: 0 0 8px rgba(245,158,11,0.05);';
               return `
-                <div class="mission-btn w-full flex items-center gap-4 p-5 rounded-2xl border transition-all min-h-[72px] ${isDone
-                    ? 'bg-[#060606] border-green-500/30'
-                    : 'bg-[#080808] border-white/[0.04]'}"
-                  style="${isDone ? 'box-shadow: 0 0 12px rgba(34,197,94,0.08);' : ''}">
-                  <button onclick="event.stopPropagation();toggleMissao('${m.id}')"
-                    class="w-8 h-8 rounded-lg border-2 flex items-center justify-center flex-shrink-0 active:scale-[0.85] haptic transition-all ${isDone ? 'bg-green-500 border-green-500' : 'border-[#333] bg-transparent'}">
-                    ${isDone ? '<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="black" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>' : ''}
-                  </button>
+                <div class="mission-btn w-full flex items-center gap-4 p-5 rounded-2xl border transition-all min-h-[72px] ${cardBg} ${cardBorder}"
+                  style="${cardShadow}">
+                  ${isDone ? `
+                    <button onclick="event.stopPropagation();toggleMissao('${m.id}')"
+                      class="w-8 h-8 rounded-lg border-2 flex items-center justify-center flex-shrink-0 active:scale-[0.85] haptic transition-all bg-green-500 border-green-500">
+                      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="black" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                    </button>
+                  ` : isAccepted ? `
+                    <button onclick="event.stopPropagation();toggleMissao('${m.id}')"
+                      class="w-8 h-8 rounded-lg border-2 flex items-center justify-center flex-shrink-0 active:scale-[0.85] haptic transition-all border-[#333] bg-transparent">
+                    </button>
+                  ` : `
+                    <button onclick="event.stopPropagation();openMissionModal('${m.id}')"
+                      class="w-8 h-8 rounded-lg border-2 flex items-center justify-center flex-shrink-0 active:scale-[0.85] haptic transition-all border-amber-500/40 bg-amber-500/10">
+                      <span class="text-sm">🔒</span>
+                    </button>
+                  `}
                   <div class="flex-1 min-w-0 cursor-pointer active:opacity-70" onclick="openMissionModal('${m.id}')">
-                    <p class="text-sm font-bold ${isDone ? 'text-green-400/50 line-through' : 'text-gray-200'}">${m.titulo}</p>
-                    <p class="text-xs font-medium mt-0.5 ${isDone ? 'text-green-500/30' : 'text-gray-600'} truncate">${m.descricao}</p>
+                    <p class="text-sm font-bold ${isDone ? 'text-green-400/50 line-through' : isAccepted ? 'text-gray-200' : 'text-amber-200/70'}">${m.titulo}</p>
+                    <p class="text-xs font-medium mt-0.5 ${isDone ? 'text-green-500/30' : isAccepted ? 'text-gray-600' : 'text-amber-500/30'} truncate">${m.descricao}</p>
                   </div>
-                  <span class="text-[10px] font-black ${isDone ? 'text-green-400/40' : 'text-gray-600'} flex-shrink-0">+${m.xp}</span>
+                  ${isDone ? `
+                    <span class="text-[10px] font-black text-green-400/40 flex-shrink-0">+${m.xp}</span>
+                  ` : isAccepted ? `
+                    <span class="text-[10px] font-black text-gray-600 flex-shrink-0">+${m.xp}</span>
+                  ` : `
+                    <span class="text-[10px] font-black text-amber-500/60 flex-shrink-0 px-2 py-1 rounded-md bg-amber-500/10 border border-amber-500/20">ACEITAR</span>
+                  `}
                 </div>
               `;
             }).join('')}
@@ -5220,6 +5351,22 @@
             </div>
           </div>
 
+          <!-- ===== ALERTAS DE GUERRA ===== -->
+          <div class="card-neu p-5 rounded-2xl">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <span class="text-2xl">${userState.notificationsEnabled ? '🔔' : '🔕'}</span>
+                <div>
+                  <p class="text-sm font-black text-white">Alertas de Guerra</p>
+                  <p class="text-xs font-medium text-gray-600">Goggins, missões, disciplina</p>
+                </div>
+              </div>
+              <button onclick="toggleNotifications()" class="w-14 h-8 rounded-full transition-all duration-300 flex items-center px-1 min-h-[32px] haptic ${userState.notificationsEnabled ? 'bg-royal justify-end' : 'bg-[#222] justify-start'}">
+                <div class="w-6 h-6 rounded-full bg-white shadow-md transition-all"></div>
+              </button>
+            </div>
+          </div>
+
           <!-- ===== ARSENAL HEADER ===== -->
           <div class="flex items-center justify-between px-1">
             <div>
@@ -5545,6 +5692,213 @@
         navigator.serviceWorker.register('./sw.js')
           .then(reg => console.log('SW registered:', reg.scope))
           .catch(err => console.warn('SW registration failed:', err));
+      }
+    }
+
+    // =============================================
+    // NOTIFICATION SYSTEM
+    // =============================================
+    // Note: setTimeout/setInterval only work while app is open.
+    // For true background notifications, Web Push (VAPID + server) would be needed.
+
+    let notifScheduled = false;
+
+    function initNotifications() {
+      if (!('Notification' in window)) return;
+
+      // If already granted and enabled, schedule
+      if (Notification.permission === 'granted' && userState.notificationsEnabled) {
+        scheduleAllNotifications();
+        return;
+      }
+
+      // Prompt after 2 days of usage
+      if (Notification.permission === 'default' && !userState.notifPromptDismissed) {
+        const firstUse = userState.firstUseDate || getTodayKey();
+        const daysSinceFirst = Math.floor((new Date() - new Date(firstUse)) / 86400000);
+        if (daysSinceFirst >= 2) {
+          setTimeout(showNotificationPermissionModal, 5000);
+        }
+      }
+    }
+
+    function showNotificationPermissionModal() {
+      if (document.getElementById('notifPermModal')) return;
+      const overlay = document.createElement('div');
+      overlay.id = 'notifPermModal';
+      overlay.className = 'fixed inset-0 z-[9999] flex items-center justify-center p-4';
+      overlay.style.cssText = 'background:rgba(0,0,0,0.85);backdrop-filter:blur(12px);animation:fadeIn 0.3s ease';
+      overlay.innerHTML = `
+        <div class="card-neu rounded-3xl p-8 max-w-sm w-full text-center" style="animation:slideUp 0.4s cubic-bezier(0.16,1,0.3,1)">
+          <div class="text-6xl mb-4">🔔</div>
+          <h3 class="text-xl font-black text-white mb-2">ATIVAR ALERTAS DE GUERRA</h3>
+          <p class="text-sm text-gray-400 mb-6">Receba chamados motivacionais durante o dia:</p>
+          <div class="space-y-3 mb-8 text-left">
+            <div class="flex items-center gap-3">
+              <span class="text-lg">💀</span>
+              <span class="text-sm font-bold text-gray-300">Frases do Goggins 3x ao dia</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="text-lg">⚔️</span>
+              <span class="text-sm font-bold text-gray-300">Alerta de missões pendentes</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="text-lg">🔥</span>
+              <span class="text-sm font-bold text-gray-300">Lembretes de disciplina</span>
+            </div>
+          </div>
+          <div class="space-y-3">
+            <button onclick="requestNotifPermission()" class="w-full py-4 rounded-xl font-black text-sm text-white min-h-[52px] active:scale-[0.93] haptic" style="background:linear-gradient(135deg,#2563EB,#1e40af);">
+              ATIVAR ALERTAS
+            </button>
+            <button onclick="dismissNotifPrompt()" class="w-full py-3 rounded-xl font-bold text-sm text-gray-600 min-h-[44px] active:scale-[0.93] haptic">
+              DEPOIS
+            </button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+      haptic(15);
+    }
+
+    async function requestNotifPermission() {
+      const perm = await Notification.requestPermission();
+      const modal = document.getElementById('notifPermModal');
+      if (modal) modal.remove();
+
+      if (perm === 'granted') {
+        userState.notificationsEnabled = true;
+        saveData();
+        showToast('Alertas de guerra ativados!', 3000);
+        scheduleAllNotifications();
+        renderActiveTab();
+      } else {
+        userState.notifPromptDismissed = true;
+        saveData();
+        showToast('Alertas desativados. Ative no perfil quando quiser.', 4000);
+      }
+    }
+
+    function dismissNotifPrompt() {
+      const modal = document.getElementById('notifPermModal');
+      if (modal) modal.remove();
+      userState.notifPromptDismissed = true;
+      saveData();
+    }
+
+    async function toggleNotifications() {
+      if (!('Notification' in window)) {
+        showToast('Seu navegador não suporta notificações', 3000);
+        return;
+      }
+
+      if (!userState.notificationsEnabled) {
+        // Turning ON
+        if (Notification.permission === 'default') {
+          const perm = await Notification.requestPermission();
+          if (perm !== 'granted') {
+            showToast('Permissão negada. Ative nas configurações do navegador.', 4000);
+            return;
+          }
+        } else if (Notification.permission === 'denied') {
+          showToast('Notificações bloqueadas. Ative nas configurações do navegador.', 4000);
+          return;
+        }
+        userState.notificationsEnabled = true;
+        saveData();
+        scheduleAllNotifications();
+        showToast('Alertas de guerra ATIVADOS', 3000);
+        haptic(30);
+      } else {
+        // Turning OFF
+        userState.notificationsEnabled = false;
+        notifScheduled = false;
+        saveData();
+        showToast('Alertas desativados', 2000);
+        haptic(10);
+      }
+      renderActiveTab();
+    }
+
+    const DISCIPLINE_PHRASES = [
+      'A disciplina é a ponte entre metas e conquistas.',
+      'Levanta. Ninguém vai fazer isso por você.',
+      'Cada segundo parado é um segundo desperdiçado.',
+      'Dor é temporária. Desistir é permanente.',
+      'Você não precisa de motivação. Precisa de disciplina.',
+      'O conforto é o inimigo do progresso.',
+      'Faz o que tem que ser feito. Sem desculpas.',
+      'Quem busca conforto não encontra grandeza.',
+      'A guerra é contra você mesmo. Vença.',
+      'Hoje é dia de provar que você mudou.',
+    ];
+
+    function scheduleAllNotifications() {
+      if (notifScheduled || !userState.notificationsEnabled) return;
+      notifScheduled = true;
+
+      const now = new Date();
+      const h = now.getHours();
+      const m = now.getMinutes();
+      const currentMinutes = h * 60 + m;
+
+      // Goggins quotes at 08:00, 14:00, 20:00
+      const gogginsTimes = [480, 840, 1200]; // in minutes
+      gogginsTimes.forEach(targetMin => {
+        let delay = (targetMin - currentMinutes) * 60000;
+        if (delay < 0) return; // already passed today
+        setTimeout(() => {
+          if (!userState.notificationsEnabled) return;
+          const quote = getRandomGogginsQuote();
+          fireNotification('PROTOCOLO GOGGINS', quote.text, 'goggins');
+        }, delay);
+      });
+
+      // Mission reminder at 18:00
+      const missionReminderMin = 1080;
+      let missionDelay = (missionReminderMin - currentMinutes) * 60000;
+      if (missionDelay > 0) {
+        setTimeout(() => {
+          if (!userState.notificationsEnabled) return;
+          const missoes = getMissoesDoDia();
+          const done = missoes.filter(x => x.concluida).length;
+          if (done < missoes.length / 2) {
+            fireNotification('MISSÕES PENDENTES', `Você completou ${done}/${missoes.length} missões. Hora de moer.`, 'missions');
+          }
+        }, missionDelay);
+      }
+
+      // Discipline reminder every 3 hours
+      setInterval(() => {
+        if (!userState.notificationsEnabled) return;
+        const phrase = DISCIPLINE_PHRASES[Math.floor(Math.random() * DISCIPLINE_PHRASES.length)];
+        fireNotification('DISCIPLINA', phrase, 'discipline');
+      }, 3 * 60 * 60 * 1000);
+    }
+
+    function fireNotification(title, body, tag) {
+      if (Notification.permission !== 'granted' || !userState.notificationsEnabled) return;
+
+      // Try SW notification first (persists even if tab is hidden)
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistration().then(reg => {
+          if (reg) {
+            reg.showNotification(title, {
+              body: body,
+              icon: './icons/icon-192x192.png',
+              badge: './icons/icon-192x192.png',
+              tag: tag,
+              vibrate: [200, 100, 200],
+              renotify: true,
+            });
+          } else {
+            new Notification(title, { body, icon: './icons/icon-192x192.png', tag });
+          }
+        }).catch(() => {
+          new Notification(title, { body, icon: './icons/icon-192x192.png', tag });
+        });
+      } else {
+        new Notification(title, { body, icon: './icons/icon-192x192.png', tag });
       }
     }
 
@@ -6260,6 +6614,7 @@ Formato direto e disciplinado. Sem emojis.`;
           updateHeaderDate();
           switchTab('dashboard');
           checkScarcity();
+          initNotifications();
           return;
         }
       } catch (err) {
